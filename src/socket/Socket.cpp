@@ -4,13 +4,43 @@
 Socket::Socket()
 {
 	std::cout << "\e[0;33mDefault Constructor called of Socket\e[0m" << std::endl;
+	int option;
+
+	option = 1;
+	this->socketAddressLen = sizeof(this->socketAddress);
+	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->serverSocket == -1)
+		throw std::exception();
+	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &option, sizeof(option)) == -1)
+		throw std::exception();
+	this->socketAddress.sin_family = AF_INET;
+	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
+	this->socketAddress.sin_port = htons(DEFAULTPORT);
+	if (bind(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t)this->socketAddressLen) == -1)
+		throw std::exception();
+	if (listen(this->serverSocket, 1) == -1)
+		throw std::exception();
 }
 
-Socket::Socket(const std::string &host, const std::string &port)
+Socket::Socket(const int port)
 {
 	std::cout << "\e[0;33mConstructor called of Socket\e[0m" << std::endl;
-	(void) host;
-	(void) port;
+	int option;
+
+	option = 1;
+	this->socketAddressLen = sizeof(this->socketAddress);
+	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->serverSocket == -1)
+		throw std::exception();
+	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &option, sizeof(option)) == -1)
+		throw std::exception();
+	this->socketAddress.sin_family = AF_INET;
+	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
+	this->socketAddress.sin_port = htons(PORT);
+	if (bind(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t)this->socketAddressLen) == -1)
+		throw std::exception();
+	if (listen(this->serverSocket, 1) == -1)
+		throw std::exception();
 }
 
 Socket::Socket(const Socket &copy)
@@ -24,6 +54,8 @@ Socket::Socket(const Socket &copy)
 Socket::~Socket()
 {
 	std::cout << "\e[0;31mDestructor called of Socket\e[0m" << std::endl;
+	close(this->requestSocket);
+	close(this->serverSocket);
 }
 
 

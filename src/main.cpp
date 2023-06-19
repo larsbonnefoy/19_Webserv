@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/19 14:53:36 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/19 19:20:51 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ int main(int ac, char **av)
                           "</body>\r\n"
                           "</html>";
 
-
+	// const char *response = "HTTP/1.1 302 Found\r\n"
+    //                       "Location: https://http.cat/status/418\r\n"
+    //                       "\r\n";
 	opt = 1;
 	addr_len = sizeof(addr);
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -67,13 +69,19 @@ int main(int ac, char **av)
 	if (bind(socket_fd, (struct sockaddr *)&addr, (socklen_t)addr_len) == -1)
 		return (3);
 	if (listen(socket_fd, 1) == -1)
-		return (4);	
-	new_socket = accept(socket_fd, (struct sockaddr *)&addr, (socklen_t *)&addr_len);
-	if (new_socket == -1)
-		return (5);
-	read(new_socket, buffer, BUFF_SIZE);
-	std::cout << buffer << std::endl;
-	std::cout << "DONE" << std::endl;
-	std::cout << response << std::endl;
-	write(new_socket , response, strlen(response));
+		return (4);
+	int i = 0;
+	while (1)
+	{
+		new_socket = accept(socket_fd, (struct sockaddr *)&addr, (socklen_t *)&addr_len);
+		if (new_socket == -1)
+			return (5);
+		read(new_socket, buffer, BUFF_SIZE);
+		std::cout << buffer << std::endl;
+		std::cout << "DONE " << i++ << std::endl;
+		// std::cout << response << std::endl;
+		write(new_socket, response, strlen(response));
+		close(new_socket);
+		close(new_socket);
+	}
 }

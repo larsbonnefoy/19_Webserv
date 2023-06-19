@@ -6,15 +6,25 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 11:19:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/19 11:19:17 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/19 18:10:45by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-# include <iostream>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
 # include <string>
+# include <cstring>
+# include <iostream>
+# include <poll.h>
+# define PORT 8080
+# define DEFAULTPORT 8080
+# define BUFF_SIZE 1024
 
 class Socket
 {
@@ -22,14 +32,28 @@ class Socket
 		// Constructors
 		Socket();
 		Socket(const Socket &copy);
-		Socket(const std::string &host, const std::string &port);
+		Socket(const int port);
 		// Destructor
 		~Socket();
 		
 		// Operators
 		Socket & operator=(const Socket &assign);
 		
+		// Getter
+		char	*getRequest(void);
+
+		// MemberFunctions
+		char	*receive(void);
+		void	send(void);		
+
 	private:
+		int 				serverSocket;
+		int					socketAddressLen;
+		struct sockaddr_in	socketAddress;
+		int 				requestSocket;
+		char				request[BUFF_SIZE];
+		char				badbit;
+		
 		
 };
 
