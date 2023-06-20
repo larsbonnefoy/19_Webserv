@@ -22,6 +22,8 @@
 # include <cstring>
 # include <iostream>
 # include <poll.h>
+# include <fcntl.h>
+// # include <cstdint>
 # define PORT 8080
 # define DEFAULTPORT 8080
 # define BUFF_SIZE 1024
@@ -40,11 +42,11 @@ class Socket
 		Socket & operator=(const Socket &assign);
 		
 		// Getter
-		char	*getRequest(void);
+		const char	*getRequest(void) const;
 
 		// MemberFunctions
-		char	*receive(void);
-		void	send(void);		
+		const char	*receiveRequest(void);
+		void		sendResponse(const std::string response);		
 
 	private:
 		int 				serverSocket;

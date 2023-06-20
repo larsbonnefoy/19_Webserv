@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/19 19:20:51 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/20 15:33:21 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,10 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#define PORT 8080
-#define BUFF_SIZE 1024
-int main(int ac, char **av)
+#include "socket/Socket.hpp"
+
+int main()
 {
-	int 				socket_fd;
-	int					opt;
-	int					addr_len;
-	struct sockaddr_in	addr;
-	int 				new_socket;
-	char				buffer[BUFF_SIZE];
 	const char *response = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
                           "Content-Length: 617\r\n"
@@ -53,35 +47,12 @@ int main(int ac, char **av)
                           "</body>\r\n"
                           "</html>";
 
-	// const char *response = "HTTP/1.1 302 Found\r\n"
-    //                       "Location: https://http.cat/status/418\r\n"
-    //                       "\r\n";
-	opt = 1;
-	addr_len = sizeof(addr);
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket_fd == -1)
-		return (1); // error
-	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) == -1)
-		return (2);
-		addr.sin_family = AF_INET;
-		addr.sin_addr.s_addr = INADDR_ANY;
-		addr.sin_port = htons(PORT);
-	if (bind(socket_fd, (struct sockaddr *)&addr, (socklen_t)addr_len) == -1)
-		return (3);
-	if (listen(socket_fd, 1) == -1)
-		return (4);
-	int i = 0;
-	while (1)
-	{
-		new_socket = accept(socket_fd, (struct sockaddr *)&addr, (socklen_t *)&addr_len);
-		if (new_socket == -1)
-			return (5);
-		read(new_socket, buffer, BUFF_SIZE);
-		std::cout << buffer << std::endl;
-		std::cout << "DONE " << i++ << std::endl;
-		// std::cout << response << std::endl;
-		write(new_socket, response, strlen(response));
-		close(new_socket);
-		close(new_socket);
-	}
+	// const char *response1 = "HTTP/1.1 302 Found\r\n"
+                        //   "Location: https://http.cat/status/418\r\n"
+                        //   "\r\n";
+	Socket	listener(PORT);
+	const char *buffer = listener.receiveRequest();
+	std::cout << buffer << std::endl;
+	std::cout << "DONE" << std::endl;
+	listener.sendResponse(response);
 }

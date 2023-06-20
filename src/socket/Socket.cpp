@@ -36,7 +36,7 @@ Socket::Socket(const int port)
 		throw std::exception();
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
-	this->socketAddress.sin_port = htons(PORT);
+	this->socketAddress.sin_port = htons(port);
 	if (bind(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t)this->socketAddressLen) == -1)
 		throw std::exception();
 	if (listen(this->serverSocket, 1) == -1)
@@ -66,3 +66,28 @@ Socket & Socket::operator=(const Socket &assign)
 	return *this;
 }
 
+// Getter
+const char	*Socket::getRequest(void) const
+{
+	return ((char *)this->request);
+}
+
+// Member Functions
+
+const char	*Socket::receiveRequest(void)
+{
+	this->requestSocket = accept(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t *)&this->socketAddressLen);
+	// fcntl(this->requestSocket, F_SETFL, O_NONBLOCK);
+	if (this->requestSocket == -1)
+		throw std::exception();
+	read(this->requestSocket , this->request, BUFF_SIZE);
+	//if read < 0
+	return ((char *)this->request);
+}
+
+void	Socket::sendResponse(const std::string response)
+{
+	write(this->requestSocket, response.c_str(), response.size());
+	// if write < 0
+	close(this->requestSocket);
+}
