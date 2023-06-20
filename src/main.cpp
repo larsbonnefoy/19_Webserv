@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/20 15:33:21 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/20 20:48:56 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int main()
 	// const char *response1 = "HTTP/1.1 302 Found\r\n"
                         //   "Location: https://http.cat/status/418\r\n"
                         //   "\r\n";
-	Socket	listener(PORT);
+	Socket	listener(233);
 	const char *buffer = listener.receiveRequest();
 	std::cout << buffer << std::endl;
 	std::cout << "DONE" << std::endl;
