@@ -23,6 +23,8 @@
 # include <iostream>
 # include <poll.h>
 # include <fcntl.h>
+
+# include "../log/Log.hpp"
 // # include <cstdint>
 # define PORT 8080
 # define DEFAULTPORT 8080

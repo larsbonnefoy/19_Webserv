@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/20 20:48:56 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/21 16:38:00 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+
 #include "socket/Socket.hpp"
+#include "log/Log.hpp"
 
 int main()
 {
@@ -48,11 +50,17 @@ int main()
                           "</html>";
 
 	// const char *response1 = "HTTP/1.1 302 Found\r\n"
-                        //   "Location: https://http.cat/status/418\r\n"
-                        //   "\r\n";
-	Socket	listener(233);
+    //                       "Location: https://http.cat/status/418\r\n"
+    //                       "\r\n";
+	Socket	listener(8080);
+	// Socket	listener1(8181);
 	const char *buffer = listener.receiveRequest();
-	std::cout << buffer << std::endl;
-	std::cout << "DONE" << std::endl;
+	// const char *buffer1 = listener1.receiveRequest();
+	log(buffer);
+	logErr("DONE");
+	// std::cout << buffer << std::endl;
+	// std::cout << "DONE" << std::endl;
 	listener.sendResponse(response);
+	log(response);
+	// listener1.sendResponse(response1);
 }

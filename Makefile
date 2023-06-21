@@ -1,6 +1,6 @@
 NAME = socket
  
-FILES = main.cpp socket/Socket.cpp
+FILES = main.cpp socket/Socket.cpp log/Log.cpp
 	   
 SRCS = $(addprefix src/, $(FILES))
 
