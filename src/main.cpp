@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/21 16:38:00 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/22 22:24:33 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,23 @@ int main()
                           "</body>\r\n"
                           "</html>";
 
-	// const char *response1 = "HTTP/1.1 302 Found\r\n"
-    //                       "Location: https://http.cat/status/418\r\n"
-    //                       "\r\n";
+	const char *response1 = "HTTP/1.1 302 Found\r\n"
+                          "Location: https://http.cat/status/418\r\n"
+                          "\r\n";
 	Socket	listener(8080);
 	// Socket	listener1(8181);
 	const char *buffer = listener.receiveRequest();
 	// const char *buffer1 = listener1.receiveRequest();
-	log(buffer);
+	logFile(buffer);
 	logErr("DONE");
 	// std::cout << buffer << std::endl;
 	// std::cout << "DONE" << std::endl;
 	listener.sendResponse(response);
-	log(response);
+	logFile(response);
 	// listener1.sendResponse(response1);
+	Socket	listener1(listener);
+	const char *buffer1 = listener1.receiveRequest();
+	log(buffer1);
+	listener1.sendResponse(response1);
+	logFile(response1);
 }

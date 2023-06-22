@@ -37,6 +37,7 @@ class Socket
 		Socket();
 		Socket(const Socket &copy);
 		Socket(const int port);
+
 		// Destructor
 		~Socket();
 		
@@ -45,20 +46,19 @@ class Socket
 		
 		// Getter
 		const char	*getRequest(void) const;
+		int			getServerSocket(void) const;
 
 		// MemberFunctions
 		const char	*receiveRequest(void);
 		void		sendResponse(const std::string response);		
+		void		socketInit(const int port);
 
 	private:
-		int 				serverSocket;
-		int					socketAddressLen;
-		struct sockaddr_in	socketAddress;
+		const int 			serverSocket;
+		const int			socketAddressLen;
+	 	struct sockaddr_in	socketAddress;
 		int 				requestSocket;
 		char				request[BUFF_SIZE];
-		char				badbit;
-		
-		
 };
 
 #endif
