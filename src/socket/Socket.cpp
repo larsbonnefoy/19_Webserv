@@ -33,12 +33,13 @@ Socket::Socket(const int port) :	serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
 	this->socketInit(port);
 }
 
-Socket::Socket(const Socket &copy) : 	serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
+Socket::Socket(const Socket &copy) : 	serverSocket(copy.serverSocket),
 										socketAddressLen(sizeof(this->socketAddress))
 
 {
-	this->socketInit((copy.socketAddress.sin_port));
-	(void)copy;
+	this->socketAddress = copy.socketAddress;
+	if (listen(this->serverSocket, 1) == -1)
+		throw std::exception();
 }
 
 
