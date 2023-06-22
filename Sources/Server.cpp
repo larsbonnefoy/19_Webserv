@@ -20,8 +20,26 @@ Server::~Server(void) {
 }
 
 Server &Server::operator=(const Server &other) {
-    (void) other;
+    this->_serverName = other.getName();
+    this->_ip = other.getIp();
+    this->_port = other.getPort();
+    this->_errors = other._errors;
     return *this;
+}
+
+void Server::setIp(std::string ip) {
+    this->_ip = ip;
+}
+
+void Server::setPort(uint32_t port) {
+    this->_port = port;
+}
+void Server::setName(std::string name) {
+    this->_serverName = name;
+}
+
+void Server::setError(int errCode, std::string errPath) {
+    this->_errors[errCode] = errPath;
 }
 
 std::string Server::getName(void) const {

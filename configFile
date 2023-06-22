@@ -1,6 +1,22 @@
 server {
-    listen 127.0.0.1:80;
-    server_name localhost;
+    listen 127.0.0.1:40;
+    server_name test;
+    
+    error_page 403  default/40x/403.html;
+    error_page 402  default/40x/402.html;
+    
+    location / {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        accept GET;
+        accept POST;
+        accept DELETE;
+        autoindex true;
+    }
+}
+
+server {
+    listen 127.0.0.1:4242;
+    server_name testbis;
     
     error_page 403  default/40x/403.html;
     

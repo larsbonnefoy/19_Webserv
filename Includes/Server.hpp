@@ -2,16 +2,16 @@
 #define SERVER_HPP
 
 #include <string>
-#include <cstdint>
+#include <ctype.h>
 #include <map>
 #include <sys/types.h>
 
 class Server {
     private:
-        const std::string                   _ip;
-        const uint32_t                      _port;
-        const std::string                   _serverName;
-        const std::map<int, std::string>    _errors;        
+        std::string                   _ip;
+        uint32_t                      _port;
+        std::string                   _serverName;
+        std::map<int, std::string>    _errors;
 
     public:
         Server(void);
@@ -20,9 +20,14 @@ class Server {
         ~Server(void);
         Server &operator=(const Server &other);
         
-        std::string   getIp(void) const;
-        uint32_t      getPort(void) const;
-        std::string   getName(void) const;
+        void        setIp(std::string ip);
+        void        setPort(uint32_t port);
+        void        setName(std::string name);
+        void        setError(int errCode, std::string errPath);
+
+        std::string getIp(void)   const;
+        uint32_t    getPort(void) const;
+        std::string getName(void) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const Server &pt);
