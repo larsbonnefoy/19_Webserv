@@ -11,11 +11,11 @@ class Server {
         std::string                   _ip;
         uint32_t                      _port;
         std::string                   _serverName;
-        std::map<int, std::string>    _errors;
+        std::map<uint32_t, std::string>    _errors;
 
     public:
         Server(void);
-        Server(std::string ip, uint32_t port, std::string serverName, std::map<int, std::string> &errors);
+        Server(std::string ip, uint32_t port, std::string serverName, std::map<uint32_t, std::string> &errors);
         Server(const Server &other);
         ~Server(void);
         Server &operator=(const Server &other);
@@ -23,11 +23,12 @@ class Server {
         void        setIp(std::string ip);
         void        setPort(uint32_t port);
         void        setName(std::string name);
-        void        setError(int errCode, std::string errPath);
+        void        setError(uint32_t errCode, std::string errPath);
 
-        std::string getIp(void)   const;
-        uint32_t    getPort(void) const;
-        std::string getName(void) const;
+        std::string                     getIp(void)   const;
+        uint32_t                        getPort(void) const;
+        std::string                     getName(void) const;
+        std::map<uint32_t, std::string> getErrors(void) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const Server &pt);

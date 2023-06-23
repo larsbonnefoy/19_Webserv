@@ -1,17 +1,16 @@
 #include "../Includes/Server.hpp"
 #include "../Includes/Config.hpp"
 #include "../Includes/ConfigParser.hpp"
-#include <cstddef>
 #include <cstdio>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#define LISTEN 0
-std::string findMatchingValue(std::string inputString, std::string directive);
+int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint32_t startPosition = 0);
 void        addServer(std::string infoBuffer, Config &conf);
 std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
 void        addIpPort(std::string values, Server &serv);
+void        addErrorPages(std::string infoBuffer, Server &serv);
 
 /*
  * When seeing a key word (server,.. tbc) jump to the next closing bracket and
@@ -71,33 +70,65 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
 
 /*
  * Find key words "listen", "server_name" and "error_page" and saves those information in the Server instance that is then copied into the config;
+ * Find a way to add multiple errors and locations i guess
  */
 void    addServer(std::string infoBuffer, Config &conf) {
 
     Server serv;
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
-    std::string directives[3] = {"listen", "server_name", "error_page"};
+    std::string directives[4] = {"listen", "server_name", "error_page", "location"};
     
-    for (uint32_t directiveID = 0; directiveID < 3; directiveID++) {
-        std::string value = findMatchingValue(infoBuffer, directives[directiveID]);
+    for (uint32_t directiveID = 0; directiveID < 4; directiveID++) {
+        std::string value;
         switch (directiveID) {
             case 0:
+                findMatchingValue(infoBuffer, directives[directiveID], value);
                 addIpPort(value, serv);
                 break; 
             case 1:
+                findMatchingValue(infoBuffer, directives[directiveID], value);
                 serv.setName(value);
                 break; 
             case 2:
+                addErrorPages(infoBuffer, serv);
+                break; 
+            case 3:
                 break; 
         }
     }
-    std::cout << "================" << std::endl;
-    std::cout << serv << std::endl;
-    std::cout << "================" << std::endl;
     conf.getServers().push_back(serv);
 }
 
+/* 
+ * Adding all occurences of error_pages [nb] [Path] to the server;
+ */ 
+void addErrorPages(std::string infoBuffer, Server &serv) {
+
+    std::string outputBuffer;
+    int32_t searchPos = 0;
+    std::string errCode;
+    std::string errPath;
+    uint32_t convErrCode;
+
+    while (true) {
+        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
+        if (searchPos == -1)
+            break ;
+
+        errCode = outputBuffer.substr(0, 3);
+        errPath = outputBuffer.substr(3, outputBuffer.length());
+
+        std::stringstream ss(errCode);
+        ss >> convErrCode;
+        if (ss.fail()) {
+            std::cout << "Unvalid Err Code" << std::endl;
+        }
+        serv.setError(convErrCode, errPath);
+    }
+}
+
 void addIpPort(std::string values, Server &serv) {
+     
     std::size_t sep = values.find(":");
     if (sep != std::string::npos) {
         std::string ip = values.substr(0, sep);
@@ -120,25 +151,25 @@ void addIpPort(std::string values, Server &serv) {
 }
 
 /*
- * finds the value associated with given directive 
+ * Writes the value of [directive] from [inputString] to [outputBuffer] starting
+ * [startPos] in inputString.
+ * Value HAS to be terminated with ';'
+ * Returns ends position of value that has been found or -1 if no match has been found
  * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
  */ 
-std::string findMatchingValue(std::string inputString, std::string directive) {
-    std::size_t directivePos =  inputString.find(directive);
-    std::string value;
+int32_t findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, uint32_t startPos) {
+    std::size_t directivePos =  inputString.find(directive, startPos);
 
     if (directivePos != std::string::npos) {
         std::size_t valuePos = directivePos + directive.length();
         std::size_t endPos = inputString.find(";", valuePos);
         if (endPos != std::string::npos) {
-            value = inputString.substr(valuePos, endPos - valuePos);
+            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
+            return (endPos);
         }
         else {
             std::cout << "B: Directive not ended by semicolumn" << std::endl;
         }
     }
-    else {
-        std::cout << "Directive not found" << std::endl;
-    }
-    return (value);
+    return (-1);
 }

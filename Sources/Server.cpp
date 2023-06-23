@@ -3,12 +3,13 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <sys/types.h>
 
 Server::Server(void) 
     : _ip("127.0.0.1"), _port(80), _serverName("localhost") {
 }
 
-Server::Server(std::string ip, uint32_t port, std::string serverName, std::map<int, std::string> &errors)
+Server::Server(std::string ip, uint32_t port, std::string serverName, std::map<uint32_t, std::string> &errors)
     : _ip(ip), _port(port), _serverName(serverName), _errors(errors) {
 }
 
@@ -38,7 +39,7 @@ void Server::setName(std::string name) {
     this->_serverName = name;
 }
 
-void Server::setError(int errCode, std::string errPath) {
+void Server::setError(uint32_t errCode, std::string errPath) {
     this->_errors[errCode] = errPath;
 }
 
@@ -54,9 +55,19 @@ std::uint32_t Server::getPort(void) const {
     return (this->_port);
 }
 
+std::map<uint32_t, std::string> Server::getErrors(void) const {
+    return (this->_errors);
+}
+
 std::ostream &operator<<(std::ostream &out, const Server &serv) {
     out << "Server Name : " << serv.getName() << std::endl;
     out << "IP : " << serv.getIp() << std::endl;
     out << "Port : " << serv.getPort() << std::endl;
+    
+    std::map<uint32_t, std::string> errors = serv.getErrors();
+    for (std::map<uint32_t, std::string>::iterator it = errors.begin(); 
+            it != errors.end(); it++) {
+        out << "Error : [" << it->first << "]" << " : " << it->second << std::endl; 
+    }
     return (out);
 }
