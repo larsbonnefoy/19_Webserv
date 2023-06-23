@@ -13,4 +13,12 @@ server {
         accept DELETE;
         autoindex true;
     }
+
+    error_page 410 default/40x/410.html;
+
+    location /images {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        accept GET;
+        autoindex false;
+    }
 }

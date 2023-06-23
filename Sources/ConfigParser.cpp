@@ -1,16 +1,19 @@
 #include "../Includes/Server.hpp"
 #include "../Includes/Config.hpp"
 #include "../Includes/ConfigParser.hpp"
-#include <cstdio>
+#include <algorithm>
 #include <sstream>
 #include <string>
+#include <sys/types.h>
 #include <vector>
 
-int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint32_t startPosition = 0);
+int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
+int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
 void        addServer(std::string infoBuffer, Config &conf);
 std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
 void        addIpPort(std::string values, Server &serv);
 void        addErrorPages(std::string infoBuffer, Server &serv);
+void        addLocation(std::string infoBuffer, Server &serv);
 
 /*
  * When seeing a key word (server,.. tbc) jump to the next closing bracket and
@@ -69,6 +72,36 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
 }
 
 /*
+ * Given location returns string of containing matching opening and closing brackets;
+ * Returns position AFTER closing bracket if found or -1 if error; 
+ */ 
+int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos) {
+
+    std::stack<char>    bracketStack;
+    uint32_t            bracketStart = 0;
+
+    for (size_t i = startPos; i < input.length(); i++) {
+        if (input[i] == '{') {
+            if (bracketStart == 0) {
+                bracketStart = i;
+            }
+            bracketStack.push('{');
+        }
+        else if (input[i] == '}') {
+            if (bracketStack.empty()) {
+                return -1;
+            }
+            bracketStack.pop();
+            if (bracketStack.empty()) {
+                outputBuffer = input.substr(bracketStart + 1, i - bracketStart - 1);
+                return (i + 1);
+            }
+        }
+    }
+    return (-1);
+}
+
+/*
  * Find key words "listen", "server_name" and "error_page" and saves those information in the Server instance that is then copied into the config;
  * Find a way to add multiple errors and locations i guess
  */
@@ -93,11 +126,29 @@ void    addServer(std::string infoBuffer, Config &conf) {
                 addErrorPages(infoBuffer, serv);
                 break; 
             case 3:
+                addLocation(infoBuffer, serv);
                 break; 
         }
     }
     conf.getServers().push_back(serv);
 }
+
+void addLocation(std::string infoBuffer, Server &serv) {
+
+    uint16_t    endPos = 0;
+    size_t      searchFrom;
+    std::string outputBuffer;
+
+    while (true) {
+        searchFrom = infoBuffer.find("location", endPos);
+        if (searchFrom == std::string::npos) {
+            break;
+        }
+        endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
+        std::cout << outputBuffer << std::endl;
+    }
+}
+
 
 /* 
  * Adding all occurences of error_pages [nb] [Path] to the server;
@@ -157,7 +208,7 @@ void addIpPort(std::string values, Server &serv) {
  * Returns ends position of value that has been found or -1 if no match has been found
  * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
  */ 
-int32_t findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, uint32_t startPos) {
+int32_t findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, uint16_t startPos) {
     std::size_t directivePos =  inputString.find(directive, startPos);
 
     if (directivePos != std::string::npos) {
