@@ -1,6 +1,19 @@
 #include "Socket.hpp"
 
 // Static functions
+
+static std::string ipAddressToString(uint32_t ipAddress) {
+    std::stringstream ipString;
+    ipString << ((ipAddress >> 24) & 0xFF);
+    ipString << ".";
+    ipString << ((ipAddress >> 16) & 0xFF);
+    ipString << ".";
+    ipString << ((ipAddress >> 8) & 0xFF);
+    ipString << ".";
+    ipString << (ipAddress & 0xFF);
+    return (ipString.str());
+}
+
 void	Socket::socketInit(const int port)
 {
 	int option;
@@ -35,7 +48,6 @@ Socket::Socket(const int port) :	serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
 
 Socket::Socket(const Socket &copy) : 	serverSocket(copy.serverSocket),
 										socketAddressLen(sizeof(this->socketAddress))
-
 {
 	this->socketAddress = copy.socketAddress;
 	if (listen(this->serverSocket, 1) == -1)
@@ -46,7 +58,7 @@ Socket::Socket(const Socket &copy) : 	serverSocket(copy.serverSocket),
 // Destructor
 Socket::~Socket()
 {
-	close(this->requestSocket);
+	close(this->clientSocket);
 	close(this->serverSocket);
 }
 
@@ -71,20 +83,32 @@ int	Socket::getServerSocket(void) const
 
 // Member Functions
 
+int	Socket::connectClient(void)
+{
+
+	struct sockaddr_in	clientAddress;
+	int					clientAddressLen = sizeof(clientAddress);
+	
+	this->clientSocket = accept(this->serverSocket, (struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
+	std::stringstream stream;
+	stream << "Client connected on port: " << ntohs(this->socketAddress.sin_port) << " from ip: " <<  ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
+	log(stream.str());
+	if (this->clientSocket == -1)
+		throw std::exception();
+	return (this->clientSocket);
+}
+
 const char	*Socket::receiveRequest(void)
 {
-	this->requestSocket = accept(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t *)&this->socketAddressLen);
-	// fcntl(this->requestSocket, F_SETFL, O_NONBLOCK);
-	if (this->requestSocket == -1)
-		throw std::exception();
-	read(this->requestSocket , this->request, BUFF_SIZE);
+	// fcntl(this->clientSocket, F_SETFL, O_NONBLOCK);
+	read(this->clientSocket , this->request, BUFF_SIZE);
 	//if read < 0
 	return ((char *)this->request);
 }
 
 void	Socket::sendResponse(const std::string response)
 {
-	write(this->requestSocket, response.c_str(), response.size());
+	write(this->clientSocket, response.c_str(), response.size());
 	// if write < 0
-	close(this->requestSocket);
+	close(this->clientSocket);
 }

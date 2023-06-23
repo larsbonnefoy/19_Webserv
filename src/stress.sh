@@ -4,7 +4,7 @@
 num_users=5000
 
 # URL to simulate requests
-url="http://localhost:8080"
+url="http://localhost:8282"
 
 # Function to simulate a user making requests
 simulate_user() {

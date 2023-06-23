@@ -1,22 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Mux.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/23 11:06:41 by hdelmas           #+#    #+#             */
+/*   Updated: 2023/06/23 11:09:00 by hdelmas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Mux.hpp"
 
 // Constructors
 Mux::Mux()
 {
-	std::cout << "\e[0;33mDefault Constructor called of Mux\e[0m" << std::endl;
+	
 }
 
 Mux::Mux(const Mux &copy)
 {
 	(void) copy;
-	std::cout << "\e[0;33mCopy Constructor called of Mux\e[0m" << std::endl;
-}
 
+}
 
 // Destructor
 Mux::~Mux()
 {
-	std::cout << "\e[0;31mDestructor called of Mux\e[0m" << std::endl;
+
 }
 
 

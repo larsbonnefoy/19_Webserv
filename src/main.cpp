@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/22 22:24:33 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/23 18:54:50 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 #include "socket/Socket.hpp"
 #include "log/Log.hpp"
-
+#define MAX_EVENT 10
 int main()
 {
 	const char *response = "HTTP/1.1 200 OK\r\n"
@@ -49,23 +49,59 @@ int main()
                           "</body>\r\n"
                           "</html>";
 
-	const char *response1 = "HTTP/1.1 302 Found\r\n"
-                          "Location: https://http.cat/status/418\r\n"
-                          "\r\n";
-	Socket	listener(8080);
-	// Socket	listener1(8181);
-	const char *buffer = listener.receiveRequest();
+	// const char *response1 = "HTTP/1.1 302 Found\r\n"
+    //                       "Location: https://http.cat/status/418\r\n"
+    //                       "\r\n";
+	struct pollfd	openSockets[2];
+	Socket	listener(8282);
+	Socket	listener1(8181);
+	// Socket	listener2(80);
+		
+	Socket *Sockets[2];
+	Sockets[0] = &listener;	
+	Sockets[1] = &listener1;
+	// Sockets[2] = &listener2;	
+	openSockets[0].fd = Sockets[0]->getServerSocket();
+	openSockets[0].events = POLLIN | POLLPRI;
+	openSockets[1].fd = Sockets[1]->getServerSocket();
+	openSockets[1].events = POLLIN | POLLPRI;
+	// openSockets[2].fd = Sockets[2]->getServerSocket();
+	// openSockets[2].events = POLLIN | POLLPRI;
+	
+	while (1)
+	{
+		int returnPoll = poll(openSockets, 2, -1);
+		if (returnPoll < 0)
+			return (404);
+		else if (returnPoll > 0)
+		{
+			for (int i = 0; i < 2; ++i)
+			{
+				if (openSockets[i].revents & POLLIN)
+				{
+					Sockets[i]->connectClient();
+					const char *buffer = Sockets[i]->receiveRequest();
+					logFile(buffer);
+					logFile("DONE");
+					Sockets[i]->sendResponse(response);			
+					logFile(response);
+					openSockets[i].revents = 0;
+				}
+			}			
+		}
+	}
+	// const char *buffer = listener.receiveRequest();
+	// // const char *buffer1 = listener1.receiveRequest();
+	// logFile(buffer);
+	// logErr("DONE");
+	// // std::cout << buffer << std::endl;
+	// // std::cout << "DONE" << std::endl;
+	// listener.sendResponse(response);
+	// logFile(response);
+	// // listener1.sendResponse(response1);
+	// Socket	listener1(listener);
 	// const char *buffer1 = listener1.receiveRequest();
-	logFile(buffer);
-	logErr("DONE");
-	// std::cout << buffer << std::endl;
-	// std::cout << "DONE" << std::endl;
-	listener.sendResponse(response);
-	logFile(response);
+	// log(buffer1);
 	// listener1.sendResponse(response1);
-	Socket	listener1(listener);
-	const char *buffer1 = listener1.receiveRequest();
-	log(buffer1);
-	listener1.sendResponse(response1);
-	logFile(response1);
+	// logFile(response1);
 }

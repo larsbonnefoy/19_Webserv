@@ -13,20 +13,24 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
+# include <iostream>
+# include <string>
 # include <string>
 # include <cstring>
 # include <iostream>
+
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <string.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
 # include <poll.h>
 # include <fcntl.h>
 
 # include "../log/Log.hpp"
-// # include <cstdint>
-# define PORT 8080
+
+# define PORT 8282
 # define DEFAULTPORT 8080
 # define BUFF_SIZE 1024
 
@@ -50,6 +54,7 @@ class Socket
 
 		// MemberFunctions
 		const char	*receiveRequest(void);
+		int			connectClient(void);
 		void		sendResponse(const std::string response);		
 		void		socketInit(const int port);
 
@@ -57,7 +62,7 @@ class Socket
 		const int 			serverSocket;
 		const int			socketAddressLen;
 	 	struct sockaddr_in	socketAddress;
-		int 				requestSocket;
+		int 				clientSocket;
 		char				request[BUFF_SIZE];
 };
 
