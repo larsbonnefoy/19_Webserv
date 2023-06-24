@@ -1,5 +1,6 @@
 #include "../Includes/Server.hpp"
 #include "../Includes/Config.hpp"
+#include "../Includes/Location.hpp"
 #include "../Includes/ConfigParser.hpp"
 #include <algorithm>
 #include <sstream>
@@ -20,14 +21,12 @@ void        addLocation(std::string infoBuffer, Server &serv);
  * start configuring server obj that will be added in Config object
  */ 
 Config *parseConfig(std::string configFile) {
-    //creates a new empty object in first
     Config *configRes = new Config();
 
     std::ifstream file(configFile); 
     std::string line;
 
     while (std::getline(file, line, '{')) {
-        //line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
 
         //jump to next matching bracket and use this text to config server
         if (line.find("server") != std::string::npos) {
@@ -138,7 +137,7 @@ void addLocation(std::string infoBuffer, Server &serv) {
     uint16_t    endPos = 0;
     size_t      searchFrom;
     std::string outputBuffer;
-
+    
     while (true) {
         searchFrom = infoBuffer.find("location", endPos);
         if (searchFrom == std::string::npos) {
@@ -148,7 +147,6 @@ void addLocation(std::string infoBuffer, Server &serv) {
         std::cout << outputBuffer << std::endl;
     }
 }
-
 
 /* 
  * Adding all occurences of error_pages [nb] [Path] to the server;

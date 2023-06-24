@@ -13,7 +13,7 @@
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp 
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp
 
 SRCS = $(addprefix Sources/, $(FILES))
 
