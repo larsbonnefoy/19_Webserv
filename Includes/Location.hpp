@@ -11,7 +11,7 @@
 
 class Location {
     private:
-        std::string         _Path; 
+        std::string         _path; 
         bool                _autoindex;
         bool                _autorizedMethods[NBR_METHODS];
 
@@ -30,6 +30,9 @@ class Location {
         void        setPath(std::string path);
         void        setAutoIndex(bool val);
         void        setAutorizedMethods(bool get, bool post, bool del);
+        void        setGet(bool val);
+        void        setPost(bool val);
+        void        setDel(bool val);
 };
 
 std::ostream &operator<<(std::ostream &out, const Location &loc);

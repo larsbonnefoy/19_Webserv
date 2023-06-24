@@ -1,16 +1,9 @@
 #include "../Includes/Server.hpp"
-#include <cstdint>
-#include <string>
-#include <iostream>
-#include <map>
-#include <sys/types.h>
+#include <cstddef>
+#include <vector>
 
 Server::Server(void) 
     : _ip("127.0.0.1"), _port(80), _serverName("localhost") {
-}
-
-Server::Server(std::string ip, uint32_t port, std::string serverName, std::map<uint32_t, std::string> &errors)
-    : _ip(ip), _port(port), _serverName(serverName), _errors(errors) {
 }
 
 Server::Server(const Server &other) 
@@ -25,6 +18,7 @@ Server &Server::operator=(const Server &other) {
     this->_ip = other.getIp();
     this->_port = other.getPort();
     this->_errors = other._errors;
+    this->_locations = other._locations;
     return *this;
 }
 
@@ -43,6 +37,10 @@ void Server::setError(uint32_t errCode, std::string errPath) {
     this->_errors[errCode] = errPath;
 }
 
+void Server::setLocation(Location &loc) {
+    this->_locations.push_back(loc);
+}
+
 std::string Server::getName(void) const {
     return (this->_serverName);
 }
@@ -59,6 +57,10 @@ std::map<uint32_t, std::string> Server::getErrors(void) const {
     return (this->_errors);
 }
 
+std::vector<Location> Server::getLocations(void) const {
+    return (this->_locations);
+}
+
 std::ostream &operator<<(std::ostream &out, const Server &serv) {
     out << "Server Name : " << serv.getName() << std::endl;
     out << "IP : " << serv.getIp() << std::endl;
@@ -68,6 +70,11 @@ std::ostream &operator<<(std::ostream &out, const Server &serv) {
     for (std::map<uint32_t, std::string>::iterator it = errors.begin(); 
             it != errors.end(); it++) {
         out << "Error : [" << it->first << "]" << " : " << it->second << std::endl; 
+    }
+    
+    std::vector<Location> loc = serv.getLocations();
+    for (size_t i = 0; i < loc.size(); i++) {
+        out << loc[i] << std::endl;
     }
     return (out);
 }

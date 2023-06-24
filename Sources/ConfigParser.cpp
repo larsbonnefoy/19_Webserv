@@ -1,7 +1,7 @@
 #include "../Includes/Server.hpp"
 #include "../Includes/Config.hpp"
-#include "../Includes/Location.hpp"
 #include "../Includes/ConfigParser.hpp"
+#include "../Includes/Location.hpp"
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -15,6 +15,9 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
 void        addIpPort(std::string values, Server &serv);
 void        addErrorPages(std::string infoBuffer, Server &serv);
 void        addLocation(std::string infoBuffer, Server &serv);
+void        createLocation(std::string inputBuffer, Server &serv);
+void        addMethods(std::string infoBuffer, Location &loc);
+int32_t     matchMethod(std::string method);
 
 /*
  * When seeing a key word (server,.. tbc) jump to the next closing bracket and
@@ -144,10 +147,77 @@ void addLocation(std::string infoBuffer, Server &serv) {
             break;
         }
         endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
-        std::cout << outputBuffer << std::endl;
+        createLocation(outputBuffer, serv);
     }
 }
 
+void createLocation(std::string inputBuffer, Server &serv) {
+    Location    loc;
+    std::string directives[3] = {"root", "accept", "autoindex"};
+    
+    for (uint32_t directiveID = 0; directiveID < 3; directiveID++) {
+        std::string value;
+        switch (directiveID) {
+            case 0:
+                findMatchingValue(inputBuffer, directives[directiveID], value);
+                loc.setPath(value);
+                break; 
+            case 1:
+                addMethods(inputBuffer, loc);
+                break; 
+            case 2:
+                findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (value == "true")
+                    loc.setAutoIndex(true);
+                else if (value == "false")
+                    loc.setAutoIndex(false);
+                else 
+                    std::cout << "Unvalid autoindex" << std::endl;
+                break; 
+        }
+    }
+    std::cout << loc << std::endl;
+    serv.setLocation(loc);
+}
+
+void addMethods(std::string infoBuffer, Location &loc) {
+    int32_t     searchPos = 0;
+    std::string outputBuffer;
+    int32_t     methodID;
+
+    while (true) {
+        searchPos = findMatchingValue(infoBuffer, "accept", outputBuffer, searchPos);
+        if (searchPos == -1)
+            break;
+        methodID = matchMethod(outputBuffer);
+        switch (methodID) {
+            case GET:
+                loc.setGet(true);
+                break;
+            case POST:
+                loc.setPost(true);
+                break;
+            case DELETE:
+                loc.setDel(true);
+                break;
+            default:
+                std::cout << "Unvalid Method" << std::endl;
+        }
+    }    
+}
+
+int32_t matchMethod(std::string method) {
+
+    uint32_t retVal = -1;
+    std::string methods[3] = {"GET", "POST", "DELETE"};
+
+    for (size_t methodID = 0; methodID < 3; methodID++) {
+        if (method == methods[methodID]) {
+            retVal = methodID;
+        }
+    } 
+    return (retVal);
+}
 /* 
  * Adding all occurences of error_pages [nb] [Path] to the server;
  */ 
