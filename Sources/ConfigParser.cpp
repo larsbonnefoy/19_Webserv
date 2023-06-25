@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <vector>
 
-
 /* TO DO 
  * Check possible parsing errors 
  *      -> non ending ;
@@ -17,6 +16,16 @@
  * Change return type of nextMatchingBracket func
  * 
  * Reserve WORD (directives) to make parsing more effective? 
+ *
+ * Limit client body size 
+ * Be able to not set server_name;
+ * First host:port has to be default one 
+ *
+ * Location (->Route??)
+ *  ->Default file to answer if request is a directory
+ *  ->Exec CGI on certain file extension
+ *  ->Make route able to accept uploaded files and configure where they should be saved
+ *
  */ 
 
 int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);

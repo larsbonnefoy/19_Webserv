@@ -1,6 +1,7 @@
 server {
     listen 127.0.0.1:40;
     server_name test;
+
     error_page 403  default/40x/403.html;
     error_page 402  default/40x/402.html;
     error_page 402  default/40x/400.html;
