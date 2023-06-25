@@ -347,7 +347,7 @@ const char *UnterminatedDirective::what(void) const throw() {
 }
 
 const char *UnterminatedBlock::what(void) const throw() {
-    return ("[ConfigFileError] : Instruction Block not terminated by bracket");
+    return ("[ConfigFileError] : Instruction Block not enclosed by brackets}");
 }
 
 const char *UnvalidValue::what(void) const throw() {
