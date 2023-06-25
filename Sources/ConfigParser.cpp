@@ -3,21 +3,36 @@
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
 #include <algorithm>
+#include <cctype>
+#include <cstddef>
 #include <sstream>
 #include <string>
 #include <sys/types.h>
 #include <vector>
 
+
+/* TO DO 
+ * Check possible parsing errors 
+ *      -> non ending ;
+ *      -> non ending block
+ *      -> non valid ip address xxx.xxx.xxx.xxx
+ */ 
+
+
 int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
 int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
-void        addServer(std::string infoBuffer, Config &conf);
 std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
+
+void        addServer(std::string infoBuffer, Config &conf);
 void        addIpPort(std::string values, Server &serv);
 void        addErrorPages(std::string infoBuffer, Server &serv);
 void        addLocation(std::string infoBuffer, Server &serv);
+
 void        createLocation(std::string inputBuffer, Server &serv);
 void        addMethods(std::string infoBuffer, Location &loc);
 int32_t     matchMethod(std::string method);
+
+bool        isNumeric(const std::string &input);
 
 /*
  * When seeing a key word (server,.. tbc) jump to the next closing bracket and
@@ -65,10 +80,10 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
                 }
             }
             else {
-                std::cout << "Unvalid Closing Char" << std::endl;
+                throw UnterminatedBlock();
             }
         }
-        buffer += (line + '\n');
+        buffer += (line);
     }
     return (buffer);
 }
@@ -91,7 +106,7 @@ int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16
         }
         else if (input[i] == '}') {
             if (bracketStack.empty()) {
-                return -1;
+                throw UnterminatedBlock();
             }
             bracketStack.pop();
             if (bracketStack.empty()) {
@@ -100,7 +115,7 @@ int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16
             }
         }
     }
-    return (-1);
+    throw UnterminatedBlock();
 }
 
 /*
@@ -176,7 +191,6 @@ void createLocation(std::string inputBuffer, Server &serv) {
                 break; 
         }
     }
-    std::cout << loc << std::endl;
     serv.setLocation(loc);
 }
 
@@ -218,6 +232,7 @@ int32_t matchMethod(std::string method) {
     } 
     return (retVal);
 }
+
 /* 
  * Adding all occurences of error_pages [nb] [Path] to the server;
  */ 
@@ -255,20 +270,32 @@ void addIpPort(std::string values, Server &serv) {
         
         std::string port = values.substr(sep + 1, values.length());
         std::stringstream ss(port);
+        if (!isNumeric(port)) {
+            throw UnvalidPort();
+        }
+
         uint32_t convPort;
+
         ss >> convPort;
         if (ss.fail()) {
-            std::cout << "Unvalid Port" << std::endl;
+            throw ConfigFileError();
         }
         else {
             serv.setPort(convPort);
         }
     }
     else {
-        std::cout << "Unvalid Listen directive" << std::endl;
+        throw UnvalidListenDirective();
     }
 }
 
+bool isNumeric(const std::string &input) {
+    for (size_t i = 0; i < input.size(); i++) {
+        if (!std::isdigit(input[i]))
+            return (false);
+    }
+    return (true);
+}
 /*
  * Writes the value of [directive] from [inputString] to [outputBuffer] starting
  * [startPos] in inputString.
@@ -287,8 +314,30 @@ int32_t findMatchingValue(std::string inputString, std::string directive, std::s
             return (endPos);
         }
         else {
-            std::cout << "B: Directive not ended by semicolumn" << std::endl;
+            throw UnterminatedDirective();
         }
     }
     return (-1);
+}
+
+/*--------------------------Exceptions---------------------------------------*/
+
+const char *ConfigFileError::what(void) const throw() {
+    return ("[ConfigFileError] : Error while parsing Config File");
+}
+
+const char *UnvalidListenDirective::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Listen Directive");
+}
+
+const char *UnvalidPort::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Port");
+}
+
+const char *UnterminatedDirective::what(void) const throw() {
+    return ("[ConfigFileError] : Directive not terminated by semicolumn");
+}
+
+const char *UnterminatedBlock::what(void) const throw() {
+    return ("[ConfigFileError] : Instruction Block not terminated by bracket");
 }

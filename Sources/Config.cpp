@@ -3,7 +3,6 @@
 #include <vector>
 
 Config::Config(void) {
-    this->_servers.push_back(Server());
 }
 
 Config::Config(const Config &other) : _servers(other._servers) {

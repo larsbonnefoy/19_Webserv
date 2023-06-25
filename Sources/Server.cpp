@@ -7,7 +7,7 @@ Server::Server(void)
 }
 
 Server::Server(const Server &other) 
-    : _ip(other._ip), _port(other._port), _serverName(other._serverName), _errors(other._errors) {
+    : _ip(other._ip), _port(other._port), _serverName(other._serverName), _errors(other._errors), _locations(other._locations) {
 }
 
 Server::~Server(void) {
@@ -62,6 +62,7 @@ std::vector<Location> Server::getLocations(void) const {
 }
 
 std::ostream &operator<<(std::ostream &out, const Server &serv) {
+
     out << "Server Name : " << serv.getName() << std::endl;
     out << "IP : " << serv.getIp() << std::endl;
     out << "Port : " << serv.getPort() << std::endl;
@@ -71,7 +72,7 @@ std::ostream &operator<<(std::ostream &out, const Server &serv) {
             it != errors.end(); it++) {
         out << "Error : [" << it->first << "]" << " : " << it->second << std::endl; 
     }
-    
+     
     std::vector<Location> loc = serv.getLocations();
     for (size_t i = 0; i < loc.size(); i++) {
         out << loc[i] << std::endl;

@@ -67,12 +67,12 @@ void Location::setAutorizedMethods(bool get, bool post, bool del) {
 }
 std::ostream &operator<<(std::ostream &out, const Location &loc) {
 
-    out << "===========LOCATION=========" << std::endl;
-    out << "Path : " << loc.getPath() << std::endl;
-    out << "Autoindex : " << loc.getAutoIndex() << std::endl;
-    out << "GET : " << loc.getGetVal() << std::endl;
-    out << "POST : " << loc.getPostVal() << std::endl;
-    out << "DEL : " << loc.getDelVal() << std::endl;
+    out << "    ->Location" << std::endl;
+    out << "    Path : " << loc.getPath() << std::endl;
+    out << "    Autoindex : " << loc.getAutoIndex() << std::endl;
+    out << "    GET : " << loc.getGetVal() << std::endl;
+    out << "    POST : " << loc.getPostVal() << std::endl;
+    out << "    DEL : " << loc.getDelVal() << std::endl;
     
     return (out);
 }
