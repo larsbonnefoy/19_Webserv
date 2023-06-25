@@ -3,8 +3,6 @@
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
 #include <algorithm>
-#include <cctype>
-#include <cstddef>
 #include <sstream>
 #include <string>
 #include <sys/types.h>
@@ -14,10 +12,12 @@
 /* TO DO 
  * Check possible parsing errors 
  *      -> non ending ;
- *      -> non ending block
  *      -> non valid ip address xxx.xxx.xxx.xxx
+ *
+ * Change return type of nextMatchingBracket func
+ * 
+ * Reserve WORD (directives) to make parsing more effective? 
  */ 
-
 
 int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
 int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
@@ -46,7 +46,6 @@ Config *parseConfig(std::string configFile) {
 
     while (std::getline(file, line, '{')) {
 
-        //jump to next matching bracket and use this text to config server
         if (line.find("server") != std::string::npos) {
             std::string serverInfoBuffer =  nextMatchingCharBuffer(file, '{', '}');
             addServer(serverInfoBuffer, *configRes);
@@ -85,12 +84,15 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
         }
         buffer += (line);
     }
+    if (!bracketStack.empty()) {
+        throw UnterminatedBlock();
+    }
     return (buffer);
 }
 
 /*
  * Given location returns string of containing matching opening and closing brackets;
- * Returns position AFTER closing bracket if found or -1 if error; 
+ * Returns position AFTER closing bracket if found or throws error if not found 
  */ 
 int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos) {
 
@@ -126,6 +128,7 @@ void    addServer(std::string infoBuffer, Config &conf) {
 
     Server serv;
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
+
     std::string directives[4] = {"listen", "server_name", "error_page", "location"};
     
     for (uint32_t directiveID = 0; directiveID < 4; directiveID++) {
@@ -187,13 +190,16 @@ void createLocation(std::string inputBuffer, Server &serv) {
                 else if (value == "false")
                     loc.setAutoIndex(false);
                 else 
-                    std::cout << "Unvalid autoindex" << std::endl;
+                    throw UnvalidValue();
                 break; 
         }
     }
     serv.setLocation(loc);
 }
 
+/*
+ * ATM: accepts multiple defintions of the same method
+ */ 
 void addMethods(std::string infoBuffer, Location &loc) {
     int32_t     searchPos = 0;
     std::string outputBuffer;
@@ -215,7 +221,7 @@ void addMethods(std::string infoBuffer, Location &loc) {
                 loc.setDel(true);
                 break;
             default:
-                std::cout << "Unvalid Method" << std::endl;
+                throw UnvalidValue();
         }
     }    
 }
@@ -251,12 +257,13 @@ void addErrorPages(std::string infoBuffer, Server &serv) {
 
         errCode = outputBuffer.substr(0, 3);
         errPath = outputBuffer.substr(3, outputBuffer.length());
+        
+        if (!isNumeric(errCode))
+            throw UnvalidErrCode();
 
         std::stringstream ss(errCode);
         ss >> convErrCode;
-        if (ss.fail()) {
-            std::cout << "Unvalid Err Code" << std::endl;
-        }
+
         serv.setError(convErrCode, errPath);
     }
 }
@@ -296,6 +303,7 @@ bool isNumeric(const std::string &input) {
     }
     return (true);
 }
+
 /*
  * Writes the value of [directive] from [inputString] to [outputBuffer] starting
  * [startPos] in inputString.
@@ -340,4 +348,12 @@ const char *UnterminatedDirective::what(void) const throw() {
 
 const char *UnterminatedBlock::what(void) const throw() {
     return ("[ConfigFileError] : Instruction Block not terminated by bracket");
+}
+
+const char *UnvalidValue::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Value");
+}
+
+const char *UnvalidErrCode::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Error Code");
 }
