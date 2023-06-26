@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/23 18:54:50 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/26 11:54:07 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,11 @@ int main()
 	// const char *response1 = "HTTP/1.1 302 Found\r\n"
     //                       "Location: https://http.cat/status/418\r\n"
     //                       "\r\n";
+	ws_log("start");
 	struct pollfd	openSockets[2];
-	Socket	listener(8282);
+	Socket	listener(8080);
 	Socket	listener1(8181);
 	// Socket	listener2(80);
-		
 	Socket *Sockets[2];
 	Sockets[0] = &listener;	
 	Sockets[1] = &listener1;
@@ -81,10 +81,10 @@ int main()
 				{
 					Sockets[i]->connectClient();
 					const char *buffer = Sockets[i]->receiveRequest();
-					logFile(buffer);
-					logFile("DONE");
+					ws_logFile(buffer);
+					ws_log("DONE");
 					Sockets[i]->sendResponse(response);			
-					logFile(response);
+					ws_logFile(response);
 					openSockets[i].revents = 0;
 				}
 			}			

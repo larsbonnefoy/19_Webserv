@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 11:06:39 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/23 11:12:33 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/26 13:20:31 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,6 @@
 
 # include "../log/Log.hpp"
 
-class Mux
-{
-	public:
-		// Constructors
-		Mux();
-		Mux(const Mux &copy);
-		
-		// Destructor
-		~Mux();
-		
-		// Operators
-		Mux & operator=(const Mux &assign);
-		
-	private:
-		
-};
+3
 
 #endif

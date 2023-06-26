@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:08:39 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/21 16:41:26 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/26 11:15:24 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 void	timestamp(std::ostream &stream);
 
 template<typename T>
-void	logFile(T input)
+void	ws_logFile(T input)
 {
 	
 	std::ofstream	filestream(LOGFILE, std::ios::app);
@@ -39,22 +39,22 @@ void	logFile(T input)
 }
 
 template<typename T>
-void	log(T input)
+void	ws_log(T input)
 {
 	timestamp(LOGSTREAM);
-	logFile(input);
+	ws_logFile(input);
 	LOGSTREAM << input << std::endl;
 
 }
 
 
 template<typename T>
-void	logErr(T input)
+void	ws_logErr(T input)
 {
 	timestamp(LOGERRSTREAM);
 	std::stringstream	ss;
 	ss << "Error : " << input;
-	logFile(ss.str());
+	ws_logFile(ss.str());
 	LOGERRSTREAM << ss.str() << std::endl;
 }
 

@@ -21,12 +21,14 @@ void	Socket::socketInit(const int port)
 	option = 1;
 	if (this->serverSocket == -1)
 		throw std::exception();
-	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &option, sizeof(option)) == -1)
+	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, static_cast<socklen_t>(sizeof(option))))
+		throw std::exception();
+	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEPORT, &option, static_cast<socklen_t>(sizeof(option))))
 		throw std::exception();
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
 	this->socketAddress.sin_port = htons(port);
-	if (bind(this->serverSocket, (struct sockaddr *)&this->socketAddress, (socklen_t)this->socketAddressLen) == -1)
+	if (bind(this->serverSocket, reinterpret_cast<struct sockaddr *>(&this->socketAddress), static_cast<socklen_t>(this->socketAddressLen)) == -1)
 		throw std::exception();
 	if (listen(this->serverSocket, 1) == -1)
 		throw std::exception();
@@ -92,9 +94,10 @@ int	Socket::connectClient(void)
 	this->clientSocket = accept(this->serverSocket, (struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	std::stringstream stream;
 	stream << "Client connected on port: " << ntohs(this->socketAddress.sin_port) << " from ip: " <<  ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
-	log(stream.str());
+	ws_log(stream.str());
 	if (this->clientSocket == -1)
 		throw std::exception();
+	fcntl(this->clientSocket, F_SETFL, O_NONBLOCK);
 	return (this->clientSocket);
 }
 
