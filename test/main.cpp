@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/26 15:05:22 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/27 00:03:35 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "Socket.hpp"
 
 #include "Log.hpp"
+
 
 static const char *httpResponse = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
@@ -62,13 +63,16 @@ int main()
 	Socket	listener(8080);
 	Socket	listener1(8181);
 	// Socket	listener2(80);
-	Socket *Sockets[2];
-	Sockets[0] = &listener;	
-	Sockets[1] = &listener1;
+	Socket Sockets[2];
+	Sockets[0] = listener;	
+	Sockets[1] = listener1;
 	// Sockets[2] = &listener2;	
-	openSockets[0].fd = Sockets[0]->getServerSocket();
+	openSockets[0].fd = Sockets[0].getServerSocket();
+	ws_log(openSockets[0].fd);
 	openSockets[0].events = POLLIN | POLLPRI;
-	openSockets[1].fd = Sockets[1]->getServerSocket();
+	openSockets[1].fd = Sockets[1].getServerSocket();
+	ws_log(listener1.getServerSocket());
+	ws_log(openSockets[1].fd);
 	openSockets[1].events = POLLIN | POLLPRI;
 	// openSockets[2].fd = Sockets[2]->getServerSocket();
 	// openSockets[2].events = POLLIN | POLLPRI;
@@ -84,12 +88,12 @@ int main()
 			{
 				if (openSockets[i].revents & POLLIN)
 				{
-					Sockets[i]->connectClient();
-					const char *buffer = Sockets[i]->receiveRequest();
+					Sockets[i].connectClient();
+					const char *buffer = Sockets[i].receiveRequest();
 					ws_logFile(buffer);
 					ws_log("DONE");
-					Sockets[i]->sendResponse(response);			
-					ws_logFile(response);
+					Sockets[i].sendResponse(httpResponse);			
+					// ws_logFile(response);i
 					openSockets[i].revents = 0;
 				}
 			}			

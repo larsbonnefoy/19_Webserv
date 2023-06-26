@@ -33,7 +33,7 @@ Mux::Mux()
 
 Mux::Mux(Config	&conf) : _conf(conf)
 {
-	this->initSockets();
+	this->initSockets();	
 }
 
 
@@ -47,10 +47,6 @@ Mux::Mux(const Mux &copy)
 Mux::~Mux()
 {
 	delete [] this->_pollSocketFds;
-	for (size_t i =0; i < this->_nbrSocket; ++i)
-	{
-		delete this->_Sockets[i];
-	}
 }
 
 
@@ -64,8 +60,7 @@ Mux & Mux::operator=(const Mux &assign)
 // Member Functions
 void	Mux::run(void)
 {
-	int oi = -1;
-	while (++oi < 3)
+	while (1)
 	{
 		int returnPoll = poll(this->_pollSocketFds, this->_nbrSocket , TIMEOUT);
 		// ws_log(returnPoll);
@@ -79,12 +74,12 @@ void	Mux::run(void)
 				if (this->_pollSocketFds[i].revents & POLLIN)
 				{
 					ws_log("in");
-					this->_Sockets[i]->connectClient();
-					this->_Sockets[i]->receiveRequest();
-					// ws_logFile(buffer);
+					this->_Sockets[i].connectClient();
+					const char *buffer = this->_Sockets[i].receiveRequest();
+					ws_logFile(buffer);
 					ws_log("DONE");
-					this->_Sockets[i]->sendResponse(httpResponse);			
-					this->_Sockets[i]->closeClient();			
+					this->_Sockets[i].sendResponse(httpResponse);			
+					this->_Sockets[i].closeClient();			
 					ws_logFile(httpResponse);
 					this->_pollSocketFds[i].revents = 0;
 				}
@@ -108,16 +103,14 @@ void	Mux::initSockets()
 
 		if (std::find(ports.begin(), ports.end(), server.getPort()) == ports.end())
 		{
-			// ws_log(server.getPort());
-			ws_log("sock.getServerSocket()");
-			// ws_log();
-			// this->_Sockets.push_back(sock);		
-			this->_Sockets.push_back(new Socket(server.getPort()));		
-			// ws_log(this->_Sockets[i].getServerSocket());
+			ws_log(server.getPort());
+			Socket sock(server.getPort());
+			this->_Sockets.push_back(sock);		
+			// this->_Sockets.push_back(Socket(server.getPort()));		
+			ws_log(this->_Sockets[i].getServerSocket());
 			ports.insert(server.getPort());
 			nbrSocket++;
 		}
-		ws_log("test");
 	}
 	if (nbrSocket != this->_Sockets.size() || nbrSocket != ports.size())
 	{
@@ -130,11 +123,11 @@ void	Mux::initSockets()
 	// this->_pollSocketFds = fdpoll;
 	for (size_t i = 0; i < nbrSocket; ++i)
 	{
-		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
+		this->_pollSocketFds[i].fd = this->_Sockets[i].getServerSocket();
 		this->_pollSocketFds[i].events = POLLIN | POLLPRI;
 
-		// ws_log(i);
-		// ws_log(this->_pollSocketFds[i].events);
+		ws_log(i);
+		ws_log(this->_pollSocketFds[i].events);
 	}
 }
 

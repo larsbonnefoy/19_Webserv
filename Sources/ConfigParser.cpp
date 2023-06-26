@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/types.h>
 #include <vector>
+#include <stack>
 
 /* TO DO 
  * Check possible parsing errors 
@@ -50,7 +51,7 @@ bool        isNumeric(const std::string &input);
 Config *parseConfig(std::string configFile) {
     Config *configRes = new Config();
 
-    std::ifstream file(configFile); 
+    std::ifstream file(configFile.c_str()); 
     std::string line;
 
     while (std::getline(file, line, '{')) {

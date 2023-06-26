@@ -35,26 +35,23 @@ void	Socket::socketInit(const uint32_t port)
 }
 
 // Constructors
-Socket::Socket() :	_serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
-					_socketAddressLen(sizeof(this->_socketAddress)),
-					_port(DEFAULTPORT)
+Socket::Socket()
 
 {
-	this->socketInit(DEFAULTPORT);
 }
 
 Socket::Socket(const uint32_t port) :	_serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
-									_socketAddressLen(sizeof(this->_socketAddress)),
-									_port(port)
+										_socketAddressLen(sizeof(this->_socketAddress)),
+										_port(port)
 {
 	this->socketInit(port);
+	ws_log(this->_serverSocket);
 }
 
-Socket::Socket(const Socket &copy) : 	_serverSocket(copy._serverSocket),
-										_socketAddressLen(sizeof(this->_socketAddress)),
-										_port(copy.getPort())
+Socket::Socket(const Socket &copy)
 {
-	this->_socketAddress = copy._socketAddress;
+	*this = copy;
+	// this->socketInit(this->_port);
 	if (listen(this->_serverSocket, 1) == -1)
 		throw std::exception();
 }
@@ -63,6 +60,7 @@ Socket::Socket(const Socket &copy) : 	_serverSocket(copy._serverSocket),
 // Destructor
 Socket::~Socket()
 {
+	ws_log("~Socket");
 	close(this->_clientSocket);
 	close(this->_serverSocket);
 }
@@ -71,7 +69,11 @@ Socket::~Socket()
 // Operators
 Socket & Socket::operator=(const Socket &assign)
 {
-	(void)assign;
+	this->_clientSocket = assign._clientSocket;
+	this->_serverSocket = assign._serverSocket;
+	this->_socketAddress = assign._socketAddress;
+	this->_port = assign._port;
+	this->_socketAddressLen = assign._socketAddressLen;
 	return (*this);
 }
 
@@ -151,7 +153,7 @@ void	Socket::sendResponse(const std::string response)
 	close(this->_clientSocket);
 }
 
-void	Socket::close(void)
+void	Socket::closeClient(void)
 {
 	close(this->_clientSocket);
 }

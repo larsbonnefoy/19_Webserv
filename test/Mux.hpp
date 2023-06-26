@@ -46,7 +46,7 @@ class Mux
 
 	private:
 		Config				_conf;
-		std::vector<Socket *>	_Sockets;
+		std::vector<Socket>	_Sockets;
 		size_t				_nbrSocket;
 		struct pollfd		*_pollSocketFds;
 		

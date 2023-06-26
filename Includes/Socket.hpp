@@ -63,12 +63,12 @@ class Socket
 		int			connectClient(void);
 		void		sendResponse(const std::string response);		
 		void		socketInit(const uint32_t port);
-		void		close(void);
+		void		closeClient(void);
 
 	private:
-		const uint32_t		_port; //ID
-		const int 			_serverSocket;
-		const int			_socketAddressLen;
+		int 				_serverSocket;
+		int					_socketAddressLen;
+		uint32_t			_port; //ID
 	 	struct sockaddr_in	_socketAddress;
 		int 				_clientSocket;
 		char				_request[BUFF_SIZE];

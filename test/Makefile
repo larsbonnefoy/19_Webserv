@@ -6,16 +6,15 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/06/27 00:39:33 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/06/27 00:25:37 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp
+SRCS = main.cpp Socket.cpp Log.cpp
 
-SRCS = $(addprefix Sources/, $(FILES))
 
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
