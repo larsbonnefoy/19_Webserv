@@ -6,11 +6,11 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:08:36 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/21 16:15:03 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/26 14:44:45 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Log.hpp"
+#include "../Includes/Log.hpp"
 
 void	timestamp(std::ostream &stream)
 {

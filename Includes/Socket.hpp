@@ -28,7 +28,7 @@
 # include <poll.h>
 # include <fcntl.h>
 
-# include "../log/Log.hpp"
+# include "Log.hpp"
 
 # define PORT 8282
 # define DEFAULTPORT 8080
@@ -40,30 +40,38 @@ class Socket
 		// Constructors
 		Socket();
 		Socket(const Socket &copy);
-		Socket(const int port);
+		Socket(const uint32_t port);
 
 		// Destructor
 		~Socket();
 		
 		// Operators
 		Socket & operator=(const Socket &assign);
+		bool operator==(const Socket &rhs);
+		bool operator<(const Socket &rhs);
+		bool operator<=(const Socket &rhs);
+		bool operator>(const Socket &rhs);
+		bool operator>=(const Socket &rhs);
 		
 		// Getter
 		const char	*getRequest(void) const;
 		int			getServerSocket(void) const;
+		uint32_t	getPort(void) const;
 
 		// MemberFunctions
 		const char	*receiveRequest(void);
 		int			connectClient(void);
 		void		sendResponse(const std::string response);		
-		void		socketInit(const int port);
+		void		socketInit(const uint32_t port);
+		void		close(void);
 
 	private:
-		const int 			serverSocket;
-		const int			socketAddressLen;
-	 	struct sockaddr_in	socketAddress;
-		int 				clientSocket;
-		char				request[BUFF_SIZE];
+		const uint32_t		_port; //ID
+		const int 			_serverSocket;
+		const int			_socketAddressLen;
+	 	struct sockaddr_in	_socketAddress;
+		int 				_clientSocket;
+		char				_request[BUFF_SIZE];
 };
 
 #endif

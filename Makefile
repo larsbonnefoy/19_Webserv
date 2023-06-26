@@ -1,33 +1,50 @@
-NAME = socket
- 
-FILES = main.cpp socket/Socket.cpp log/Log.cpp
-	   
-SRCS = $(addprefix src/, $(FILES))
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: larsbonnefoy <larsbonnefoy@student.42.f    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
+#    Updated: 2023/04/25 15:04:21 by larsbonnefo      ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-OBJ = $(SRCS:.cpp=.o)
+NAME = webserv
+OBJS_DIR = Objs
 
-CFLAGS = -Wall -Wextra -Werror $(CPPFLAGS) $(FFLAGS) -g
-CPPFLAGS = -std=c++98
-FFLAGS = -fsanitize=address
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp
 
-CC = c++
+SRCS = $(addprefix Sources/, $(FILES))
 
-RM = rm -f
+OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-		
-.cpp.o:
-		$(CC) $(CFLAGS) -c $< -o $(<:.cpp=.o)
+# ===---===---===---===---===---===---===---===---===---===---===---===---
 
-all: $(NAME)
+CFLAGS = -Wall -Wextra -Werror #-Wno-unused-variable -Wno-unused-parameter
+CPPFLAGS = -std=c++98 
+INCLUDES = -I Includes
+
+# ===---===---===---===---===---===---===---===---===---===---===---===---
+
+all: $(OBJS_DIR) $(NAME)
+
+$(OBJS_DIR):
+	@mkdir -p $(OBJS_DIR)
+	@mkdir -p $(OBJS_DIR)/Sources
+
+$(NAME): $(OBJS)
+	c++ $(CFLAGS) $(CPPFLAGS) -o $(NAME) $(OBJS)
+
+$(OBJS_DIR)/%.o: %.cpp
+	c++ $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-		$(RM) $(OBJ)
+	rm -rf $(OBJS_DIR)
 
-fclean: clean 
-		$(RM) $(NAME)
+fclean: clean
+	rm -f $(NAME)
 
-re :	fclean $(NAME) 
+re: fclean all
 
 .PHONY: all clean fclean re

@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:38:54 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/26 11:54:07 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/26 15:05:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,11 @@
 #include <cstring>
 #include <iostream>
 
-#include "socket/Socket.hpp"
-#include "log/Log.hpp"
-#define MAX_EVENT 10
-int main()
-{
-	const char *response = "HTTP/1.1 200 OK\r\n"
+#include "Socket.hpp"
+
+#include "Log.hpp"
+
+static const char *httpResponse = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
                           "Content-Length: 617\r\n"
                           "\r\n"
@@ -48,6 +47,12 @@ int main()
                           "    </form>\r\n"
                           "</body>\r\n"
                           "</html>";
+
+
+#define MAX_EVENT 10
+int main()
+{
+	
 
 	// const char *response1 = "HTTP/1.1 302 Found\r\n"
     //                       "Location: https://http.cat/status/418\r\n"
