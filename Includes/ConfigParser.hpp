@@ -51,6 +51,16 @@ class ConflictingInstruction : public std::exception {
         const char *what(void) const throw();
 }; 
 
+class DuplicateValueError : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class MissingDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
 Config *parseConfig(std::string configFile);
 
 #endif

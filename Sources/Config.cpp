@@ -16,18 +16,17 @@ Config &Config::operator=(const Config &other) {
     return *this;
 }
 
-std::vector<Server> &Config::getServers(void) {
+std::map<size_t, Server> &Config::getServers(void) {
     return (this->_servers);
 }
 
 //overload not working idk why
 std::ostream &operator<<(std::ostream &out, Config &config) {
 
-    std::vector<Server> servers = config.getServers();
-    int32_t size = servers.size();
+    std::map<size_t, Server> servers = config.getServers();
 
-    for (int32_t i = 0; i < size; i++) {
-        out << servers[i];
+    for (std::map<size_t, Server>::iterator it=servers.begin();  it !=  servers.end(); it++) {
+        out << it->second << std::endl;
     }
     return (out);
 }

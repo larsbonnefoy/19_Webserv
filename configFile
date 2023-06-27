@@ -26,7 +26,7 @@ server {
 }
 
 server {
-    listen 127.0.0.1:40;
+    listen 127.0.0.1:80;
     server_name localhost;
     
     error_page 418  default/40x/418.html;

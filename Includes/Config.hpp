@@ -1,12 +1,13 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
+#include <cstddef>
 #include <vector>
 #include "../Includes/Server.hpp"
 
 //essayer de mettre _server en const mais tendu i guess
 class Config {
     private:
-        std::vector<Server> _servers; 
+        std::map<size_t, Server> _servers; 
 
     public:
         Config(void);
@@ -14,7 +15,7 @@ class Config {
         ~Config(void);
         Config &operator=(const Config &other); 
 
-        std::vector<Server> &getServers(void);
+        std::map<size_t, Server> &getServers(void);
 };
 
 std::ostream &operator<<(std::ostream &out, Config &pt);

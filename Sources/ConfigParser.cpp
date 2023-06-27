@@ -148,19 +148,22 @@ void    addServer(std::string infoBuffer, Config &conf) {
     Server serv;
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
 
-    int32_t retVal;
+    int32_t pos;
     std::string directives[5] = {"listen", "server_name", "error_page", "location", "max_body_size"};
     
     for (uint32_t directiveID = 0; directiveID < 5; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
-                findMatchingValue(infoBuffer, directives[directiveID], value);
+                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
+                if (pos == -1)
+                    throw MissingDirective(); 
                 addIpPort(value, serv);
                 break; 
             case 1:
-                findMatchingValue(infoBuffer, directives[directiveID], value);
-                serv.setName(value);
+                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
+                if (pos != -1)
+                    serv.setName(value);
                 break; 
             case 2:
                 addErrorPages(infoBuffer, serv);
@@ -169,15 +172,18 @@ void    addServer(std::string infoBuffer, Config &conf) {
                 addLocation(infoBuffer, serv);
                 break; 
             case 4:
-                retVal = findMatchingValue(infoBuffer, directives[directiveID], value);
-                if (retVal == -1) {
+                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
+                if (pos == -1) {
                     break;
                 }
                 addMaxBodySize(value, serv);
                 break; 
         }
     }
-    conf.getServers().push_back(serv);
+    if (conf.getServers().count(serv.getPort()) == 1) {
+        throw DuplicateValueError();
+    }
+    conf.getServers()[serv.getPort()] = serv; 
 }
 
 /*
@@ -389,7 +395,7 @@ void addErrorPages(std::string infoBuffer, Server &serv) {
 }
 
 void addIpPort(std::string values, Server &serv) {
-     
+
     std::size_t sep = values.find(":");
     if (sep != std::string::npos) {
         std::string ip = values.substr(0, sep);
@@ -484,4 +490,11 @@ const char *UnvalidRoute::what(void) const throw() {
 
 const char *ConflictingInstruction::what(void) const throw() {
     return ("[ConfigFileError] : Conflicting Instructions");
+}
+
+const char *DuplicateValueError::what(void) const throw() {
+    return ("[ConfigFileError] : Duplicate Value");
+}
+const char *MissingDirective::what(void) const throw() {
+    return ("[ConfigFileError] : Missing Configuration Directive");
 }

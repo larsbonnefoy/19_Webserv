@@ -13,12 +13,12 @@ int main (int argc, char *argv[])
     }
     try {
         Config *defaultConfig = parseConfig(argv[1]);
-        std::vector<Server> testServers = defaultConfig->getServers();
+        std::map<size_t, Server> servers = defaultConfig->getServers();
 
-        for (uint32_t i = 0; i < testServers.size(); i++) {
-            std::cout << "===========SERV " << i << " ===============" << std::endl;
-            std::cout << testServers[i];
+        for (std::map<size_t, Server>::iterator it=servers.begin();  it !=  servers.end(); it++) {
+            std::cout << it->second << std::endl;
         }
+
         delete defaultConfig;
     }
     catch (std::exception &e) {

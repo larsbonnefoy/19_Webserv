@@ -4,7 +4,7 @@
 #include <vector>
 
 Server::Server(void) 
-    : _ip("127.0.0.1"), _port(80), _maxBodySize(1048576),_serverName("localhost") {
+    : _ip(""), _port(0), _maxBodySize(0), _serverName("") {
 }
 
 Server::Server(const Server &other) 
