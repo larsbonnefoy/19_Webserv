@@ -250,40 +250,37 @@ void createLocation(std::string inputBuffer, Server &serv, std::string locationP
         std::string value;
         switch (directiveID) {
             case 0:
-                findMatchingValue(inputBuffer, directives[directiveID], value);
-                loc.setRoot(value);
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (pos != -1)
+                    loc.setRoot(value);
                 break; 
             case 1:
                 addMethods(inputBuffer, loc);
                 break; 
             case 2:
                 pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (value == "true")
-                    loc.setAutoIndex(TRUE);
-                else if (value == "false")
-                    loc.setAutoIndex(FALSE);
-                else if (pos == -1)
-                    loc.setAutoIndex(UNDEFINED);
-                else 
-                    throw UnvalidValue();
+                if (pos != -1) {
+                    if (value == "true")
+                        loc.setAutoIndex(TRUE);
+                    else if (value == "false")
+                        loc.setAutoIndex(FALSE);
+                    else 
+                        throw UnvalidValue();
+                }
                 break; 
             case 3:
                 pos = findMatchingValue(inputBuffer, directives[directiveID], value);
                 if (pos != -1) {
-                    if (loc.getAutoIndex() == UNDEFINED) {
+                    if (loc.getAutoIndex() == UNDEFINED)
                         loc.setIndex(value);
-                    }
-                    else {
+                    else
                         throw ConfigFileError(); 
-                    }
                 }
-                //if there is no index or autoIndex, how should we handle it?
                 break;
             case 4:
                 pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1) {
+                if (pos != -1)
                     setRedir(value, loc);
-                }
                 break;
         }
     }
@@ -316,7 +313,6 @@ void setRedir(std::string inputBuffer, Location &loc) {
     else {
         throw ConflictingInstruction();
     }
-
 }
 
 /*

@@ -103,12 +103,12 @@ std::ostream &operator<<(std::ostream &out, const Location &loc) {
     out << "    ->Location" << std::endl;
     out << "    Path : " << loc.getPath() << std::endl;
     out << "    Root : " << loc.getRoot() << std::endl;
-    out << "    Index : " << loc.getIndex() << std::endl;
-    out << "    Autoindex : " << loc.getAutoIndex() << std::endl;
-    out << "    Redir : [" << loc.getRedirect().first << "] " << loc.getRedirect().second << std::endl;  
-    out << "    GET : [" << loc.getGetVal() << "]";
-    out << "    POST : [" << loc.getPostVal() << "]";
-    out << "    DEL : [" << loc.getDelVal() << "]" << std::endl;
+    out << "    Index : {" << loc.getIndex() << "}";
+    out << "    Autoindex : {" << loc.getAutoIndex() << "}";
+    out << "    Redir : {[" << loc.getRedirect().first << "] " << loc.getRedirect().second << "}" << std::endl;  
+    out << "    GET : {" << loc.getGetVal() << "}";
+    out << "    POST : {" << loc.getPostVal() << "}";
+    out << "    DEL : {" << loc.getDelVal() << "}" << std::endl;
     
     return (out);
 }
