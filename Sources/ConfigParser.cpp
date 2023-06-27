@@ -40,7 +40,7 @@ int32_t     findMatchingValue(std::string inputString, std::string directive,std
 std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
 
 void        addServer(std::string infoBuffer, Config &conf);
-void addMaxBodySize(std::string value, Server &serv);
+void        addMaxBodySize(std::string value, Server &serv);
 void        addIpPort(std::string values, Server &serv);
 void        addErrorPages(std::string infoBuffer, Server &serv);
 void        addLocation(std::string infoBuffer, Server &serv);
@@ -48,6 +48,7 @@ void        addLocation(std::string infoBuffer, Server &serv);
 std::string getLocationPath(std::string infoBuffer, size_t startPos);
 void        createLocation(std::string inputBuffer, Server &serv, std::string locationPath);
 void        addMethods(std::string infoBuffer, Location &loc);
+void        setRedir(std::string inputBuffer, Location &loc);
 int32_t     matchMethod(std::string method);
 
 bool        isNumeric(const std::string &input);
@@ -179,6 +180,9 @@ void    addServer(std::string infoBuffer, Config &conf) {
     conf.getServers().push_back(serv);
 }
 
+/*
+ * Set new maxbody size if defined. If not stays at default value;
+ */ 
 void addMaxBodySize(std::string value, Server &serv) {
     if (!isNumeric(value)) {
         throw UnvalidValue();
@@ -186,14 +190,15 @@ void addMaxBodySize(std::string value, Server &serv) {
     std::stringstream ss(value);     
     uint32_t convVal;
     ss >> convVal;
-    std::cout << convVal << std::endl;
     if (ss.fail()) {
         throw  UnvalidValue();
     }
     serv.setMaxBodySize(convVal);
 }
+
 /*
- * What happens if no brackets after location tag?
+ * Adds Location class to servers 
+ * If no route is specified or if brackets are missings throws an error
  */ 
 void addLocation(std::string infoBuffer, Server &serv) {
 
@@ -218,24 +223,30 @@ void addLocation(std::string infoBuffer, Server &serv) {
 /*
  * Finds Location Path. Location path is between "Location Tag" and brackets 
  * If no brackets are found after the location, throws an error.
+ * If Location path is empty, throws an error.
  */ 
 std::string getLocationPath(std::string infoBuffer, size_t startPos) {
+    std::string path;
     size_t endPos = infoBuffer.find("{", startPos);
     if (endPos == std::string::npos) {
         throw UnterminatedBlock();
     }
-    return (infoBuffer.substr(startPos, endPos - startPos));
+    path = infoBuffer.substr(startPos, endPos - startPos);
+    if (path.empty()) {
+        throw UnvalidRoute();
+    }
+    return (path);
 }
 
 void createLocation(std::string inputBuffer, Server &serv, std::string locationPath) {
 
     Location    loc;
-    std::string directives[4] = {"root", "accept", "autoIndex", "index"};
+    std::string directives[5] = {"root", "accept", "autoIndex", "index", "redirect"};
     int32_t     pos;
     
     loc.setPath(locationPath);
 
-    for (uint32_t directiveID = 0; directiveID < 4; directiveID++) {
+    for (uint32_t directiveID = 0; directiveID < 5; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -268,12 +279,48 @@ void createLocation(std::string inputBuffer, Server &serv, std::string locationP
                 }
                 //if there is no index or autoIndex, how should we handle it?
                 break;
+            case 4:
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (pos != -1) {
+                    setRedir(value, loc);
+                }
+                break;
         }
     }
     serv.setLocation(loc);
 }
 
 /*
+ * Checks if redirection is valid (ie no autoIndex or index existing)
+ * Adds [code] [path] redirect
+ * If not valid throws error
+ */ 
+void setRedir(std::string inputBuffer, Location &loc) {
+
+    if (loc.getIndex().empty() && loc.getAutoIndex() == UNDEFINED) {
+
+        std::string redirCode = inputBuffer.substr(0, 3);
+        std::string redirPath = inputBuffer.substr(3, inputBuffer.length());
+        
+        size_t      convCode; 
+        if (!isNumeric(redirCode))
+            throw UnvalidValue();
+
+        std::stringstream ss(redirCode);
+        ss >> convCode;
+        if (ss.fail()) {
+            throw UnvalidValue();
+        }
+        loc.setRedirect(convCode, redirPath);
+    }
+    else {
+        throw ConflictingInstruction();
+    }
+
+}
+
+/*
+ * If method is defined, set its value to 1, otherwise it will stay at init value
  * ATM: accepts multiple defintions of the same method
  */ 
 void addMethods(std::string infoBuffer, Location &loc) {
@@ -317,6 +364,7 @@ int32_t matchMethod(std::string method) {
 
 /* 
  * Adding all occurences of error_pages [nb] [Path] to the server;
+ * IF nb already exists, takes the newer one
  */ 
 void addErrorPages(std::string infoBuffer, Server &serv) {
 
@@ -423,7 +471,7 @@ const char *UnterminatedDirective::what(void) const throw() {
 }
 
 const char *UnterminatedBlock::what(void) const throw() {
-    return ("[ConfigFileError] : Instruction Block not enclosed by brackets}");
+    return ("[ConfigFileError] : Instruction Block not enclosed by brackets");
 }
 
 const char *UnvalidValue::what(void) const throw() {
@@ -432,4 +480,12 @@ const char *UnvalidValue::what(void) const throw() {
 
 const char *UnvalidErrCode::what(void) const throw() {
     return ("[ConfigFileError] : Unvalid Error Code");
+}
+
+const char *UnvalidRoute::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Location Route");
+}
+
+const char *ConflictingInstruction::what(void) const throw() {
+    return ("[ConfigFileError] : Conflicting Instructions");
 }

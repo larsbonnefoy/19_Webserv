@@ -6,7 +6,7 @@ server {
 
     error_page 403  default/40x/403.html;
     error_page 402  default/40x/402.html;
-    error_page 402  default/40x/400.html;
+    error_page 400  default/40x/400.html;
     
     location / {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
@@ -14,6 +14,11 @@ server {
         accept GET;
         accept POST;
         accept DELETE;
+    }
+
+    location /salut {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        redirect 301 /random.html;
     }
 
     error_page 410 default/40x/410.html;

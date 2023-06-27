@@ -41,6 +41,16 @@ class UnvalidErrCode : public std::exception {
         const char *what(void) const throw();
 }; 
 
+class UnvalidRoute : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class ConflictingInstruction : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
 Config *parseConfig(std::string configFile);
 
 #endif

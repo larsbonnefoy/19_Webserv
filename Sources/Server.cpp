@@ -1,5 +1,6 @@
 #include "../Includes/Server.hpp"
 #include <cstddef>
+#include <exception>
 #include <vector>
 
 Server::Server(void) 
@@ -7,7 +8,8 @@ Server::Server(void)
 }
 
 Server::Server(const Server &other) 
-    : _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), _serverName(other._serverName), _errors(other._errors), _locations(other._locations) {
+    : _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), 
+    _serverName(other._serverName), _errors(other._errors), _locations(other._locations) {
 }
 
 Server::~Server(void) {
@@ -40,6 +42,9 @@ void Server::setName(std::string name) {
 }
 
 void Server::setError(uint32_t errCode, std::string errPath) {
+    if (_errors.count(errCode) == 1) {
+        throw std::exception();
+    }
     this->_errors[errCode] = errPath;
 }
 
