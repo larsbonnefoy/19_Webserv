@@ -36,12 +36,10 @@ class UnterminatedBlock : public std::exception {
         const char *what(void) const throw();
 }; 
 
-
 class UnvalidErrCode : public std::exception { 
     public:
         const char *what(void) const throw();
 }; 
-
 
 Config *parseConfig(std::string configFile);
 

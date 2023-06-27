@@ -3,6 +3,7 @@
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
 #include <algorithm>
+#include <exception>
 #include <sstream>
 #include <string>
 #include <sys/types.h>
@@ -26,6 +27,12 @@
  *  ->Exec CGI on certain file extension
  *  ->Make route able to accept uploaded files and configure where they should be saved
  *
+ * if index: load index
+ *  else {
+        autoIndex true or false
+    }
+ *
+ *  List of ports linked to servers ?
  */ 
 
 int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
@@ -33,11 +40,13 @@ int32_t     findMatchingValue(std::string inputString, std::string directive,std
 std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
 
 void        addServer(std::string infoBuffer, Config &conf);
+void addMaxBodySize(std::string value, Server &serv);
 void        addIpPort(std::string values, Server &serv);
 void        addErrorPages(std::string infoBuffer, Server &serv);
 void        addLocation(std::string infoBuffer, Server &serv);
 
-void        createLocation(std::string inputBuffer, Server &serv);
+std::string getLocationPath(std::string infoBuffer, size_t startPos);
+void        createLocation(std::string inputBuffer, Server &serv, std::string locationPath);
 void        addMethods(std::string infoBuffer, Location &loc);
 int32_t     matchMethod(std::string method);
 
@@ -138,9 +147,10 @@ void    addServer(std::string infoBuffer, Config &conf) {
     Server serv;
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
 
-    std::string directives[4] = {"listen", "server_name", "error_page", "location"};
+    int32_t retVal;
+    std::string directives[5] = {"listen", "server_name", "error_page", "location", "max_body_size"};
     
-    for (uint32_t directiveID = 0; directiveID < 4; directiveID++) {
+    for (uint32_t directiveID = 0; directiveID < 5; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -157,50 +167,107 @@ void    addServer(std::string infoBuffer, Config &conf) {
             case 3:
                 addLocation(infoBuffer, serv);
                 break; 
+            case 4:
+                retVal = findMatchingValue(infoBuffer, directives[directiveID], value);
+                if (retVal == -1) {
+                    break;
+                }
+                addMaxBodySize(value, serv);
+                break; 
         }
     }
     conf.getServers().push_back(serv);
 }
 
+void addMaxBodySize(std::string value, Server &serv) {
+    if (!isNumeric(value)) {
+        throw UnvalidValue();
+    }
+    std::stringstream ss(value);     
+    uint32_t convVal;
+    ss >> convVal;
+    std::cout << convVal << std::endl;
+    if (ss.fail()) {
+        throw  UnvalidValue();
+    }
+    serv.setMaxBodySize(convVal);
+}
+/*
+ * What happens if no brackets after location tag?
+ */ 
 void addLocation(std::string infoBuffer, Server &serv) {
 
     uint16_t    endPos = 0;
     size_t      searchFrom;
     std::string outputBuffer;
+    std::string locationPath;
     
     while (true) {
         searchFrom = infoBuffer.find("location", endPos);
         if (searchFrom == std::string::npos) {
             break;
         }
+        locationPath = getLocationPath(infoBuffer, searchFrom + 8);
+
         endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
-        createLocation(outputBuffer, serv);
+        createLocation(outputBuffer, serv, locationPath);
+        
     }
 }
 
-void createLocation(std::string inputBuffer, Server &serv) {
+/*
+ * Finds Location Path. Location path is between "Location Tag" and brackets 
+ * If no brackets are found after the location, throws an error.
+ */ 
+std::string getLocationPath(std::string infoBuffer, size_t startPos) {
+    size_t endPos = infoBuffer.find("{", startPos);
+    if (endPos == std::string::npos) {
+        throw UnterminatedBlock();
+    }
+    return (infoBuffer.substr(startPos, endPos - startPos));
+}
+
+void createLocation(std::string inputBuffer, Server &serv, std::string locationPath) {
+
     Location    loc;
-    std::string directives[3] = {"root", "accept", "autoindex"};
+    std::string directives[4] = {"root", "accept", "autoIndex", "index"};
+    int32_t     pos;
     
-    for (uint32_t directiveID = 0; directiveID < 3; directiveID++) {
+    loc.setPath(locationPath);
+
+    for (uint32_t directiveID = 0; directiveID < 4; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
                 findMatchingValue(inputBuffer, directives[directiveID], value);
-                loc.setPath(value);
+                loc.setRoot(value);
                 break; 
             case 1:
                 addMethods(inputBuffer, loc);
                 break; 
             case 2:
-                findMatchingValue(inputBuffer, directives[directiveID], value);
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
                 if (value == "true")
-                    loc.setAutoIndex(true);
+                    loc.setAutoIndex(TRUE);
                 else if (value == "false")
-                    loc.setAutoIndex(false);
+                    loc.setAutoIndex(FALSE);
+                else if (pos == -1)
+                    loc.setAutoIndex(UNDEFINED);
                 else 
                     throw UnvalidValue();
                 break; 
+            case 3:
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (pos != -1) {
+                    if (loc.getAutoIndex() == UNDEFINED) {
+                        loc.setIndex(value);
+                    }
+                    else {
+                        throw ConfigFileError(); 
+                    }
+                }
+                //if there is no index or autoIndex, how should we handle it?
+                break;
         }
     }
     serv.setLocation(loc);

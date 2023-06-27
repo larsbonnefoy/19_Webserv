@@ -9,10 +9,16 @@
 #define POST 1
 #define DELETE 2
 
+#define FALSE 0
+#define TRUE 1
+#define UNDEFINED 2
+
 class Location {
     private:
-        std::string         _path; 
-        bool                _autoindex;
+        std::string         _path;
+        std::string         _root; 
+        std::string         _index; 
+        uint8_t             _autoindex;
         bool                _autorizedMethods[NBR_METHODS];
 
     public:
@@ -22,13 +28,17 @@ class Location {
         Location &operator=(const Location &other);
 
         std::string getPath(void) const;
-        bool        getAutoIndex(void) const;
+        std::string getRoot(void) const;
+        std::string getIndex(void) const;
+        size_t      getAutoIndex(void) const;
         bool        getGetVal(void) const;
         bool        getPostVal(void) const;
         bool        getDelVal(void) const;
 
-        void        setPath(std::string path);
-        void        setAutoIndex(bool val);
+        void        setPath(std::string root);
+        void        setRoot(std::string root);
+        void        setIndex(std::string index);
+        void        setAutoIndex(size_t val);
         void        setAutorizedMethods(bool get, bool post, bool del);
         void        setGet(bool val);
         void        setPost(bool val);
