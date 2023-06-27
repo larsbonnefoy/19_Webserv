@@ -17,18 +17,23 @@ int main (int argc, char *argv[])
     }
     try {
         Config *defaultConfig = parseConfig(argv[1]);
-		ws_log("mux");
-		Mux	mux(*defaultConfig);
-		mux.run();
-
-        // std::vector<Server> testServers = defaultConfig->getServers();
-
-        // for (uint32_t i = 0; i < testServers.size(); i++) {
-        //     std::cout << "===========SERV " << i << " ===============" << std::endl;
-        //     std::cout << testServers[i];
-        // }
-        // delete defaultConfig;
+        // std::map<size_t, Server> servers = defaultConfig->getServers();
+		try
+		{
+			Mux	mux(*defaultConfig);
+			mux.run();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 		delete defaultConfig;
+
+        // for (std::map<size_t, Server>::iterator it=servers.begin();  it !=  servers.end(); it++) {
+        //     std::cout << it->second << std::endl;
+        // }
+
+        // delete defaultConfig;
     }
     catch (std::exception &e) {
         std::cout << e.what() << std::endl;

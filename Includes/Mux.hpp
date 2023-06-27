@@ -49,9 +49,9 @@ class Mux
 	private:
 		Config						_conf;
 		std::vector<Socket *>		_Sockets;
-		size_t						_nbrSocket;
+		size_t						_nbrSocket;// nbrsoxket = nbrserver
 		struct pollfd				*_pollSocketFds;
-		std::map<uint32_t, Server>	_serverMap;
+		std::map<size_t, Server>	_serverMap;
 		
 		// Private Functions
 		void	initSockets();

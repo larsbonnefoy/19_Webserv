@@ -2,25 +2,27 @@ server {
     listen 127.0.0.1:40;
     server_name test;
     
+    max_body_size 2048576;
+
     error_page 403  default/40x/403.html;
     error_page 402  default/40x/402.html;
-    error_page 402  default/40x/400.html;
+    error_page 400  default/40x/400.html;
     
     location / {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        index file.html;
         accept GET;
         accept POST;
         accept DELETE;
-        autoindex true;
+    }
+
+    location /salut {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        redirect 301 /random.html;
     }
 
     error_page 410 default/40x/410.html;
 
-    location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
-        accept GET;
-        autoindex false;
-    }
 }
 
 server {
@@ -34,12 +36,12 @@ server {
         root /projects/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
-        autoindex false;
+        autoIndex false;
     }
 
     location /images {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
         accept GET;
-        autoindex false;
+        autoIndex false;
     }
 }

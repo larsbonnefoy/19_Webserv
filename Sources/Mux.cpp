@@ -31,7 +31,8 @@ Mux::Mux()
 	// this->initSockets();
 }
 
-Mux::Mux(Config	&conf) : _conf(conf)
+Mux::Mux(Config	&conf) :	_conf(conf),
+							_serverMap(conf.getServers())
 {
 	this->initSockets();
 }
@@ -91,30 +92,45 @@ void	Mux::run(void)
 }
 
 // Private Function
+// void	Mux::initSockets()
+// {
+// 	size_t				nbrServer;
+// 	size_t				nbrSocket;
+// 	std::set<uint32_t>	ports;
+
+// 	nbrServer = this->_conf.getServers().size();
+// 	nbrSocket = 0; 
+// 	for (size_t i = 0; i < nbrServer; ++i)
+// 	{
+// 		Server server = this->_conf.getServers()[i];
+
+// 		if (std::find(ports.begin(), ports.end(), server.getPort()) == ports.end())
+// 		{
+// 			this->_Sockets.push_back(new Socket(server.getPort()));		
+// 			ports.insert(server.getPort());
+// 			nbrSocket++;
+// 		}
+// 	}
+// 	if (nbrSocket != this->_Sockets.size() || nbrSocket != ports.size())
+// 		throw InitSocketException(); 
+// 	this->_nbrSocket = nbrSocket;
+// 	this->_pollSocketFds = new pollfd[nbrSocket];
+// 	for (size_t i = 0; i < nbrSocket; ++i)
+// 	{
+// 		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
+// 		this->_pollSocketFds[i].events = POLLIN | POLLPRI;
+// 	}
+// }
 void	Mux::initSockets()
 {
-	size_t				nbrServer;
-	size_t				nbrSocket;
-	std::set<uint32_t>	ports;
 
-	nbrServer = this->_conf.getServers().size();
-	nbrSocket = 0; 
-	for (size_t i = 0; i < nbrServer; ++i)
+	this->_nbrSocket = this->_conf.getServers().size();
+	for (std::map<size_t, Server>::iterator it = this->_serverMap.begin() ; it != this->_serverMap.end(); ++it)
 	{
-		Server server = this->_conf.getServers()[i];
-
-		if (std::find(ports.begin(), ports.end(), server.getPort()) == ports.end())
-		{
-			this->_Sockets.push_back(new Socket(server.getPort()));		
-			ports.insert(server.getPort());
-			nbrSocket++;
-		}
+		this->_Sockets.push_back(new Socket(it->first));	
 	}
-	if (nbrSocket != this->_Sockets.size() || nbrSocket != ports.size())
-		throw InitSocketException(); 
-	this->_nbrSocket = nbrSocket;
-	this->_pollSocketFds = new pollfd[nbrSocket];
-	for (size_t i = 0; i < nbrSocket; ++i)
+	this->_pollSocketFds = new pollfd[this->_nbrSocket];
+	for (size_t i = 0; i <this->_nbrSocket; ++i)
 	{
 		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
 		this->_pollSocketFds[i].events = POLLIN | POLLPRI;

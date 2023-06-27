@@ -3,6 +3,7 @@
 
 #include <exception>
 #include <iostream>
+#include <netinet/in.h>
 #include <fstream>
 #include "../Includes/Config.hpp"
 
@@ -36,12 +37,30 @@ class UnterminatedBlock : public std::exception {
         const char *what(void) const throw();
 }; 
 
-
 class UnvalidErrCode : public std::exception { 
     public:
         const char *what(void) const throw();
 }; 
 
+class UnvalidRoute : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class ConflictingInstruction : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class DuplicateValueError : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class MissingDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
 
 Config *parseConfig(std::string configFile);
 
