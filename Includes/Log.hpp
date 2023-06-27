@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:08:39 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/26 11:15:24 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/27 17:09:55 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	ws_logFile(T input)
 	std::ofstream	filestream(LOGFILE, std::ios::app);
 	if (!filestream.good())
 		throw std::exception();
+ 	filestream << "============================================================" << std::endl;
 	timestamp(filestream);
  	filestream << input << std::endl;
 	filestream.close();

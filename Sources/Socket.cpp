@@ -20,18 +20,27 @@ void	Socket::socketInit(const uint32_t port)
 
 	option = 1;
 	if (this->_serverSocket == -1)
-		throw std::exception();
-	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, static_cast<socklen_t>(sizeof(option))))
-		throw std::exception();
-	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEPORT, &option, static_cast<socklen_t>(sizeof(option))))
-		throw std::exception();
+		throw InitSocketException();
+
+	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
+					static_cast<socklen_t>(sizeof(option))))
+		throw InitSocketException();
+
+	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEPORT, &option,
+					static_cast<socklen_t>(sizeof(option))))
+		throw InitSocketException();
+
 	this->_socketAddress.sin_family = AF_INET;
 	this->_socketAddress.sin_addr.s_addr = INADDR_ANY;
 	this->_socketAddress.sin_port = htons(port);
-	if (bind(this->_serverSocket, reinterpret_cast<struct sockaddr *>(&this->_socketAddress), static_cast<socklen_t>(this->_socketAddressLen)) == -1)
-		throw std::exception();
+
+	if (bind(this->_serverSocket,
+					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
+					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
+		throw InitSocketException();
+		
 	if (listen(this->_serverSocket, 1) == -1)
-		throw std::exception();
+		throw InitSocketException();
 }
 
 // Constructors
@@ -45,13 +54,11 @@ Socket::Socket(const uint32_t port) :	_serverSocket(socket(AF_INET, SOCK_STREAM,
 										_port(port)
 {
 	this->socketInit(port);
-	ws_log(this->_serverSocket);
 }
 
 Socket::Socket(const Socket &copy)
 {
 	*this = copy;
-	// this->socketInit(this->_port);
 	if (listen(this->_serverSocket, 1) == -1)
 		throw std::exception();
 }
@@ -60,7 +67,6 @@ Socket::Socket(const Socket &copy)
 // Destructor
 Socket::~Socket()
 {
-	ws_log("~Socket");
 	close(this->_clientSocket);
 	close(this->_serverSocket);
 }
@@ -105,9 +111,9 @@ bool Socket::operator>=(const Socket &rhs)
 }
 
 // Getter
-const char	*Socket::getRequest(void) const
+const std::string	Socket::getRequest(void) const
 {
-	return ((char *)this->_request);
+	return (this->_request);
 }
 
 int	Socket::getServerSocket(void) const
@@ -128,32 +134,64 @@ int	Socket::connectClient(void)
 	struct sockaddr_in	clientAddress;
 	int					clientAddressLen = sizeof(clientAddress);
 	
-	this->_clientSocket = accept(this->_serverSocket, (struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
-	std::stringstream stream;
-	stream << "Client connected on port: " << ntohs(this->_socketAddress.sin_port) << " from ip: " <<  ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
-	ws_log(stream.str());
+	this->_clientSocket = accept(this->_serverSocket,
+			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (this->_clientSocket == -1)
 		throw std::exception();
+	std::stringstream stream;
+	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
+	stream << "Client connected on port: "
+			<< ntohs(this->_socketAddress.sin_port)
+			<< " from ip: " << this->_clientIp;
+	ws_log(stream.str());
 	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
 	return (this->_clientSocket);
 }
 
-const char	*Socket::receiveRequest(void)
+const std::string	Socket::receiveRequest(void)
 {
-	// fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
-	read(this->_clientSocket , this->_request, BUFF_SIZE);
-	//if read < 0
-	return ((char *)this->_request);
+	ssize_t	returnRead = 1;
+	this->_request = "";
+	while (returnRead != 0)
+	{
+		char	buffer[BUFF_SIZE + 1];
+		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
+		if (returnRead < 0)
+			throw IoException();
+		ws_log(returnRead);
+		buffer[returnRead] = 0;
+		this->_request.append(buffer);
+		if (returnRead < BUFF_SIZE)
+			break ;
+	}	
+	return (this->_request);
 }
 
 void	Socket::sendResponse(const std::string response)
 {
-	write(this->_clientSocket, response.c_str(), response.size());
-	// if write < 0
-	close(this->_clientSocket);
+	if (write(this->_clientSocket, response.c_str(), response.size()) < 0)
+		throw IoException();
+
 }
 
 void	Socket::closeClient(void)
 {
+	std::stringstream stream;
+	stream << "Client disconnected on port: "
+			<< ntohs(this->_socketAddress.sin_port)
+			<< " from ip: " << this->_clientIp; 
+	ws_log(stream.str());
 	close(this->_clientSocket);
+}
+
+const char* Socket::InitSocketException::what() const throw()
+{
+	ws_logErr("[Socket] : Socket Initialization Failure");
+	return ("[Socket] : Socket Initialization Failure");
+}
+
+const char* Socket::IoException::what() const throw()
+{
+	ws_logErr("[Socket] : IO Failure");
+	return ("[Socket] : IO Failure");
 }

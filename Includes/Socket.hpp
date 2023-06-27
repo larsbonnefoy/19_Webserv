@@ -18,6 +18,7 @@
 # include <string>
 # include <cstring>
 # include <iostream>
+# include <exception>
 
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -54,16 +55,16 @@ class Socket
 		bool operator>=(const Socket &rhs);
 		
 		// Getter
-		const char	*getRequest(void) const;
-		int			getServerSocket(void) const;
-		uint32_t	getPort(void) const;
+		const std::string	getRequest(void) const;
+		int					getServerSocket(void) const;
+		uint32_t			getPort(void) const;
 
 		// MemberFunctions
-		const char	*receiveRequest(void);
-		int			connectClient(void);
-		void		sendResponse(const std::string response);		
-		void		socketInit(const uint32_t port);
-		void		closeClient(void);
+		const std::string	receiveRequest(void);
+		int					connectClient(void);
+		void				sendResponse(const std::string response);		
+		void				socketInit(const uint32_t port);
+		void				closeClient(void);
 
 	private:
 		int 				_serverSocket;
@@ -71,7 +72,22 @@ class Socket
 		uint32_t			_port; //ID
 	 	struct sockaddr_in	_socketAddress;
 		int 				_clientSocket;
-		char				_request[BUFF_SIZE];
+		std::string			_clientIp;
+		std::string			_request;
+
+		// Exceptions
+
+	class InitSocketException : public std::exception
+	{
+		public:
+			virtual const char* what() const throw();
+	};
+
+	class IoException : public std::exception
+	{
+		public:
+			virtual const char* what() const throw();
+	};
 };
 
 #endif

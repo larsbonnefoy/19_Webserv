@@ -5,10 +5,12 @@
 # include <string>
 # include <iostream>
 # include <vector>
+# include <map>
 # include <algorithm>
 # include <set>
 # include <cstring>
 # include <iostream>
+# include <exception>
 
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -45,14 +47,29 @@ class Mux
 		void run(void);
 
 	private:
-		Config				_conf;
-		std::vector<Socket *>	_Sockets;
-		size_t				_nbrSocket;
-		struct pollfd		*_pollSocketFds;
+		Config						_conf;
+		std::vector<Socket *>		_Sockets;
+		size_t						_nbrSocket;
+		struct pollfd				*_pollSocketFds;
+		std::map<uint32_t, Server>	_serverMap;
 		
 		// Private Functions
 		void	initSockets();
-		
+	
+	// Exceptions
+	class PollException : public std::exception
+	{
+		public:
+			virtual const char* what() const throw();
+	};
+	
+	class InitSocketException : public std::exception
+	{
+		public:
+			virtual const char* what() const throw();
+	};
+
+
 };
 
 #endif

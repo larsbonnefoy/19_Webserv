@@ -27,8 +27,8 @@ static const char *httpResponse = "HTTP/1.1 200 OK\r\n"
 // Constructors
 Mux::Mux()
 {
-	std::cout << "\e[0;33m TODO Default Constructor called of Mux\e[0m" << std::endl;
-	// this->init(deflautConf);
+	// this->_conf = DEFAULTCONF;
+	// this->initSockets();
 }
 
 Mux::Mux(Config	&conf) : _conf(conf)
@@ -47,10 +47,11 @@ Mux::Mux(const Mux &copy)
 Mux::~Mux()
 {
 	delete [] this->_pollSocketFds;
-	for (size_t i =0; i < this->_nbrSocket; ++i)
+	for (size_t i = 0; i < this->_nbrSocket; ++i)
 	{
 		delete this->_Sockets[i];
 	}
+	this->_Sockets.clear();
 }
 
 
@@ -64,26 +65,22 @@ Mux & Mux::operator=(const Mux &assign)
 // Member Functions
 void	Mux::run(void)
 {
-	int oi = -1;
-	while (++oi < 3)
+	while (1)
 	{
 		int returnPoll = poll(this->_pollSocketFds, this->_nbrSocket , TIMEOUT);
-		// ws_log(returnPoll);
 		if (returnPoll < 0)
-			throw std::exception();
+			throw PollException();
 		else if (returnPoll > 0)
 		{
 			for (size_t i = 0; i < this->_nbrSocket; ++i)
 			{
-				// ws_log(this->_pollSocketFds[i].fd);
 				if (this->_pollSocketFds[i].revents & POLLIN)
 				{
-					ws_log("in");
+					//connect client maybe change program flow from receive parse read to receive all parse all send all 
 					this->_Sockets[i]->connectClient();
-					this->_Sockets[i]->receiveRequest();
-					// ws_logFile(buffer);
-					ws_log("DONE");
-					this->_Sockets[i]->sendResponse(httpResponse);			
+					const std::string request = this->_Sockets[i]->receiveRequest();
+					ws_logFile(request);
+					this->_Sockets[i]->sendResponse(httpResponse);	
 					this->_Sockets[i]->closeClient();			
 					ws_logFile(httpResponse);
 					this->_pollSocketFds[i].revents = 0;
@@ -108,33 +105,32 @@ void	Mux::initSockets()
 
 		if (std::find(ports.begin(), ports.end(), server.getPort()) == ports.end())
 		{
-			// ws_log(server.getPort());
-			ws_log("sock.getServerSocket()");
-			// ws_log();
-			// this->_Sockets.push_back(sock);		
 			this->_Sockets.push_back(new Socket(server.getPort()));		
-			// ws_log(this->_Sockets[i].getServerSocket());
 			ports.insert(server.getPort());
 			nbrSocket++;
 		}
-		ws_log("test");
 	}
 	if (nbrSocket != this->_Sockets.size() || nbrSocket != ports.size())
-	{
-		//some error
-		throw std::exception();
-	}
-	//init pollfd new struct pollfd[nbrSockeT]
+		throw InitSocketException(); 
 	this->_nbrSocket = nbrSocket;
 	this->_pollSocketFds = new pollfd[nbrSocket];
-	// this->_pollSocketFds = fdpoll;
 	for (size_t i = 0; i < nbrSocket; ++i)
 	{
 		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
 		this->_pollSocketFds[i].events = POLLIN | POLLPRI;
-
-		// ws_log(i);
-		// ws_log(this->_pollSocketFds[i].events);
 	}
 }
 
+// Execptions
+
+const char* Mux::PollException::what() const throw()
+{
+	ws_logErr("[Mux] : Poll Failure");
+	return ("[Mux] : Poll Failure");
+}
+
+const char* Mux::InitSocketException::what() const throw()
+{
+	ws_logErr("[Mux] : Socket Initialization Failure");
+	return ("[Mux] : Socket Initialization Failure");
+}
