@@ -49,9 +49,9 @@ class Http
 		virtual void	setHeaderField(std::map<std::string, std::string> headerField);
 
 		// Getters
-		virtual std::string							GetVersion(void);		
-		virtual std::string							GetBody(void);
-		virtual std::map<std::string, std::string>	GetHeaderField(void);
+		virtual std::string							GetVersion(void) const;		
+		virtual std::string							GetBody(void) const;
+		virtual std::map<std::string, std::string>	GetHeaderField(void) const;
 
 
 	protected:
