@@ -1,0 +1,67 @@
+#ifndef CONFIGPARSER_HPP
+#define CONFIGPARSER_HPP
+
+#include <exception>
+#include <iostream>
+#include <netinet/in.h>
+#include <fstream>
+#include "../Includes/Config.hpp"
+
+class ConfigFileError : public std::exception {
+    public:
+        const char *what(void) const throw();
+};
+
+class UnvalidValue : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnvalidListenDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnvalidPort : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnterminatedDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnterminatedBlock : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnvalidErrCode : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnvalidRoute : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class ConflictingInstruction : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class DuplicateValueError : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class MissingDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+Config *parseConfig(std::string configFile);
+
+#endif
