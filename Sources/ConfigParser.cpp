@@ -126,6 +126,30 @@ int nextMatchingBracket(std::string input, std::string &outputBuffer, size_t sta
 }
 
 /*
+ * Writes the value of [directive] from [inputString] to [outputBuffer] starting
+ * [startPos] in inputString.
+ * Value HAS to be terminated with ';'
+ * Returns ends position of value that has been found or -1 if no match has been found
+ * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
+ */ 
+int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, size_t startPos) {
+    std::size_t directivePos =  inputString.find(directive, startPos);
+
+    if (directivePos != std::string::npos) {
+        std::size_t valuePos = directivePos + directive.length();
+        std::size_t endPos = inputString.find(";", valuePos);
+        if (endPos != std::string::npos) {
+            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
+            return (endPos + 1);
+        }
+        else {
+            throw UnterminatedDirective();
+        }
+    }
+    return (-1);
+}
+
+/*
  * Find key words "listen", "server_name" and "error_page" and saves those information in the Server instance that is then copied into the config;
  * Find a way to add multiple errors and locations i guess
  */
@@ -186,6 +210,64 @@ void addMaxBodySize(std::string value, Server &serv) {
         throw  UnvalidValue();
     }
     serv.setMaxBodySize(convVal);
+}
+
+/* 
+ * Adding all occurences of error_pages [nb] [Path] to the server;
+ * IF nb already exists, takes the newer one
+ */ 
+void addErrorPages(std::string infoBuffer, Server &serv) {
+
+    std::string outputBuffer;
+    int searchPos = 0;
+    std::string errCode;
+    std::string errPath;
+    size_t convErrCode;
+
+    while (true) {
+        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
+        if (searchPos == -1)
+            break ;
+
+        errCode = outputBuffer.substr(0, 3);
+        errPath = outputBuffer.substr(3, outputBuffer.length());
+        
+        if (!isNumeric(errCode))
+            throw UnvalidErrCode();
+
+        std::stringstream ss(errCode);
+        ss >> convErrCode;
+
+        serv.setError(convErrCode, errPath);
+    }
+}
+
+void addIpPort(std::string values, Server &serv) {
+
+    std::size_t sep = values.find(":");
+    if (sep != std::string::npos) {
+        std::string ip = values.substr(0, sep);
+        serv.setIp(ip);
+        
+        std::string port = values.substr(sep + 1, values.length());
+        std::stringstream ss(port);
+        if (!isNumeric(port)) {
+            throw UnvalidPort();
+        }
+
+        size_t convPort;
+
+        ss >> convPort;
+        if (ss.fail()) {
+            throw ConfigFileError();
+        }
+        else {
+            serv.setPort(convPort);
+        }
+    }
+    else {
+        throw UnvalidListenDirective();
+    }
 }
 
 /*
@@ -349,65 +431,6 @@ int matchMethod(std::string method) {
     } 
     return (retVal);
 }
-
-/* 
- * Adding all occurences of error_pages [nb] [Path] to the server;
- * IF nb already exists, takes the newer one
- */ 
-void addErrorPages(std::string infoBuffer, Server &serv) {
-
-    std::string outputBuffer;
-    int searchPos = 0;
-    std::string errCode;
-    std::string errPath;
-    size_t convErrCode;
-
-    while (true) {
-        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
-        if (searchPos == -1)
-            break ;
-
-        errCode = outputBuffer.substr(0, 3);
-        errPath = outputBuffer.substr(3, outputBuffer.length());
-        
-        if (!isNumeric(errCode))
-            throw UnvalidErrCode();
-
-        std::stringstream ss(errCode);
-        ss >> convErrCode;
-
-        serv.setError(convErrCode, errPath);
-    }
-}
-
-void addIpPort(std::string values, Server &serv) {
-
-    std::size_t sep = values.find(":");
-    if (sep != std::string::npos) {
-        std::string ip = values.substr(0, sep);
-        serv.setIp(ip);
-        
-        std::string port = values.substr(sep + 1, values.length());
-        std::stringstream ss(port);
-        if (!isNumeric(port)) {
-            throw UnvalidPort();
-        }
-
-        size_t convPort;
-
-        ss >> convPort;
-        if (ss.fail()) {
-            throw ConfigFileError();
-        }
-        else {
-            serv.setPort(convPort);
-        }
-    }
-    else {
-        throw UnvalidListenDirective();
-    }
-}
-
 bool isEmptyLine(std::string str) {
     for (size_t i = 0; i < str.length(); i++) {
         if (!isspace(str[i])) {
@@ -425,29 +448,6 @@ bool isNumeric(const std::string &input) {
     return (true);
 }
 
-/*
- * Writes the value of [directive] from [inputString] to [outputBuffer] starting
- * [startPos] in inputString.
- * Value HAS to be terminated with ';'
- * Returns ends position of value that has been found or -1 if no match has been found
- * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
- */ 
-int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, size_t startPos) {
-    std::size_t directivePos =  inputString.find(directive, startPos);
-
-    if (directivePos != std::string::npos) {
-        std::size_t valuePos = directivePos + directive.length();
-        std::size_t endPos = inputString.find(";", valuePos);
-        if (endPos != std::string::npos) {
-            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
-            return (endPos + 1);
-        }
-        else {
-            throw UnterminatedDirective();
-        }
-    }
-    return (-1);
-}
 
 /*--------------------------Exceptions---------------------------------------*/
 
@@ -500,5 +500,5 @@ const char *MissingDirective::what(void) const throw() {
 }
 
 const char *UnvalidInstructionBlock::what(void) const throw() {
-    return ("[ConfigFileError] : Unvalid Instruction Block ");
+    return ("[ConfigFileError] : Unknown Instruction Block ");
 }
