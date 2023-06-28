@@ -152,7 +152,7 @@ const std::string	Socket::receiveRequest(void)
 {
 	ssize_t	returnRead = 1;
 	this->_request = "";
-	while (returnRead != 0)
+	while (returnRead > 0)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
@@ -161,8 +161,10 @@ const std::string	Socket::receiveRequest(void)
 		ws_log(returnRead);
 		if (returnRead < 0)
 		{
-			ws_log("read");
-			throw IoException();
+			this->_request.append("\0");
+			break ;
+			// ws_log("Need to send error page not kill the server");
+			// throw IoException();
 		}
 		buffer[returnRead] = 0;
 		this->_request.append(buffer);
@@ -175,8 +177,10 @@ const std::string	Socket::receiveRequest(void)
 void	Socket::sendResponse(const std::string response)
 {
 	if (write(this->_clientSocket, response.c_str(), response.size()) < 0)
+	{
+		ws_log("Need to send error page not kill the server");
 		throw IoException();
-
+	}
 }
 
 void	Socket::closeClient(void)
