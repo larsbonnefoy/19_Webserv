@@ -46,6 +46,11 @@ class UnvalidRoute : public std::exception {
         const char *what(void) const throw();
 }; 
 
+class UnvalidServerRoute : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
 class ConflictingInstruction : public std::exception { 
     public:
         const char *what(void) const throw();

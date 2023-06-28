@@ -4,6 +4,7 @@
 #include "../Includes/Location.hpp"
 #include <algorithm>
 #include <exception>
+#include <ios>
 #include <sstream>
 #include <string>
 #include <sys/types.h>
@@ -18,26 +19,26 @@
  * 
  * Reserve WORD (directives) to make parsing more effective? 
  *
- * Limit client body size 
  * Be able to not set server_name;
- * First host:port has to be default one 
  *
  * Location (->Route??)
  *  ->Default file to answer if request is a directory
  *  ->Exec CGI on certain file extension
  *  ->Make route able to accept uploaded files and configure where they should be saved
  *
- * if index: load index
- *  else {
+ * if index: load index else {
         autoIndex true or false
     }
  *
  *  List of ports linked to servers ?
+ *  if index, autoindex and redir are not defined what happens?
+ *
+ *  If no server route is defined, will still launch !!
  */ 
 
-int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
-int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
-std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
+int32_t         nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
+int32_t         findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
+std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuffer);
 
 void        addServer(std::string infoBuffer, Config &conf);
 void        addMaxBodySize(std::string value, Server &serv);
@@ -54,20 +55,29 @@ int32_t     matchMethod(std::string method);
 bool        isNumeric(const std::string &input);
 
 /*
- * When seeing a key word (server,.. tbc) jump to the next closing bracket and
- * start configuring server obj that will be added in Config object
+ * When seeing a key word (server,root tbc) jump to the next closing terminating char
+ * (bracket or ;) and start configuring server obj that will be added in Config object
+ *
+ * /!\if '{' is removed in getline it breaks everything idk why
  */ 
 Config *parseConfig(std::string configFile) {
     Config *configRes = new Config();
 
     std::ifstream file(configFile); 
     std::string line;
+    std::streampos nextPos = 0;
 
-    while (std::getline(file, line, '{')) {
+    while (std::getline(file.seekg(nextPos), line, '{')) {
+        std::string infoBuffer;
 
-        if (line.find("server") != std::string::npos) {
-            std::string serverInfoBuffer =  nextMatchingCharBuffer(file, '{', '}');
-            addServer(serverInfoBuffer, *configRes);
+        if (line.find("root") != std::string::npos) {
+            line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+            nextPos = findMatchingValue(line, "root", infoBuffer, nextPos) + 1 ;
+            Server::setRoot(infoBuffer);
+        }
+        else if (line.find("server") != std::string::npos) {
+            nextPos = getInstructionBlock(file, infoBuffer);
+            addServer(infoBuffer, *configRes);
         }
     }
     return (configRes);
@@ -78,19 +88,18 @@ Config *parseConfig(std::string configFile) {
  * /!\ First opening bracket has already been seen, have to add it manually
  *
  */
-std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar) {
+std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuffer) {
 
     std::stack<char>    bracketStack;
-    std::string         buffer;
     std::string         line;
     
-    bracketStack.push(openingChar);
+    bracketStack.push('{');
 
     while (std::getline(file, line)) {
-        if (line.find(openingChar) != std::string::npos) {
-            bracketStack.push(openingChar);
+        if (line.find('{') != std::string::npos) {
+            bracketStack.push('{');
         }
-        else if (line.find(closingChar) != std::string::npos) {
+        else if (line.find('}') != std::string::npos) {
             if (!bracketStack.empty()) {
                 bracketStack.pop(); 
                 if (bracketStack.empty()) {
@@ -101,12 +110,12 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
                 throw UnterminatedBlock();
             }
         }
-        buffer += (line);
+        outputBuffer += (line);
     }
     if (!bracketStack.empty()) {
         throw UnterminatedBlock();
     }
-    return (buffer);
+    return(file.tellg());
 }
 
 /*
@@ -222,7 +231,6 @@ void addLocation(std::string infoBuffer, Server &serv) {
 
         endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
         createLocation(outputBuffer, serv, locationPath);
-        
     }
 }
 
@@ -486,6 +494,10 @@ const char *UnvalidErrCode::what(void) const throw() {
 
 const char *UnvalidRoute::what(void) const throw() {
     return ("[ConfigFileError] : Unvalid Location Route");
+}
+
+const char *UnvalidServerRoute::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Server Route");
 }
 
 const char *ConflictingInstruction::what(void) const throw() {

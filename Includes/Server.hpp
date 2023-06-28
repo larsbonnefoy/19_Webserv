@@ -19,11 +19,14 @@ class Server {
         std::vector<Location>               _locations;
 
     public:
+        static std::string                  root;
+
         Server(void);
         Server(const Server &other);
         ~Server(void);
         Server &operator=(const Server &other);
         
+        static void setRoot(std::string root);
         void        setIp(std::string ip);
         void        setPort(uint32_t port);
         void        setMaxBodySize(uint32_t size);

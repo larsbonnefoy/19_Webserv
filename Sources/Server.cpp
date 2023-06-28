@@ -1,10 +1,14 @@
 #include "../Includes/Server.hpp"
+#include "../Includes/ConfigParser.hpp"
 #include <cstddef>
 #include <exception>
 #include <vector>
+#include <sys/stat.h>
+
+std::string Server::root = "";
 
 Server::Server(void) 
-    : _ip(""), _port(0), _maxBodySize(0), _serverName("") {
+    :_ip(""), _port(0), _maxBodySize(0), _serverName("") {
 }
 
 Server::Server(const Server &other) 
@@ -25,6 +29,19 @@ Server &Server::operator=(const Server &other) {
     return *this;
 }
 
+void Server::setRoot(std::string rootPath) {
+    struct stat dir_stat;
+    if (stat(rootPath.c_str(), &dir_stat) == 0) {
+        if (S_ISDIR(dir_stat.st_mode)) {
+            Server::root = rootPath;
+        }
+        else 
+            throw UnvalidServerRoute();
+    }
+    else 
+        throw UnvalidServerRoute();
+}
+
 void Server::setIp(std::string ip) {
     this->_ip = ip;
 }
@@ -43,7 +60,7 @@ void Server::setName(std::string name) {
 
 void Server::setError(uint32_t errCode, std::string errPath) {
     if (_errors.count(errCode) == 1) {
-        throw std::exception();
+        throw DuplicateValueError();
     }
     this->_errors[errCode] = errPath;
 }
@@ -76,7 +93,8 @@ std::vector<Location> Server::getLocations(void) const {
 }
 
 std::ostream &operator<<(std::ostream &out, const Server &serv) {
-
+    
+    out << "Server RootPath : " << Server::root << std::endl;
     out << "Server Name : " << serv.getName() << std::endl;
     out << "IP : " << serv.getIp() << std::endl;
     out << "Port : " << serv.getPort() << std::endl;
