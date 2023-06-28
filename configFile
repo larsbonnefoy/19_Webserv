@@ -2,8 +2,8 @@ root /Users/larsbonnefoy/projects/19_Webserv/site/data;
 
 server {
     listen 127.0.0.1:40;
-    server_name test;
-    
+    server_name localhost;
+
     max_body_size 2048576;
 
     error_page 403  default/40x/403.html;

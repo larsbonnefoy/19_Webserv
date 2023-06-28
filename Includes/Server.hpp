@@ -26,7 +26,7 @@ class Server {
         ~Server(void);
         Server &operator=(const Server &other);
         
-        static void setRoot(std::string root);
+        static void setServerRoot(std::string root);
         void        setIp(std::string ip);
         void        setPort(size_t port);
         void        setMaxBodySize(size_t size);

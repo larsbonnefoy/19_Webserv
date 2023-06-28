@@ -29,17 +29,21 @@ Server &Server::operator=(const Server &other) {
     return *this;
 }
 
-void Server::setRoot(std::string rootPath) {
+void Server::setServerRoot(std::string rootPath) {
     struct stat dir_stat;
     if (stat(rootPath.c_str(), &dir_stat) == 0) {
         if (S_ISDIR(dir_stat.st_mode)) {
             Server::root = rootPath;
         }
-        else 
+        else {
+            std::cout << "In ServerRoot 1" <<std::endl;
             throw UnvalidServerRoute();
+        } 
     }
-    else 
+    else { 
+        std::cout << "In ServerRoot 2" <<std::endl;
         throw UnvalidServerRoute();
+    }
 }
 
 void Server::setIp(std::string ip) {

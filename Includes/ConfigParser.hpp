@@ -4,7 +4,36 @@
 #include <exception>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <exception>
+#include <ios>
+#include <sstream>
+#include <string>
+#include <sys/types.h>
+#include <vector>
 #include "../Includes/Config.hpp"
+
+Config *parseConfig(std::string configFile);
+
+int             nextMatchingBracket(std::string input, std::string &outputBuffer, size_t startPos = 0);
+int             findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, size_t startPosition = 0);
+std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuffer);
+
+void        addServer(std::string infoBuffer, Config &conf);
+void        addMaxBodySize(std::string value, Server &serv);
+void        addIpPort(std::string values, Server &serv);
+void        addErrorPages(std::string infoBuffer, Server &serv);
+void        addLocation(std::string infoBuffer, Server &serv);
+
+std::string getLocationPath(std::string infoBuffer, size_t startPos);
+void        createLocation(std::string inputBuffer, Server &serv, std::string locationPath);
+void        addMethods(std::string infoBuffer, Location &loc);
+void        setRedir(std::string inputBuffer, Location &loc);
+int         matchMethod(std::string method);
+
+bool        isNumeric(const std::string &input);
+bool        isEmptyLine(std::string str);
+
 
 class ConfigFileError : public std::exception {
     public:
@@ -66,6 +95,9 @@ class MissingDirective : public std::exception {
         const char *what(void) const throw();
 }; 
 
-Config *parseConfig(std::string configFile);
+class UnvalidInstructionBlock : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
 
 #endif
