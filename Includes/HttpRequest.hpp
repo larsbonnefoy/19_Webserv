@@ -26,8 +26,9 @@
 # include "Config.hpp"
 # include "ConfigParser.hpp"
 # include "Server.hpp"
+# include "Http.hpp"
 
-class HttpRequest
+class HttpRequest : Http
 {
 	public:
 		// Constructors
@@ -41,10 +42,7 @@ class HttpRequest
 		HttpRequest & operator=(const HttpRequest &assign);
 		
 	private:
-		int									methode
-		std::string							startLine;
-		std::map<std::string, std::string>	headerField;
-		std::string							body;
+
 };
 
 #endif
