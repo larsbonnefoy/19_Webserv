@@ -38,7 +38,7 @@ void	Socket::socketInit(const uint32_t port)
 					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
 					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
 		throw InitSocketException();
-		
+	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (listen(this->_serverSocket, 1) == -1)
 		throw InitSocketException();
 }
@@ -156,6 +156,8 @@ const std::string	Socket::receiveRequest(void)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
+		ws_log(errno);
+		ws_log(EAGAIN);
 		ws_log(returnRead);
 		if (returnRead < 0)
 		{
