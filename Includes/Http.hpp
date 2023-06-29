@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Http.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/29 11:11:15 by hdelmas           #+#    #+#             */
+/*   Updated: 2023/06/29 11:42:43 by hdelmas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HTTP_HPP
 # define HTTP_HPP
 
@@ -6,7 +18,7 @@
 
 # include <iostream>
 # include <string>
-# include <string>
+# include <sstream>
 # include <iostream>
 # include <vector>
 # include <map>
@@ -47,6 +59,7 @@ class Http
 		virtual void	setStartLine(std::string startLine);
 		virtual void	setBody(std::string body);
 		virtual void	setHeaderField(std::map<std::string, std::string> headerField);
+		virtual void	addToHeaderField(std::string headerToAdd);
 
 		// Getters
 		virtual std::string							GetStartLine(void) const;		

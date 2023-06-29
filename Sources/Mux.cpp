@@ -1,6 +1,6 @@
 #include "../Includes/Mux.hpp"
 
-static const char *httpResponse = "HTTP/1.1 200 OK\r\n"
+static const std::string httpResponse = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
                           "Content-Length: 617\r\n"
                           "\r\n"

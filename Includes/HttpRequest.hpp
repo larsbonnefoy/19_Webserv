@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.hpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/29 11:11:06 by hdelmas           #+#    #+#             */
+/*   Updated: 2023/06/29 13:28:29 by hdelmas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HTTPREQUEST_HPP
 # define HTTPREQUEST_HPP
 
 # include <iostream>
 # include <string>
-# include <string>
+# include <sstream>
 # include <iostream>
 # include <vector>
 # include <map>
@@ -28,11 +40,12 @@
 # include "Server.hpp"
 # include "Http.hpp"
 
-class HttpRequest : Http
+class HttpRequest : public Http
 {
 	public:
 		// Constructors
 		HttpRequest();
+		HttpRequest(std::string request);
 		HttpRequest(const HttpRequest &copy);
 		
 		// Destructor
@@ -40,8 +53,15 @@ class HttpRequest : Http
 		
 		// Operators
 		HttpRequest & operator=(const HttpRequest &assign);
+
+		//Member Functions
+		void	requestParser(std::string request);
 		
 	private:
+		std::string _version;
+		bool		_hasEmptyLine;
+		bool		_hasBody;
+
 
 };
 
