@@ -51,6 +51,10 @@ void	Http::setHeaderField(std::map<std::string, std::string> headerField)
 	this->_headerField = headerField;
 }
 
+void	Http::addToHeaderField(std::string header, std::string value) {
+    this->_headerField[header] = value;
+}
+
 void	Http::addToHeaderField(std::string headerToAdd)
 {
 	std::pair<std::string, std::string> pair;
