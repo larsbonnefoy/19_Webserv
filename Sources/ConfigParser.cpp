@@ -2,96 +2,81 @@
 #include "../Includes/Config.hpp"
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
-#include <algorithm>
-#include <exception>
-#include <sstream>
-#include <string>
-#include <stack>
-#include <sys/types.h>
-#include <vector>
 
 /* TO DO 
  * Check possible parsing errors 
  *      -> non ending ;
  *      -> non valid ip address xxx.xxx.xxx.xxx
+ *      -> if server is declared without brackets preceeding another server declaration
  *
- * Change return type of nextMatchingBracket func
- * 
- * Reserve WORD (directives) to make parsing more effective? 
- *
- * Limit client body size 
- * Be able to not set server_name;
- * First host:port has to be default one 
+ * Be able to not set server_name [ok] -> set to ""
  *
  * Location (->Route??)
  *  ->Default file to answer if request is a directory
  *  ->Exec CGI on certain file extension
  *  ->Make route able to accept uploaded files and configure where they should be saved
  *
- * if index: load index
- *  else {
-        autoIndex true or false
-    }
  *
- *  List of ports linked to servers ?
+ *  if index, autoindex and redir are not defined what happens?
+ * 
+ *  check for valid Error url ?
  */ 
 
-int32_t     nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos = 0);
-int32_t     findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, uint16_t startPosition = 0);
-std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar);
-
-void        addServer(std::string infoBuffer, Config &conf);
-void        addMaxBodySize(std::string value, Server &serv);
-void        addIpPort(std::string values, Server &serv);
-void        addErrorPages(std::string infoBuffer, Server &serv);
-void        addLocation(std::string infoBuffer, Server &serv);
-
-std::string getLocationPath(std::string infoBuffer, size_t startPos);
-void        createLocation(std::string inputBuffer, Server &serv, std::string locationPath);
-void        addMethods(std::string infoBuffer, Location &loc);
-void        setRedir(std::string inputBuffer, Location &loc);
-int32_t     matchMethod(std::string method);
-
-bool        isNumeric(const std::string &input);
-
 /*
- * When seeing a key word (server,.. tbc) jump to the next closing bracket and
- * start configuring server obj that will be added in Config object
+ * When seeing a key word (server,root tbc) jump to the next closing terminating char
+ * (bracket or ;) and start configuring server obj that will be added in Config object
+ *
+ * /!\if '{' is removed in getline it breaks everything idk why
  */ 
 Config *parseConfig(std::string configFile) {
     Config *configRes = new Config();
 
-    std::ifstream file(configFile.c_str()); 
+    std::ifstream file(configFile); 
     std::string line;
+    std::streampos nextPos = 0;
 
-    while (std::getline(file, line, '{')) {
-
-        if (line.find("server") != std::string::npos) {
-            std::string serverInfoBuffer =  nextMatchingCharBuffer(file, '{', '}');
-            addServer(serverInfoBuffer, *configRes);
+    while (std::getline(file.seekg(nextPos), line)) {
+        std::string infoBuffer;
+        if (line.find("root") != std::string::npos && Server::root == "") {
+            line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+            nextPos = findMatchingValue(line, "root", infoBuffer, nextPos) + 1;
+            Server::setServerRoot(infoBuffer);
         }
+        else if (line.find("server") != std::string::npos) {
+            nextPos = getInstructionBlock(file, infoBuffer);
+            addServer(infoBuffer, *configRes);
+        }
+        else {
+            if (!isEmptyLine(line)) {
+                throw UnvalidInstructionBlock();
+            }
+            nextPos += 1;
+        }
+    }
+    if (Server::root == "") {
+        throw UnvalidServerRoute();
     }
     return (configRes);
 }
 
+ 
 /*
  * Returns str enclosed by two matching brackets 
  * /!\ First opening bracket has already been seen, have to add it manually
  *
  */
-std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char closingChar) {
+std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuffer) {
 
     std::stack<char>    bracketStack;
-    std::string         buffer;
     std::string         line;
     
-    bracketStack.push(openingChar);
+    bracketStack.push('{');
 
     while (std::getline(file, line)) {
-        if (line.find(openingChar) != std::string::npos) {
-            bracketStack.push(openingChar);
+        if (line.find('{') != std::string::npos) {
+            bracketStack.push('{');
         }
-        else if (line.find(closingChar) != std::string::npos) {
+        else if (line.find('}') != std::string::npos) {
             if (!bracketStack.empty()) {
                 bracketStack.pop(); 
                 if (bracketStack.empty()) {
@@ -102,22 +87,22 @@ std::string nextMatchingCharBuffer(std::ifstream &file, char openingChar, char c
                 throw UnterminatedBlock();
             }
         }
-        buffer += (line);
+        outputBuffer += (line);
     }
     if (!bracketStack.empty()) {
         throw UnterminatedBlock();
     }
-    return (buffer);
+    return(file.tellg());
 }
 
 /*
  * Given location returns string of containing matching opening and closing brackets;
  * Returns position AFTER closing bracket if found or throws error if not found 
  */ 
-int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16_t startPos) {
+int nextMatchingBracket(std::string input, std::string &outputBuffer, size_t startPos) {
 
     std::stack<char>    bracketStack;
-    uint32_t            bracketStart = 0;
+    size_t              bracketStart = 0;
 
     for (size_t i = startPos; i < input.length(); i++) {
         if (input[i] == '{') {
@@ -141,6 +126,30 @@ int32_t nextMatchingBracket(std::string input, std::string &outputBuffer, uint16
 }
 
 /*
+ * Writes the value of [directive] from [inputString] to [outputBuffer] starting
+ * [startPos] in inputString.
+ * Value HAS to be terminated with ';'
+ * Returns ends position of value that has been found or -1 if no match has been found
+ * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
+ */ 
+int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, size_t startPos) {
+    std::size_t directivePos =  inputString.find(directive, startPos);
+
+    if (directivePos != std::string::npos) {
+        std::size_t valuePos = directivePos + directive.length();
+        std::size_t endPos = inputString.find(";", valuePos);
+        if (endPos != std::string::npos) {
+            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
+            return (endPos + 1);
+        }
+        else {
+            throw UnterminatedDirective();
+        }
+    }
+    return (-1);
+}
+
+/*
  * Find key words "listen", "server_name" and "error_page" and saves those information in the Server instance that is then copied into the config;
  * Find a way to add multiple errors and locations i guess
  */
@@ -149,10 +158,10 @@ void    addServer(std::string infoBuffer, Config &conf) {
     Server serv;
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
 
-    int32_t pos;
+    int pos;
     std::string directives[5] = {"listen", "server_name", "error_page", "location", "max_body_size"};
     
-    for (uint32_t directiveID = 0; directiveID < 5; directiveID++) {
+    for (size_t directiveID = 0; directiveID < 5; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -195,12 +204,70 @@ void addMaxBodySize(std::string value, Server &serv) {
         throw UnvalidValue();
     }
     std::stringstream ss(value);     
-    uint32_t convVal;
+    size_t convVal;
     ss >> convVal;
     if (ss.fail()) {
         throw  UnvalidValue();
     }
     serv.setMaxBodySize(convVal);
+}
+
+/* 
+ * Adding all occurences of error_pages [nb] [Path] to the server;
+ * IF nb already exists, takes the newer one
+ */ 
+void addErrorPages(std::string infoBuffer, Server &serv) {
+
+    std::string outputBuffer;
+    int searchPos = 0;
+    std::string errCode;
+    std::string errPath;
+    size_t convErrCode;
+
+    while (true) {
+        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
+        if (searchPos == -1)
+            break ;
+
+        errCode = outputBuffer.substr(0, 3);
+        errPath = outputBuffer.substr(3, outputBuffer.length());
+        
+        if (!isNumeric(errCode))
+            throw UnvalidErrCode();
+
+        std::stringstream ss(errCode);
+        ss >> convErrCode;
+
+        serv.setError(convErrCode, errPath);
+    }
+}
+
+void addIpPort(std::string values, Server &serv) {
+
+    std::size_t sep = values.find(":");
+    if (sep != std::string::npos) {
+        std::string ip = values.substr(0, sep);
+        serv.setIp(ip);
+        
+        std::string port = values.substr(sep + 1, values.length());
+        std::stringstream ss(port);
+        if (!isNumeric(port)) {
+            throw UnvalidPort();
+        }
+
+        size_t convPort;
+
+        ss >> convPort;
+        if (ss.fail()) {
+            throw ConfigFileError();
+        }
+        else {
+            serv.setPort(convPort);
+        }
+    }
+    else {
+        throw UnvalidListenDirective();
+    }
 }
 
 /*
@@ -223,7 +290,6 @@ void addLocation(std::string infoBuffer, Server &serv) {
 
         endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
         createLocation(outputBuffer, serv, locationPath);
-        
     }
 }
 
@@ -249,17 +315,18 @@ void createLocation(std::string inputBuffer, Server &serv, std::string locationP
 
     Location    loc;
     std::string directives[5] = {"root", "accept", "autoIndex", "index", "redirect"};
-    int32_t     pos;
+    int     pos;
     
     loc.setPath(locationPath);
 
-    for (uint32_t directiveID = 0; directiveID < 5; directiveID++) {
+    for (size_t directiveID = 0; directiveID < 5; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
                 pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1)
+                if (pos != -1) { 
                     loc.setRoot(value);
+                }
                 break; 
             case 1:
                 addMethods(inputBuffer, loc);
@@ -327,9 +394,9 @@ void setRedir(std::string inputBuffer, Location &loc) {
  * ATM: accepts multiple defintions of the same method
  */ 
 void addMethods(std::string infoBuffer, Location &loc) {
-    int32_t     searchPos = 0;
+    int     searchPos = 0;
     std::string outputBuffer;
-    int32_t     methodID;
+    int     methodID;
 
     while (true) {
         searchPos = findMatchingValue(infoBuffer, "accept", outputBuffer, searchPos);
@@ -352,9 +419,9 @@ void addMethods(std::string infoBuffer, Location &loc) {
     }    
 }
 
-int32_t matchMethod(std::string method) {
+int matchMethod(std::string method) {
 
-    uint32_t retVal = -1;
+    size_t retVal = -1;
     std::string methods[3] = {"GET", "POST", "DELETE"};
 
     for (size_t methodID = 0; methodID < 3; methodID++) {
@@ -364,63 +431,13 @@ int32_t matchMethod(std::string method) {
     } 
     return (retVal);
 }
-
-/* 
- * Adding all occurences of error_pages [nb] [Path] to the server;
- * IF nb already exists, takes the newer one
- */ 
-void addErrorPages(std::string infoBuffer, Server &serv) {
-
-    std::string outputBuffer;
-    int32_t searchPos = 0;
-    std::string errCode;
-    std::string errPath;
-    uint32_t convErrCode;
-
-    while (true) {
-        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
-        if (searchPos == -1)
-            break ;
-
-        errCode = outputBuffer.substr(0, 3);
-        errPath = outputBuffer.substr(3, outputBuffer.length());
-        
-        if (!isNumeric(errCode))
-            throw UnvalidErrCode();
-
-        std::stringstream ss(errCode);
-        ss >> convErrCode;
-
-        serv.setError(convErrCode, errPath);
-    }
-}
-
-void addIpPort(std::string values, Server &serv) {
-
-    std::size_t sep = values.find(":");
-    if (sep != std::string::npos) {
-        std::string ip = values.substr(0, sep);
-        serv.setIp(ip);
-        
-        std::string port = values.substr(sep + 1, values.length());
-        std::stringstream ss(port);
-        if (!isNumeric(port)) {
-            throw UnvalidPort();
-        }
-
-        uint32_t convPort;
-
-        ss >> convPort;
-        if (ss.fail()) {
-            throw ConfigFileError();
-        }
-        else {
-            serv.setPort(convPort);
+bool isEmptyLine(std::string str) {
+    for (size_t i = 0; i < str.length(); i++) {
+        if (!isspace(str[i])) {
+            return (false);
         }
     }
-    else {
-        throw UnvalidListenDirective();
-    }
+    return (true);
 }
 
 bool isNumeric(const std::string &input) {
@@ -431,29 +448,6 @@ bool isNumeric(const std::string &input) {
     return (true);
 }
 
-/*
- * Writes the value of [directive] from [inputString] to [outputBuffer] starting
- * [startPos] in inputString.
- * Value HAS to be terminated with ';'
- * Returns ends position of value that has been found or -1 if no match has been found
- * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
- */ 
-int32_t findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, uint16_t startPos) {
-    std::size_t directivePos =  inputString.find(directive, startPos);
-
-    if (directivePos != std::string::npos) {
-        std::size_t valuePos = directivePos + directive.length();
-        std::size_t endPos = inputString.find(";", valuePos);
-        if (endPos != std::string::npos) {
-            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
-            return (endPos);
-        }
-        else {
-            throw UnterminatedDirective();
-        }
-    }
-    return (-1);
-}
 
 /*--------------------------Exceptions---------------------------------------*/
 
@@ -489,6 +483,10 @@ const char *UnvalidRoute::what(void) const throw() {
     return ("[ConfigFileError] : Unvalid Location Route");
 }
 
+const char *UnvalidServerRoute::what(void) const throw() {
+    return ("[ConfigFileError] : Unvalid Server Route");
+}
+
 const char *ConflictingInstruction::what(void) const throw() {
     return ("[ConfigFileError] : Conflicting Instructions");
 }
@@ -496,6 +494,11 @@ const char *ConflictingInstruction::what(void) const throw() {
 const char *DuplicateValueError::what(void) const throw() {
     return ("[ConfigFileError] : Duplicate Value");
 }
+
 const char *MissingDirective::what(void) const throw() {
     return ("[ConfigFileError] : Missing Configuration Directive");
+}
+
+const char *UnvalidInstructionBlock::what(void) const throw() {
+    return ("[ConfigFileError] : Unknown Instruction Block ");
 }

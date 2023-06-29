@@ -1,10 +1,9 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
+#include <iterator>
 #include <string>
 #include <vector>
-#include <netinet/in.h>
-
 
 #define NBR_METHODS 3
 #define GET 0
@@ -21,7 +20,7 @@ class Location {
         std::string                         _root; 
         std::string                         _index; 
         uint8_t                             _autoindex;
-        std::pair<uint32_t, std::string>    _redirect;
+        std::pair<size_t, std::string>      _redirect;
         bool                                _autorizedMethods[NBR_METHODS];
 
     public:
