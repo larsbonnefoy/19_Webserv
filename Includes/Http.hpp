@@ -46,27 +46,29 @@ class Http
 {
 	public:
 		// Constructors
-		Http();
+		Http(void);
 		Http(const Http &copy);
 		 
 		// Destructor
-		virtual	~Http() = 0;
+		virtual	~Http(void) = 0;
 		
 		// Operators
 		Http & operator=(const Http &assign);
 
 		// Setters
-		virtual void	setStartLine(std::string startLine);
-		virtual void	setBody(std::string body);
-		virtual void	setHeaderField(std::map<std::string, std::string> headerField);
-        virtual void	addToHeaderField(std::string header, std::string value);
-		virtual void	addToHeaderField(std::string headerToAdd);
+		void	setStartLine(std::string startLine);
+		void	setBody(std::string body);
+		void	setHeaderField(std::map<std::string, std::string> headerField);
+		void	addToHeaderField(std::string headerToAdd);
+        void	addToHeaderField(std::string header, std::string value);
 
 		// Getters
-		virtual std::string							getStartLine(void) const;		
-		virtual std::string							getBody(void) const;
-		virtual std::map<std::string, std::string>	getHeaderField(void) const;
+		std::string							getStartLine(void) const;		
+		std::string							getBody(void) const;
+		std::map<std::string, std::string>	getHeaderField(void) const;
 
+
+        std::string headerToStr(void);
 
 	protected:
 

@@ -13,13 +13,12 @@
 #include "../Includes/Http.hpp"
 
 // Constructors
-Http::Http()
+Http::Http(void)
 {
 }
 
-Http::Http(const Http &copy)
-{
-	(void) copy;
+Http::Http(const Http &copy) 
+    : _startLine(copy._startLine), _body(copy._body), _headerField(copy._headerField) {
 }
 
 
@@ -31,14 +30,16 @@ Http::~Http()
 // Operators
 Http & Http::operator=(const Http &assign)
 {
-	(void) assign;
+    this->_startLine = assign._startLine;
+    this->_body = assign._body;
+    this->_headerField = assign._headerField;
 	return *this;
 }
 
 // Setters
 void	Http::setStartLine(std::string version)
 {
-	this->_startLine   = version;
+	this->_startLine = version;
 }
 
 void	Http::setBody(std::string body)
@@ -51,17 +52,13 @@ void	Http::setHeaderField(std::map<std::string, std::string> headerField)
 	this->_headerField = headerField;
 }
 
-void	Http::addToHeaderField(std::string header, std::string value) {
-    this->_headerField[header] = value;
-}
-
 void	Http::addToHeaderField(std::string headerToAdd)
 {
 	std::pair<std::string, std::string> pair;
 	std::stringstream					headerStream(headerToAdd);
 	
 	
-	std::string::iterator checkIt = std::find(headerToAdd.begin(), headerToAdd.end(), ":");
+	std::string::iterator checkIt = std::find(headerToAdd.begin(), headerToAdd.end(), ':');
 	if (checkIt == headerToAdd.end())
 		throw std::exception(); //TODO
 
@@ -69,6 +66,10 @@ void	Http::addToHeaderField(std::string headerToAdd)
 	std::getline(headerStream, pair.second);
 
 	this->_headerField.insert(pair);
+}
+
+void	Http::addToHeaderField(std::string header, std::string value) {
+    this->_headerField[header] = value;
 }
 
 // Getters
@@ -85,4 +86,14 @@ std::string							Http::getBody(void) const
 std::map<std::string, std::string>	Http::getHeaderField(void) const
 {
 	return (this->_headerField);
+}
+
+std::string Http::headerToStr(void) {
+    std::string headerStr;
+    
+    for (std::map<std::string, std::string>::iterator it = _headerField.begin();
+            it != _headerField.end(); it++) {
+        headerStr += (it->first + ": " + it->second + "\r\n");
+    }
+    return (headerStr);
 }
