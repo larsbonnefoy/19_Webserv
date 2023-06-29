@@ -1859,3 +1859,1312 @@ Content-Length: 617
 [2023/6/28 10:48:14] Error : [Socket] : IO Failure
 ============================================================
 [2023/6/29 11:35:10] Error : [Socket] : Socket Initialization Failure
+============================================================
+[2023/6/29 11:39:24] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:24] 0
+============================================================
+[2023/6/29 11:39:24] 35
+============================================================
+[2023/6/29 11:39:24] 589
+============================================================
+[2023/6/29 11:39:24] 0
+============================================================
+[2023/6/29 11:39:24] 35
+============================================================
+[2023/6/29 11:39:24] 114
+============================================================
+[2023/6/29 11:39:24] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:24] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:24] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:24] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:24] 0
+============================================================
+[2023/6/29 11:39:24] 35
+============================================================
+[2023/6/29 11:39:24] 589
+============================================================
+[2023/6/29 11:39:24] 0
+============================================================
+[2023/6/29 11:39:24] 35
+============================================================
+[2023/6/29 11:39:24] 40
+============================================================
+[2023/6/29 11:39:24] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:24] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:24] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:30] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 589
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 140
+============================================================
+[2023/6/29 11:39:30] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:30] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:30] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 589
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 40
+============================================================
+[2023/6/29 11:39:30] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:30] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:30] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 589
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 140
+============================================================
+[2023/6/29 11:39:30] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:30] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:30] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 589
+============================================================
+[2023/6/29 11:39:30] 0
+============================================================
+[2023/6/29 11:39:30] 35
+============================================================
+[2023/6/29 11:39:30] 40
+============================================================
+[2023/6/29 11:39:30] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:30] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 140
+============================================================
+[2023/6/29 11:39:31] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 40
+============================================================
+[2023/6/29 11:39:31] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 140
+============================================================
+[2023/6/29 11:39:31] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 40
+============================================================
+[2023/6/29 11:39:31] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 140
+============================================================
+[2023/6/29 11:39:31] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 40
+============================================================
+[2023/6/29 11:39:31] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 140
+============================================================
+[2023/6/29 11:39:31] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:31] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 589
+============================================================
+[2023/6/29 11:39:31] 0
+============================================================
+[2023/6/29 11:39:31] 35
+============================================================
+[2023/6/29 11:39:31] 40
+============================================================
+[2023/6/29 11:39:31] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:31] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:31] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:32] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:32] 0
+============================================================
+[2023/6/29 11:39:32] 35
+============================================================
+[2023/6/29 11:39:32] 589
+============================================================
+[2023/6/29 11:39:32] 0
+============================================================
+[2023/6/29 11:39:32] 35
+============================================================
+[2023/6/29 11:39:32] 140
+============================================================
+[2023/6/29 11:39:32] GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:32] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:32] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:32] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:32] 0
+============================================================
+[2023/6/29 11:39:32] 35
+============================================================
+[2023/6/29 11:39:32] 589
+============================================================
+[2023/6/29 11:39:32] 0
+============================================================
+[2023/6/29 11:39:32] 35
+============================================================
+[2023/6/29 11:39:32] 40
+============================================================
+[2023/6/29 11:39:32] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:32] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:32] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:34] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 589
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 294
+============================================================
+[2023/6/29 11:39:34] POST / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 13
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+fname=&lname=
+============================================================
+[2023/6/29 11:39:34] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:34] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 589
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 40
+============================================================
+[2023/6/29 11:39:34] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:34] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:34] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 589
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 294
+============================================================
+[2023/6/29 11:39:34] POST / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 13
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+fname=&lname=
+============================================================
+[2023/6/29 11:39:34] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:34] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 589
+============================================================
+[2023/6/29 11:39:34] 0
+============================================================
+[2023/6/29 11:39:34] 35
+============================================================
+[2023/6/29 11:39:34] 40
+============================================================
+[2023/6/29 11:39:34] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:34] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:34] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:35] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:35] 0
+============================================================
+[2023/6/29 11:39:35] 35
+============================================================
+[2023/6/29 11:39:35] 589
+============================================================
+[2023/6/29 11:39:35] 0
+============================================================
+[2023/6/29 11:39:35] 35
+============================================================
+[2023/6/29 11:39:35] 294
+============================================================
+[2023/6/29 11:39:35] POST / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 13
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+fname=&lname=
+============================================================
+[2023/6/29 11:39:35] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:35] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 11:39:35] Client connected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:35] 0
+============================================================
+[2023/6/29 11:39:35] 35
+============================================================
+[2023/6/29 11:39:35] 589
+============================================================
+[2023/6/29 11:39:35] 0
+============================================================
+[2023/6/29 11:39:35] 35
+============================================================
+[2023/6/29 11:39:35] 40
+============================================================
+[2023/6/29 11:39:35] GET /favicon.png HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-BE,fr-FR;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6,nl;q=0.5
+
+
+============================================================
+[2023/6/29 11:39:35] Client disconnected on port: 8080 from ip: 127.0.0.1
+============================================================
+[2023/6/29 11:39:35] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
