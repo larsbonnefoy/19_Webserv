@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:15 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 11:42:43 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 15:42:41 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Http
 		virtual	~Http() = 0;
 		
 		// Operators
-		Http & operator=(const Http &assign) {(void)assign;};
+		Http & operator=(const Http &assign);
 
 		// Setters
 		virtual void	setStartLine(std::string startLine);

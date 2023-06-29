@@ -26,6 +26,8 @@
 # include "Config.hpp"
 # include "ConfigParser.hpp"
 # include "Server.hpp"
+# include "Http.hpp"
+# include "HttpRequest.hpp"
 
 # define TIMEOUT -1
 

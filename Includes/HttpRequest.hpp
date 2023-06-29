@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:06 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 13:28:29 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 16:47:51 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,13 @@ class HttpRequest : public Http
 
 		//Member Functions
 		void	requestParser(std::string request);
+		void	HttpRequest::parseFirstLine(void);
 		
 	private:
 		std::string _version;
-		bool		_hasEmptyLine;
+		std::string _methode;
+		std::string _uri;
+		std::string _protocol;
 		bool		_hasBody;
 
 

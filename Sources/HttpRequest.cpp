@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 14:27:27 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 16:48:35 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,16 @@ void	HttpRequest::requestParser(std::string request)
 	this->_hasBody = 0;
 
 	std::getline(requestStream, this->_startLine);
-
-
-
+	ws_log(this->_startLine);
+	this->parseFirstLine();
 	std::string line;
 	std::getline(requestStream, line);
-	while(line != "" && requestStream.eof() == 0)
+	while(*line.begin() != 13 && requestStream.eof() == 0)
 	{
 		this->addToHeaderField(line);
+		// ws_log(line);
 		std::getline(requestStream, line);
+		// ws_log((int)line.c_str()[0]);
 	}
 
 	if (requestStream.eof() == 1)
@@ -67,4 +68,15 @@ void	HttpRequest::requestParser(std::string request)
 	this->_hasBody = 1;
 	for (std::string bodyLine; std::getline(requestStream, bodyLine);)
 		this->_body.append(bodyLine);
+	ws_log(this->_body);
+}
+
+void	HttpRequest::parseFirstLine(void)
+{
+		std::stringstream startStream(this->_startLine);
+
+		std::getline(startStream, this->_methode, ' ');	
+		std::getline(startStream, this->_uri, ' ');	
+		std::getline(startStream, this->_protocol, '/');	
+		std::getline(startStream, this->_version);	
 }

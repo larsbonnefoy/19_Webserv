@@ -80,7 +80,9 @@ void	Mux::run(void)
 					//connect client maybe change program flow from receive parse read to receive all parse all send all 
 					this->_Sockets[i]->connectClient();
 					const std::string request = this->_Sockets[i]->receiveRequest();
-					ws_logFile(request);
+					// ws_logFile(request);
+					ws_log(request);
+					HttpRequest	test(request);
 					this->_Sockets[i]->sendResponse(httpResponse);	
 					this->_Sockets[i]->closeClient();			
 					ws_logFile(httpResponse);

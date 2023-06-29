@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:08:39 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/27 17:09:55 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 15:57:29 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	ws_logFile(T input)
 template<typename T>
 void	ws_log(T input)
 {
+ 	LOGSTREAM << "============================================================" << std::endl;
 	timestamp(LOGSTREAM);
 	ws_logFile(input);
 	LOGSTREAM << input << std::endl;
