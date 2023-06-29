@@ -32,7 +32,6 @@ int main (int argc, char *argv[])
         // for (std::map<size_t, Server>::iterator it=servers.begin();  it !=  servers.end(); it++) {
         //     std::cout << it->second << std::endl;
         // }
-
         // delete defaultConfig;
     }
     catch (std::exception &e) {

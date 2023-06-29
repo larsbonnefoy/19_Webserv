@@ -59,6 +59,7 @@ class Http
 		virtual void	setStartLine(std::string startLine);
 		virtual void	setBody(std::string body);
 		virtual void	setHeaderField(std::map<std::string, std::string> headerField);
+        virtual void	addToHeaderField(std::string header, std::string value);
 		virtual void	addToHeaderField(std::string headerToAdd);
 
 		// Getters
