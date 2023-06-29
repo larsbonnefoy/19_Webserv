@@ -28,7 +28,6 @@ Http::~Http()
 {
 }
 
-
 // Operators
 Http & Http::operator=(const Http &assign)
 {
@@ -69,17 +68,17 @@ void	Http::addToHeaderField(std::string headerToAdd)
 }
 
 // Getters
-std::string							Http::GetStartLine(void) const
+std::string							Http::getStartLine(void) const
 {
 	return (this->_startLine);
 }
 
-std::string							Http::GetBody(void) const
+std::string							Http::getBody(void) const
 {
 	return (this->_body);
 }
 
-std::map<std::string, std::string>	Http::GetHeaderField(void) const
+std::map<std::string, std::string>	Http::getHeaderField(void) const
 {
 	return (this->_headerField);
 }
