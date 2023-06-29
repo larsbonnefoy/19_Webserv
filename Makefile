@@ -44,6 +44,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	rm -f webserv.log
 
 re: fclean all
 
