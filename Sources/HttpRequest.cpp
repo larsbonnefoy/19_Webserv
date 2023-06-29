@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 14:04:13 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 14:27:27 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,6 @@ void	HttpRequest::requestParser(std::string request)
 	if (requestStream.eof() == 1)
 		return ;
 	this->_hasBody = 1;
-	//
+	for (std::string bodyLine; std::getline(requestStream, bodyLine);)
+		this->_body.append(bodyLine);
 }

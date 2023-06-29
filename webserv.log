@@ -5607,3 +5607,202 @@ Content-Length: 617
     </form>
 </body>
 </html>
+============================================================
+[2023/6/29 14:28:30] Client connected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:30] 0
+============================================================
+[2023/6/29 14:28:30] 35
+============================================================
+[2023/6/29 14:28:30] 480
+============================================================
+[2023/6/29 14:28:30] GET / HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Referer: http://127.0.0.1/
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+
+============================================================
+[2023/6/29 14:28:30] Client disconnected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 14:28:30] Client connected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:30] 0
+============================================================
+[2023/6/29 14:28:30] 35
+============================================================
+[2023/6/29 14:28:30] 377
+============================================================
+[2023/6/29 14:28:30] GET /favicon.png HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0
+Accept: image/avif,image/webp,*/*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Referer: http://127.0.0.1/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+
+
+============================================================
+[2023/6/29 14:28:30] Client disconnected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:30] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 14:28:47] Client connected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:47] 0
+============================================================
+[2023/6/29 14:28:47] 35
+============================================================
+[2023/6/29 14:28:47] 445
+============================================================
+[2023/6/29 14:28:47] GET / HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+
+
+============================================================
+[2023/6/29 14:28:47] Client disconnected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:47] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+============================================================
+[2023/6/29 14:28:47] Client connected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:47] 0
+============================================================
+[2023/6/29 14:28:47] 35
+============================================================
+[2023/6/29 14:28:47] 377
+============================================================
+[2023/6/29 14:28:47] GET /favicon.png HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0
+Accept: image/avif,image/webp,*/*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Referer: http://localhost/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+
+
+============================================================
+[2023/6/29 14:28:47] Client disconnected on port: 80 from ip: 127.0.0.1
+============================================================
+[2023/6/29 14:28:47] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
