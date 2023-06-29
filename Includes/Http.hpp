@@ -53,7 +53,7 @@ class Http
 		virtual	~Http() = 0;
 		
 		// Operators
-		Http & operator=(const Http &assign) {(void)assign;};
+		Http & operator=(const Http &assign);
 
 		// Setters
 		virtual void	setStartLine(std::string startLine);
@@ -62,9 +62,9 @@ class Http
 		virtual void	addToHeaderField(std::string headerToAdd);
 
 		// Getters
-		virtual std::string							GetStartLine(void) const;		
-		virtual std::string							GetBody(void) const;
-		virtual std::map<std::string, std::string>	GetHeaderField(void) const;
+		virtual std::string							getStartLine(void) const;		
+		virtual std::string							getBody(void) const;
+		virtual std::map<std::string, std::string>	getHeaderField(void) const;
 
 
 	protected:
