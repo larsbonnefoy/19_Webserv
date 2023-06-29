@@ -1,0 +1,47 @@
+root /Users/larsbonnefoy/projects/19_Webserv/site/data;
+
+server {
+    listen 127.0.0.1:40;
+    server_name localhost;
+
+    max_body_size 2048576;
+
+    error_page 403  default/40x/403.html;
+    error_page 402  default/40x/402.html;
+    error_page 400  default/40x/400.html;
+    
+    location / {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        index file.html;
+        accept GET;
+        accept POST;
+        accept DELETE;
+    }
+
+    location /salut {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        redirect 301 /random.html;
+    }
+
+    error_page 410 default/40x/410.html;
+
+}
+
+server {
+    listen 127.0.0.1:80;
+    server_name localhost;
+    
+    error_page 418  default/40x/418.html;
+    error_page 410 default/40x/410.html;
+    
+    location / {
+        root /projects/19_Webserv/site/data/www;
+        accept GET;
+        accept DELETE;
+    }
+
+    location /images {
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        accept GET;
+    }
+}
