@@ -3,7 +3,7 @@
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
 
-/* TO DO 
+/* TODO 
  * Check possible parsing errors 
  *      -> non ending ;
  *      -> non valid ip address xxx.xxx.xxx.xxx
