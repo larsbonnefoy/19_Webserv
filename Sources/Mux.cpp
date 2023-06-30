@@ -41,7 +41,7 @@ Mux::Mux(Config	&conf) :	_conf(conf),
 
 Mux::Mux(const Mux &copy)
 {
-	*this = copy;
+	(void) copy;
 }
 
 
@@ -82,13 +82,10 @@ void	Mux::run(void)
 					this->_Sockets[i]->connectClient();
 					const std::string request = this->_Sockets[i]->receiveRequest();
 					ws_logFile(request);
-					// ws_log(request);
-					HttpRequest	test(request);
                     HttpResponse placeholder;
-					std::string	response = placeholder.convertToStr();
-					this->_Sockets[i]->sendResponse(response);	
+					this->_Sockets[i]->sendResponse(placeholder.convertToStr());	
 					this->_Sockets[i]->closeClient();			
-					ws_logFile(response);
+					ws_logFile(httpResponse);
 					this->_pollSocketFds[i].revents = 0;
 				}
 			}			

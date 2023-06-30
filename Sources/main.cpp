@@ -4,6 +4,8 @@
 #include "../Includes/Mux.hpp"
 #include "../Includes/Socket.hpp"
 #include "../Includes/Log.hpp"
+#include "../Includes/Http.hpp"
+#include "../Includes/HttpResponse.hpp"
 #include <string>
 #include <iostream>
 #include <vector>
@@ -15,11 +17,12 @@ int main (int argc, char *argv[])
         std::cout << "Unvalid Input Files" << std::endl;
         return (1);
     }
+
     try {
         Config *defaultConfig = parseConfig(argv[1]);
-        // std::map<size_t, Server> servers = defaultConfig->getServers();
 		try
 		{
+            StaticInit::initStatic();
 			Mux	mux(*defaultConfig);
 			mux.run();
 		}
@@ -29,11 +32,6 @@ int main (int argc, char *argv[])
 		}
 		delete defaultConfig;
 
-        // for (std::map<size_t, Server>::iterator it=servers.begin();  it !=  servers.end(); it++) {
-        //     std::cout << it->second << std::endl;
-        // }
-
-        // delete defaultConfig;
     }
     catch (std::exception &e) {
         std::cout << e.what() << std::endl;
