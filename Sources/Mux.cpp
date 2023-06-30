@@ -1,4 +1,5 @@
 #include "../Includes/Mux.hpp"
+#include "../Includes/HttpResponse.hpp"
 
 static const std::string httpResponse = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
@@ -40,7 +41,7 @@ Mux::Mux(Config	&conf) :	_conf(conf),
 
 Mux::Mux(const Mux &copy)
 {
-	(void) copy;
+	*this = copy;
 }
 
 
@@ -80,12 +81,14 @@ void	Mux::run(void)
 					//connect client maybe change program flow from receive parse read to receive all parse all send all 
 					this->_Sockets[i]->connectClient();
 					const std::string request = this->_Sockets[i]->receiveRequest();
-					// ws_logFile(request);
-					ws_log(request);
+					ws_logFile(request);
+					// ws_log(request);
 					HttpRequest	test(request);
-					this->_Sockets[i]->sendResponse(httpResponse);	
+                    HttpResponse placeholder;
+					std::string	response = placeholder.convertToStr();
+					this->_Sockets[i]->sendResponse(response);	
 					this->_Sockets[i]->closeClient();			
-					ws_logFile(httpResponse);
+					ws_logFile(response);
 					this->_pollSocketFds[i].revents = 0;
 				}
 			}			

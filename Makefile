@@ -6,14 +6,14 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/06/29 15:42:15 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/06/30 12:51:20 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpRequest.cpp
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp HttpResponse.cpp HttpRequest.cpp Http.cpp
 
 SRCS = $(addprefix Sources/, $(FILES))
 
@@ -44,6 +44,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	rm -f webserv.log
 
 re: fclean all
 

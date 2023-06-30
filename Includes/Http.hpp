@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:15 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 15:42:41 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/06/29 11:42:43 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,26 +46,29 @@ class Http
 {
 	public:
 		// Constructors
-		Http();
+		Http(void);
 		Http(const Http &copy);
 		 
 		// Destructor
-		virtual	~Http() = 0;
+		virtual	~Http(void) = 0;
 		
 		// Operators
 		Http & operator=(const Http &assign);
 
 		// Setters
-		virtual void	setStartLine(std::string startLine);
-		virtual void	setBody(std::string body);
-		virtual void	setHeaderField(std::map<std::string, std::string> headerField);
-		virtual void	addToHeaderField(std::string headerToAdd);
+		void	setStartLine(std::string startLine);
+		void	setBody(std::string body);
+		void	setHeaderField(std::map<std::string, std::string> headerField);
+		void	addToHeaderField(std::string headerToAdd);
+        void	addToHeaderField(std::string header, std::string value);
 
 		// Getters
-		virtual std::string							GetStartLine(void) const;		
-		virtual std::string							GetBody(void) const;
-		virtual std::map<std::string, std::string>	GetHeaderField(void) const;
+		std::string							getStartLine(void) const;		
+		std::string							getBody(void) const;
+		std::map<std::string, std::string>	getHeaderField(void) const;
 
+
+        std::string headerToStr(void);
 
 	protected:
 
