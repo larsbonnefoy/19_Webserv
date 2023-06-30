@@ -10,14 +10,16 @@ class HttpResponse : public Http {
         std::string _statusPhrase;
 
         std::string _makeStartLine(void);
-        void        _handleURL(std::string &URLPath);
+        void        _handleURL(std::string &url);
         std::string _getFileExtension(std::string &url);
         size_t      _getFileSize(std::string &url);
         std::string _valToString(size_t num);
+        std::string _fileToString(std::string &url);
+        std::string _getMIMEType(std::string &url);
 
     public:
         HttpResponse(void);
-        HttpResponse(std::string uri, size_t code);
+        HttpResponse(std::string url, size_t code);
         HttpResponse(const HttpResponse &other);
         ~HttpResponse(void);
         HttpResponse &operator=(const HttpResponse &other);

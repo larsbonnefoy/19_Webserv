@@ -83,7 +83,8 @@ void	Mux::run(void)
 					const std::string request = this->_Sockets[i]->receiveRequest();
 					ws_logFile(request);
 					HttpRequest Request(request);
-                    HttpResponse placeholder("/Users/larsbonnefoy/projects/19_Webserv/site/data/www/home.html", 200);
+					std::pair<std::string, size_t> response = requestHandler(this->_serverMap[this->_Sockets[i]->getPort()], Request);
+                    HttpResponse placeholder("/Users/space/Documents/19_Webserv/site/data/images/randomCat.jpeg", 200);
 					this->_Sockets[i]->sendResponse(placeholder.convertToStr());	
 					this->_Sockets[i]->closeClient();			
 					ws_logFile(httpResponse);
