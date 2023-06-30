@@ -82,7 +82,7 @@ void	Mux::run(void)
 					this->_Sockets[i]->connectClient();
 					const std::string request = this->_Sockets[i]->receiveRequest();
 					ws_logFile(request);
-                    HttpResponse placeholder("/Users/larsbonnefoy/projects/19_Webserv/site/data/www/home.html", 200);
+                    HttpResponse placeholder("/Users/larsbonnefoy/projects/19_Webserv/site/data/images/randomCat.jpeg", 200);
 					this->_Sockets[i]->sendResponse(placeholder.convertToStr());	
 					this->_Sockets[i]->closeClient();			
 					ws_logFile(httpResponse);

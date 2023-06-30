@@ -6,13 +6,13 @@ server {
 
     max_body_size 2048576;
 
-    error_page 403  default/40x/403.html;
-    error_page 402  default/40x/402.html;
-    error_page 400  default/40x/400.html;
+    error_page 403  www/default/40x/403.html;
+    error_page 402  www/default/40x/402.html;
+    error_page 400  www/default/40x/400.html;
     
     location / {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
-        index file.html;
+        index home.html;
         accept GET;
         accept POST;
         accept DELETE;

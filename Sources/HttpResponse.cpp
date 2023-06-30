@@ -37,34 +37,12 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
 }
 
 //Check for valid code!;
-HttpResponse::HttpResponse(std::string uri, size_t code) {
-    std::string body =  "<!DOCTYPE html>\r\n"
-                        "<html lang=\"en\">\r\n"
-                        "<head>\r\n"
-                        "  <meta charset=\"UTF-8\" />\r\n"
-                        "  <title>Hello, world!</title>\r\n"
-                        "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
-                        "  <meta name=\"description\" content=\"\" />\r\n"
-                        "  <link rel=\"icon\" href=\"favicon.png\">\r\n"
-                        "</head>\r\n"
-                        "<body>\r\n"
-                        "    <h1>ALLLOOOOOOO</h1>\r\n"
-                        "    <form method=\"POST\">\r\n"
-                        "        <label for=\"fname\">First name:</label><br>\r\n"
-                        "        <input type=\"text\" id=\"fname\" name=\"fname\"><br>\r\n"
-                        "        <label for=\"lname\">Last name:</label><br>\r\n"
-                        "        <input type=\"text\" id=\"lname\" name=\"lname\"><br><br>\r\n"
-                        "        <input type=\"submit\" value=\"Submit\">\r\n"
-                        "    </form>\r\n"
-                        "</body>\r\n"
-                        "</html>";
+HttpResponse::HttpResponse(std::string url, size_t code) {
     this->_statusCode = code;
     this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[code];
 
     this->setStartLine(_makeStartLine());
-    this->_handleURL(uri);
-    this->setBody(body);
-    std::cout << *this << std::endl;
+    this->_handleURL(url);
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
@@ -99,11 +77,10 @@ std::string HttpResponse::_makeStartLine(void) {
     return (startLine);
 }
 
-void    HttpResponse::_handleURL(std::string &URLPath) {
-    std::cout << _getFileExtension(URLPath) << std::endl;
-    std::cout << _getFileSize(URLPath) << std::endl;
-    this->addToHeaderField("Content-Type", "text/html");
-    this->addToHeaderField("Content-Length", "605");
+void    HttpResponse::_handleURL(std::string &url) {
+    this->addToHeaderField("Content-Type", _getMIMEType(url));
+    this->addToHeaderField("Content-Length", _valToString(_getFileSize(url)));
+    this->setBody(_fileToString(url));
 }
 
 size_t      HttpResponse::_getFileSize(std::string &url) {
@@ -123,6 +100,16 @@ std::string HttpResponse::_getFileExtension(std::string &url) {
     return (url.substr(lastDot + 1));
 }
 
+std::string HttpResponse::_getMIMEType(std::string &url) {
+    return (StaticInit::MIME_TYPES[_getFileExtension(url)]);
+}
+
+std::string HttpResponse::_fileToString(std::string &url) {
+    std::ifstream file(url);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return (buffer.str());
+}
 /******************************PUBLIC FUNCTIONS********************************/
 void HttpResponse::setStatusCode(size_t code) {
     this->_statusCode = code;
