@@ -2,11 +2,18 @@
 #define HTTPRESPONSE_HPP
 
 #include "../Includes/Http.hpp"
+#include <cstddef>
 
 class HttpResponse : public Http {
     private:
         size_t      _statusCode;
         std::string _statusPhrase;
+
+        std::string _makeStartLine(void);
+        void        _handleURL(std::string &URLPath);
+        std::string _getFileExtension(std::string &url);
+        size_t      _getFileSize(std::string &url);
+        std::string _valToString(size_t num);
 
     public:
         HttpResponse(void);
@@ -22,7 +29,6 @@ class HttpResponse : public Http {
         std::string getStatusPhrase(void) const;
         
         std::string convertToStr(void);
-        std::string makeStartLine(void);
 
 };
 
