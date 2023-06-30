@@ -1,0 +1,816 @@
+=============================================================================================
+[2023/6/30 16:47:59] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:47:59] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:47:59] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:47:59] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:47:59] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:47:59] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:47:59] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:47:59] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:47:59] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:00] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:00] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:00] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:00] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:00] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:00] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:00] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:00] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:00] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:00] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:00] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:01] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:01] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:01] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:01] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:01] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:01] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:01] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:01] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:01] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:02] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:02] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:02] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:02] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:02] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:02] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+=============================================================================================
+[2023/6/30 16:48:02] Client connected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] POST /cool HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+Origin: http://localhost:8080
+Connection: keep-alive
+Referer: http://localhost:8080/cool
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+
+fname=&lname=
+=============================================================================================
+[2023/6/30 16:48:02] Client disconnected on port: 8080 from ip: 127.0.0.1
+=============================================================================================
+[2023/6/30 16:48:02] HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 617
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1>Hello</h1>
+    <form method="POST">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

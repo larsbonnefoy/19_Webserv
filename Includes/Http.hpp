@@ -91,8 +91,8 @@ struct StaticInit {
         STATUS_CODE_PHRASE[504] = "Gateway Timeout";
         STATUS_CODE_PHRASE[505] = "HTTP Version Not Supported";
 
-        MIME_TYPES[".html"] = "text/html";
-        MIME_TYPES[".txt"] = "text/plain";
+        MIME_TYPES["html"] = "text/html";
+        MIME_TYPES["txt"] = "text/plain";
     }
 };
 
