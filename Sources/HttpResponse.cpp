@@ -1,11 +1,15 @@
 #include "../Includes/HttpResponse.hpp"
+#include <string>
 
-HttpResponse::HttpResponse(void) : _statusCode(0), _statusPhrase("") {
+std::map<size_t, std::string> StaticInit::STATUS_CODE_PHRASE;
+std::map<std::string, std::string> StaticInit::MIME_TYPES;
+
+HttpResponse::HttpResponse(void) : _statusCode(200){
     std::string body =  "<!DOCTYPE html>\r\n"
                         "<html lang=\"en\">\r\n"
                         "<head>\r\n"
                         "  <meta charset=\"UTF-8\" />\r\n"
-                        "  <title>Hello, world!</title>\r\n"
+                        "  <title>test test</title>\r\n"
                         "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
                         "  <meta name=\"description\" content=\"\" />\r\n"
                         "  <link rel=\"icon\" href=\"favicon.png\">\r\n"
@@ -21,10 +25,21 @@ HttpResponse::HttpResponse(void) : _statusCode(0), _statusPhrase("") {
                         "    </form>\r\n"
                         "</body>\r\n"
                         "</html>";
-    this->setStartLine("HTTP/1.1 200 OK");
+
+    this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
+
+    this->setStartLine(makeStartLine());
     this->addToHeaderField("Content-Type", "text/html");
     this->addToHeaderField("Content-Length", "617");
     this->setBody(body);
+    std::cout << *this << std::endl;
+}
+
+//Check for valid code!;
+HttpResponse::HttpResponse(std::string uri, size_t code) {
+    (void) uri;
+    this->_statusCode = code;
+    this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
@@ -61,10 +76,26 @@ std::string HttpResponse::convertToStr(void) {
     std::string responseStr; 
     
     responseStr = getStartLine();
-    responseStr += "\n";
+    responseStr += "\r\n";
     responseStr += headerToStr();
     responseStr += "\r\n";
     responseStr += getBody();
 
     return (responseStr);
+}
+
+std::string HttpResponse::makeStartLine(void) {
+    std::string startLine = "HTTP/1.1";
+
+    startLine += " ";
+    startLine += std::to_string(_statusCode);
+    startLine += " ";
+    startLine += _statusPhrase;
+
+    return (startLine);
+}
+
+std::ostream &operator<<(std::ostream &out, HttpResponse &httpRes) {
+    out << httpRes.convertToStr();
+    return (out);
 }

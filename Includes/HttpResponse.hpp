@@ -10,6 +10,7 @@ class HttpResponse : public Http {
 
     public:
         HttpResponse(void);
+        HttpResponse(std::string uri, size_t code);
         HttpResponse(const HttpResponse &other);
         ~HttpResponse(void);
         HttpResponse &operator=(const HttpResponse &other);
@@ -21,6 +22,9 @@ class HttpResponse : public Http {
         std::string getStatusPhrase(void) const;
         
         std::string convertToStr(void);
+        std::string makeStartLine(void);
+
 };
 
+std::ostream &operator<<(std::ostream &out, HttpResponse &httpRes);
 #endif
