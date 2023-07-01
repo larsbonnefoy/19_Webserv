@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/01 01:17:30 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/01 14:00:27 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static int	getMethode(Server server, HttpRequest request)
 {
 	size_t retVal = -1;
-
+	int methode = matchMethod(request.getMethode());
     for (size_t methodID = 0; methodID < 3; methodID++) {
         if (request.getMethode() == server.getLocations()[methodID]) {
             retVal = methodID;
@@ -35,7 +35,7 @@ static int	getType(Server server, HttpRequest request)
 	
 }
 
-static std::pair<std::string, size_t> requestError(Server server, HttpRequest request)
+static std::pair<std::string, size_t> requestError(Server server, HttpRequest request, int code)
 {
 	
 }
@@ -44,16 +44,37 @@ static std::pair<std::string, size_t> requestSuccess(std::string path, int code)
 {
 	std::pair<std::string, size_t> res;
 	res.first = path;
-	res.second = 200;
+	res.second = code;
 	return (res);
 }
+
+static int	getType(std::string path)
+{
+	
+}
+
+static std::string	getIndex(Server server, HttpRequest request)
+{
+	
+}
+
+static int	getAutoIndex(Server server, HttpRequest request)
+{
+	
+}
+
+static std::string getRedir(Server server, HttpRequest request)
+{
+	
+}
+
 
 std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request)
 {
 	int methode = getMethode(server, request);
 	if (methode == -1)
 		return (requestError(server, request, 403));
-	
+	// getlocation ??
 	switch (methode)
 	{
 		case GET:
@@ -66,17 +87,17 @@ std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request
 			if (type)
 				return(requestSuccess(path, 200));
 			
-			std::string index = getIndex(server, request); //autoIndex and index ??? 
+			std::string index = getIndex(server, request);
 			if (index == "badIndex")
 				return (requestError(server, request, 403));
 			if (index != "autoIndex")
-				return(requestSuccess(path + "/" + index, 200)); //??
+				return(requestSuccess(path + "/" + index, 200));
 			
 			int	autoindex = getAutoIndex(server, request);
 			if (autoindex == 0)
 				return (requestError(server, request, 403));
 			if (autoindex == 1)
-				return(requestSuccess(path, 200));
+				return(requestSuccess(path + "/", 200));
 			
 			std::string	redir = getRedir(server, request);
 			if (redir == "badRedir")	

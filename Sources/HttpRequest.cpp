@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/30 14:52:39 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/01 13:37:45 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,3 +81,32 @@ void	HttpRequest::parseFirstLine(void)
 		std::getline(startStream, this->_protocol, '/');	
 		std::getline(startStream, this->_version);	
 }
+
+// Getter
+
+std::string	HttpRequest::getVersion(void)
+{
+	return(this->_version);	
+}
+
+std::string	HttpRequest::getMethode(void)
+{
+	return(this->_methode);
+}
+
+std::string	HttpRequest::getUri(void)
+{
+	return(this->_uri);
+}
+
+std::string	HttpRequest::getProtocol(void)
+{
+	return(this->_protocol);
+}
+
+bool		HttpRequest::gethasBody(void)
+{
+	return(this->_hasBody);
+}
+
+		
