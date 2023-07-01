@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sys/types.h>
 
-Location::Location(void) :_path(""), _root("/"), _index(""), _autoindex(UNDEFINED) {
+Location::Location(void) :_path(""), _root(""), _index(""), _autoindex(UNDEFINED) {
     this->setAutorizedMethods(false, false, false);
     this->_redirect.first = 0;
     this->_redirect.second = "";

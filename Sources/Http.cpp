@@ -11,55 +11,6 @@
 /* ************************************************************************** */
 
 #include "../Includes/Http.hpp"
-#include <utility>
-/*
-StaticInit::StaticInit(void) {
-
-    STATUS_CODE_PHRASE[100] = "Continue";
-    STATUS_CODE_PHRASE[101] = "Switching Protocols";
-    STATUS_CODE_PHRASE[200] = "OK";
-    STATUS_CODE_PHRASE[201] = "Created";
-    STATUS_CODE_PHRASE[202] = "Accepted";
-    STATUS_CODE_PHRASE[203] = "Non-Authoritative Information";
-    STATUS_CODE_PHRASE[204] = "No Content";
-    STATUS_CODE_PHRASE[205] = "Reset Content";
-    STATUS_CODE_PHRASE[206] = "Partial Content";
-    STATUS_CODE_PHRASE[300] = "Multiple Choices";
-    STATUS_CODE_PHRASE[301] = "Moved Permanently"; 
-    STATUS_CODE_PHRASE[302] = "Found";
-    STATUS_CODE_PHRASE[303] = "See Other";
-    STATUS_CODE_PHRASE[304] = "Not Modified";
-    STATUS_CODE_PHRASE[305] = "Use Proxy";
-    STATUS_CODE_PHRASE[307] = "Temporary Redirect";
-    STATUS_CODE_PHRASE[400] = "Bad Request";
-    STATUS_CODE_PHRASE[401] = "Unauthorized";
-    STATUS_CODE_PHRASE[402] = "Payment Required";
-    STATUS_CODE_PHRASE[403] = "Forbidden";
-    STATUS_CODE_PHRASE[404] = "Not Found";
-    STATUS_CODE_PHRASE[405] = "Method Not Allowed";
-    STATUS_CODE_PHRASE[406] = "Not Acceptable";
-    STATUS_CODE_PHRASE[407] = "Proxy Authentication Required";
-    STATUS_CODE_PHRASE[408] = "Request Timeout";
-    STATUS_CODE_PHRASE[409] = "Conflict";
-    STATUS_CODE_PHRASE[410] = "Gone";
-    STATUS_CODE_PHRASE[411] = "Length Required";
-    STATUS_CODE_PHRASE[412] = "Precondition Failed";
-    STATUS_CODE_PHRASE[413] = "Request Entity Too Large";
-    STATUS_CODE_PHRASE[414] = "Request-URI Too Long";
-    STATUS_CODE_PHRASE[415] = "Unsupported Media Type";
-    STATUS_CODE_PHRASE[416] = "Requested Range Not Satisfiable";
-    STATUS_CODE_PHRASE[417] = "Expectation Failed";
-    STATUS_CODE_PHRASE[500] = "Internal Server Error";
-    STATUS_CODE_PHRASE[501] = "Not Implemented";
-    STATUS_CODE_PHRASE[502] = "Bad Gateway";
-    STATUS_CODE_PHRASE[503] = "Service Unavailable";
-    STATUS_CODE_PHRASE[504] = "Gateway Timeout";
-    STATUS_CODE_PHRASE[505] = "HTTP Version Not Supported";
-
-    MIME_TYPES[".html"] = "text/html";
-    MIME_TYPES[".txt"] = "text/plain";
-}
-*/
 
 // Constructors
 Http::Http(void)

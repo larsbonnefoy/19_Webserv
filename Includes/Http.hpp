@@ -93,6 +93,9 @@ struct StaticInit {
 
         MIME_TYPES["html"] = "text/html";
         MIME_TYPES["txt"] = "text/plain";
+        MIME_TYPES["jpg"] = "image/jpeg";
+        MIME_TYPES["jpeg"] = "image/jpeg";
+        MIME_TYPES["gif"] = "image/gif";
     }
 };
 

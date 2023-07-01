@@ -15,8 +15,8 @@ class Server {
         size_t                          _port;
         size_t                          _maxBodySize;
         std::string                     _serverName;
-        std::map<size_t, std::string>   _errors;
-        std::vector<Location>           _locations;
+        std::map<size_t, std::string>    _errors;
+        std::vector<Location>            _locations;
 
     public:
         static std::string                  root;
