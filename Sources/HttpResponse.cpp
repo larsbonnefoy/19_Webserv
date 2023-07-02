@@ -13,7 +13,7 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
                         "  <title>test test</title>\r\n"
                         "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
                         "  <meta name=\"description\" content=\"\" />\r\n"
-                        "  <link rel=\"icon\" href=\"favicon.png\">\r\n"
+                        "  <link rel=\"icon\" href=\"favicon.ico\">\r\n"
                         "</head>\r\n"
                         "<body>\r\n"
                         "    <h1>Hello</h1>\r\n"
@@ -46,7 +46,7 @@ HttpResponse::HttpResponse(std::string url, size_t code) {
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
-    : _statusCode(other._statusCode), _statusPhrase(other._statusPhrase) {
+    : Http(other), _statusCode(other._statusCode), _statusPhrase(other._statusPhrase) {
 }
 
 HttpResponse::~HttpResponse(void) {
@@ -105,7 +105,7 @@ std::string HttpResponse::_getMIMEType(std::string &url) {
 }
 
 std::string HttpResponse::_fileToString(std::string &url) {
-    std::ifstream file(url);
+    std::ifstream file(url.c_str());
     std::stringstream buffer;
     buffer << file.rdbuf();
     return (buffer.str());
