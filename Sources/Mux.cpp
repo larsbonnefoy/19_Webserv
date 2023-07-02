@@ -1,5 +1,7 @@
 #include "../Includes/Mux.hpp"
 #include "../Includes/HttpResponse.hpp"
+#include "../Includes/HttpRequest.hpp"
+#include "../Includes/RequestHandler.hpp"
 
 static const std::string httpResponse = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"

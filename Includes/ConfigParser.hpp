@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <vector>
 #include <stack>
+#include <netinet/in.h>
 #include "../Includes/Config.hpp"
 
 Config *parseConfig(std::string configFile);

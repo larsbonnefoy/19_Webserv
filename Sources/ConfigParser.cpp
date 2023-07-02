@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParser.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lbonnefo <lbonnefo@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/30 18:59:09 by lbonnefo           #+#    #+#             */
-/*   Updated: 2023/06/30 18:59:14 by lbonnefo          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../Includes/Server.hpp"
 #include "../Includes/Config.hpp"
 #include "../Includes/ConfigParser.hpp"
@@ -38,7 +26,6 @@
  * When seeing a key word (server,root tbc) jump to the next closing terminating char
  * (bracket or ;) and start configuring server obj that will be added in Config object
  *
- * /!\if '{' is removed in getline it breaks everything idk why
  */ 
 Config *parseConfig(std::string configFile) {
     Config *configRes = new Config();
@@ -206,6 +193,7 @@ void    addServer(std::string infoBuffer, Config &conf) {
         throw DuplicateValueError();
     }
     conf.getServers()[serv.getPort()] = serv; 
+    std::cout << serv << std::endl;
 }
 
 /*

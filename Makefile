@@ -6,14 +6,14 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/06/30 18:55:23 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/07/02 15:04:05 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp HttpResponse.cpp HttpRequest.cpp Http.cpp RequestHandler.cpp
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpResponse.cpp HttpRequest.cpp  RequestHandler.cpp
 
 SRCS = $(addprefix Sources/, $(FILES))
 
