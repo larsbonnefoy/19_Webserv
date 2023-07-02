@@ -8,14 +8,14 @@ server {
     error_page 410 default/40x/410.html;
     
     location / {
-        root /projects/19_Webserv/site/data/www;
+        root /www;
         accept GET;
         accept DELETE;
         autoindex false;
     }
 
     location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        root www;
         accept GET;
         autoindex false;
     }
@@ -29,14 +29,14 @@ server {
     error_page 410 default/40x/410.html;
     
     location / {
-        root /projects/19_Webserv/site/data/www;
+        root www;
         accept GET;
         accept DELETE;
         autoindex false;
     }
 
     location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        root www;
         accept GET;
         autoindex false;
     }
