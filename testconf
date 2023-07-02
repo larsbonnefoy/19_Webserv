@@ -1,21 +1,24 @@
+root /home/space/Documents/19_Webserv/site/data;
+
 server {
     listen 127.0.0.1:8080;
     server_name localhost;
     
     error_page 418  default/40x/418.html;
     error_page 410 default/40x/410.html;
+    error_page 404 default/40x/404.html;
     
     location / {
-        root /projects/19_Webserv/site/data/www;
+        root /www;
         accept GET;
         accept DELETE;
-        autoindex false;
+        index home.html;
     }
 
     location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        root /www;
         accept GET;
-        autoindex false;
+        index home.html;
     }
 }
 
@@ -27,14 +30,14 @@ server {
     error_page 410 default/40x/410.html;
     
     location / {
-        root /projects/19_Webserv/site/data/www;
+        root /www;
         accept GET;
         accept DELETE;
         autoindex false;
     }
 
     location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        root /www;
         accept GET;
         autoindex false;
     }

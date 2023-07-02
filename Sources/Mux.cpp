@@ -12,7 +12,7 @@ static const std::string httpResponse = "HTTP/1.1 200 OK\r\n"
                           "  <title>Hello, world!</title>\r\n"
                           "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
                           "  <meta name=\"description\" content=\"\" />\r\n"
-                          "  <link rel=\"icon\" href=\"favicon.png\">\r\n"
+                          "  <link rel=\"icon\" href=\"favicon.ico\">\r\n"
                           "</head>\r\n"
                           "<body>\r\n"
                           "    <h1>Hello</h1>\r\n"
@@ -83,8 +83,12 @@ void	Mux::run(void)
 					const std::string request = this->_Sockets[i]->receiveRequest();
 					ws_logFile(request);
 					HttpRequest Request(request);
+
 					std::pair<std::string, size_t> response = requestHandler(this->_serverMap[this->_Sockets[i]->getPort()], Request);
-                    HttpResponse placeholder("/Users/space/Documents/19_Webserv/site/data/images/randomCat.jpeg", 200);
+                    ws_log(response.first);
+                    ws_log(response.second);
+					
+					HttpResponse placeholder(response.first, response.second);
 					this->_Sockets[i]->sendResponse(placeholder.convertToStr());	
 					this->_Sockets[i]->closeClient();			
 					ws_logFile(httpResponse);

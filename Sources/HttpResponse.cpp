@@ -13,7 +13,7 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
                         "  <title>test test</title>\r\n"
                         "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
                         "  <meta name=\"description\" content=\"\" />\r\n"
-                        "  <link rel=\"icon\" href=\"favicon.png\">\r\n"
+                        "  <link rel=\"icon\" href=\"favicon.ico\">\r\n"
                         "</head>\r\n"
                         "<body>\r\n"
                         "    <h1>Hello</h1>\r\n"
