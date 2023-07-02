@@ -4,21 +4,22 @@ server {
     listen 127.0.0.1:8080;
     server_name localhost;
     
-    error_page 418  default/40x/418.html;
-    error_page 410 default/40x/410.html;
-    error_page 404 default/40x/404.html;
+    error_page 418 www/default/40x/418.html;
+    error_page 410 www/default/40x/410.html;
+    error_page 404 www/default/40x/404.html;
+    error_page 403 www/default/40x/403.html;
     
     location / {
-        root /www;
+        root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
         index home.html;
     }
 
     location /images {
-        root /www;
+        root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
-        index home.html;
+        autoIndex false;
     }
 }
 
@@ -26,18 +27,19 @@ server {
     listen 127.0.0.1:8181;
     server_name localhost;
     
-    error_page 418  default/40x/418.html;
-    error_page 410 default/40x/410.html;
+    error_page 418 www/default/40x/418.html;
+    error_page 410 www/default/40x/410.html;
+    error_page 403 www/default/40x/403.html;
     
     location / {
-        root /www;
+        root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
-        autoindex false;
+        redirect 301 /home/space/Documents/19_Webserv/site/data/www/default/40x/418.html;
     }
 
     location /images {
-        root /www;
+        root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
         autoindex false;
     }
