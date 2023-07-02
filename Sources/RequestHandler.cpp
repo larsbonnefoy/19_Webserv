@@ -6,12 +6,12 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/02 03:43:50 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/02 18:03:30 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Includes/RequestHandler.hpp"
-
+// Change most error code to 403
 static Location	getLocation(Server server, HttpRequest request)
 {
 	Location	location;
@@ -62,7 +62,7 @@ static std::string	getRoot(Server server)
 	return (root);
 }
 
-static std::string	getPath(Server server, Location location, HttpRequest request, int methode)
+static std::string	getPath(Location location, HttpRequest request, int methode)
 {
 	std::string path;
 	std::string locationRoot;
@@ -71,7 +71,7 @@ static std::string	getPath(Server server, Location location, HttpRequest request
 	locationRoot = location.getRoot();
 	if (*locationRoot.rbegin() == '/')
 		locationRoot.erase(locationRoot.size() - 1);
-	path = getRoot(server)  + locationRoot + request.getUri();
+	path = locationRoot + request.getUri();
 	ws_log(path);
 	int ret = stat(path.c_str(), &statbuf);
 	if (ret < 0)
@@ -136,6 +136,9 @@ static std::string	getIndex(Location location, std::string path)
 {
 	struct stat statbuf;
 
+	if (location.getIndex() == "")
+		return ("");
+	
 	if (*path.rbegin() == '/')
 		path.erase(path.size() - 1);
 	std::string index = path + "/" + location.getIndex();
@@ -143,10 +146,11 @@ static std::string	getIndex(Location location, std::string path)
 	ws_log(index);
 	if (stat(index.c_str(), &statbuf) != 0)
 		return (BADINDEX);
+	ws_log("hmmm");
 	if (!((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
 		return (BADINDEX);
 	ws_log("hmmm");
-	if (index.rfind(".html") != index.size() - 5)//????
+	if (index.rfind(".html") != index.size() - 5)
 		return (BADINDEX);
 	return (index);
 }
@@ -174,11 +178,11 @@ static std::pair<std::string, size_t> requestSuccess(std::string path, int code)
  
 
 
-static std::string getRedir(Location location, std::string path)
+static std::string getRedir(Location location)
 {
 	struct stat statbuf;
-
-	std::string redir = path + "/" + location.getRedirect().second;//????
+	
+	std::string redir = location.getRedirect().second;//????
 	ws_log("redir");
 	ws_log(redir);
 	if (stat(redir.c_str(), &statbuf) != 0)
@@ -191,32 +195,33 @@ static std::string getRedir(Location location, std::string path)
 std::pair<std::string, size_t> GETRequest(Location location, Server server, HttpRequest request)
 {
 	ws_log("GET");
-	std::string	path = getPath(server, location, request, GET);
-		if (path == BADPATH)
-			return (requestError(server, 404));	
-					
-		int	type = getType(path);
-		if (type == -1)
-			return(requestError(server, 403));
-		if (type == 1)
-			return(requestSuccess(path, 200));
-			
-		std::string index = getIndex(location, path);
-		if (index == "badIndex")
-			return (requestError(server, 403));
-		if (index != "")
-			return(requestSuccess(index, 200));
-			
-		int	autoindex = location.getAutoIndex();
-		if (autoindex == 0)
-			return (requestError(server, 403));
-		if (autoindex == 1)
-			return(requestSuccess(path + "/", 200));
-			
-		std::string	redir = getRedir(location, path);
-		if (redir == "badRedir")	
-			return (requestError(server, 403));
-		return(requestSuccess(redir, 301));
+	std::string	path = getPath(location, request, GET);
+	if (path == BADPATH)
+		return (requestError(server, 404));	
+				
+	int	type = getType(path);
+	if (type == -1)
+		return(requestError(server, 402));
+	if (type == 1)
+		return(requestSuccess(path, 200));
+		
+	std::string index = getIndex(location, path);
+	if (index == "badIndex")
+		return (requestError(server, 405));
+	if (index != "")
+		return(requestSuccess(index, 200));
+		
+	ws_log("autoIndex");
+	int	autoindex = location.getAutoIndex();
+	if (autoindex == 0)
+		return (requestError(server, 406));
+	if (autoindex == 1)
+		return(requestSuccess(path, 200));// ??? no workey
+		
+	std::string	redir = getRedir(location);
+	if (redir == "badRedir")	
+		return (requestError(server, 407));
+	return(requestSuccess(redir, 301));
 }
 
 std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request)
@@ -224,7 +229,7 @@ std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request
 	Location	location = getLocation(server, request);
 	int methode = getMethode(location, request);
 	if (methode == -1)
-		return (requestError(server, 403));
+		return (requestError(server, 400));
 	
 	switch (methode)
 	{
