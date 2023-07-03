@@ -9,7 +9,7 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
 
     this->setStartLine(_makeStartLine());
     this->addToHeaderField("Content-Type", "text/html");
-    this->addToHeaderField("Content-Length", "617");
+    this->addToHeaderField("Content-Length", _valToString(body.length()));
     this->setBody(body);
     std::cout << *this << std::endl;
 }

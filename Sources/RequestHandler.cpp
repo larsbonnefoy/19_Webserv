@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/02 18:03:30 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 10:36:26 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,8 @@ static std::pair<std::string, size_t> requestError(Server server, int code)
 	std::pair<std::string, size_t> res;
 	res.first = getRoot(server);
 	res.second = code;
-	std::map<size_t, std::string>::iterator it = server.getErrors().find(code);
+	std::map<size_t, std::string> tmp = server.getErrors();
+	std::map<size_t, std::string>::iterator it = tmp.find(code);
 	if (it != server.getErrors().end())
 		res.first += "/" + server.getErrors()[code];
 	return (res);
@@ -182,7 +183,7 @@ static std::string getRedir(Location location)
 {
 	struct stat statbuf;
 	
-	std::string redir = location.getRedirect().second;//????
+	std::string redir = location.getRedirect().second;
 	ws_log("redir");
 	ws_log(redir);
 	if (stat(redir.c_str(), &statbuf) != 0)

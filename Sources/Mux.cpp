@@ -3,30 +3,6 @@
 #include "../Includes/HttpRequest.hpp"
 #include "../Includes/RequestHandler.hpp"
 
-static const std::string httpResponse = "HTTP/1.1 200 OK\r\n"
-                          "Content-Type: text/html\r\n"
-                          "Content-Length: 617\r\n"
-                          "\r\n"
-                          "<!DOCTYPE html>\r\n"
-                          "<html lang=\"en\">\r\n"
-                          "<head>\r\n"
-                          "  <meta charset=\"UTF-8\" />\r\n"
-                          "  <title>Hello, world!</title>\r\n"
-                          "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
-                          "  <meta name=\"description\" content=\"\" />\r\n"
-                          "  <link rel=\"icon\" href=\"favicon.ico\">\r\n"
-                          "</head>\r\n"
-                          "<body>\r\n"
-                          "    <h1>Hello</h1>\r\n"
-                          "    <form method=\"POST\">\r\n"
-                          "        <label for=\"fname\">First name:</label><br>\r\n"
-                          "        <input type=\"text\" id=\"fname\" name=\"fname\"><br>\r\n"
-                          "        <label for=\"lname\">Last name:</label><br>\r\n"
-                          "        <input type=\"text\" id=\"lname\" name=\"lname\"><br><br>\r\n"
-                          "        <input type=\"submit\" value=\"Submit\">\r\n"
-                          "    </form>\r\n"
-                          "</body>\r\n"
-                          "</html>";
 // Constructors
 Mux::Mux()
 {
@@ -86,14 +62,14 @@ void	Mux::run(void)
 					ws_logFile(request);
 					HttpRequest Request(request);
 
-					std::pair<std::string, size_t> response = requestHandler(this->_serverMap[this->_Sockets[i]->getPort()], Request);
-                    ws_log(response.first);
-                    ws_log(response.second);
+					std::pair<std::string, size_t> responseValues = requestHandler(this->_serverMap[this->_Sockets[i]->getPort()], Request);
+                    ws_log(responseValues.first);
+                    ws_log(responseValues.second);
 					
-					HttpResponse placeholder(response.first, response.second);
-					this->_Sockets[i]->sendResponse(placeholder.convertToStr());	
+					HttpResponse response(responseValues.first, responseValues.second);
+                    ws_log(response.convertToStr());
+					this->_Sockets[i]->sendResponse(response.convertToStr());	
 					this->_Sockets[i]->closeClient();			
-					ws_logFile(httpResponse);
 					this->_pollSocketFds[i].revents = 0;
 				}
 			}			
