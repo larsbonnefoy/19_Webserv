@@ -47,6 +47,8 @@ struct StaticInit {
     static std::map<size_t, std::string>        STATUS_CODE_PHRASE;
 
     static std::map<std::string, std::string>   MIME_TYPES;
+
+    static std::string                          DEF_ERROR;
     
     static void initStatic(void) {
         
@@ -96,6 +98,22 @@ struct StaticInit {
         MIME_TYPES["jpg"] = "image/jpeg";
         MIME_TYPES["jpeg"] = "image/jpeg";
         MIME_TYPES["gif"] = "image/gif";
+
+        DEF_ERROR = "<!DOCTYPE html>\r\n"
+                        "<html>\r\n"
+                        "<head>\r\n"
+                        "  <title>Default File</title>\r\n"
+                        "</head>\r\n"
+                        "<body>\r\n"
+                        "   <center>"
+                        "       <h1>Default Error File</h1>\r\n"
+                        "   </center>"
+                        "   <hr>"
+                        "   <center>"
+                        "       <h1>webserv/1.25.1</h1>\r\n"
+                        "   </center>"
+                        "</body>\r\n"
+                        "</html>";
     }
 };
 
