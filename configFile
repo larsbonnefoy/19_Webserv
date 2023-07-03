@@ -1,34 +1,38 @@
 root /Users/hdelmas/19_Webserv/site/data;
 
 server {
-    listen 127.0.0.1:80;
+    listen 127.0.0.1:40;
     server_name localhost;
-    
-    error_page 418 www/default/40x/418.html;
-    error_page 410 www/default/40x/410.html;
-    error_page 404 www/default/40x/404.html;
-    error_page 403 www/default/40x/403.html;
+
+    max_body_size 2048576;
+
+    error_page 403  default/40x/403.html;
+    error_page 402  default/40x/402.html;
+    error_page 400  default/40x/400.html;
     
     location / {
         root /Users/hdelmas/19_Webserv/site/data/www;
+        index file.html;
         accept GET;
+        accept POST;
         accept DELETE;
-        index home.html;
     }
 
-    location /images {
+    location /salut {
         root /Users/hdelmas/19_Webserv/site/data/www;
-        accept GET;
+        redirect 301 /random.html;
     }
+
+    error_page 410 default/40x/410.html;
+
 }
 
 server {
-    listen 127.0.0.1:8181;
+    listen 127.0.0.1:80;
     server_name localhost;
     
-    error_page 418 www/default/40x/418.html;
+    error_page 418  www/default/40x/418.html;
     error_page 410 www/default/40x/410.html;
-    error_page 403 www/default/40x/403.html;
     
     location / {
         root /Users/hdelmas/19_Webserv/site/data/www;
@@ -39,6 +43,5 @@ server {
     location /images {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
-        autoindex false;
     }
 }

@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 11:19:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/19 18:10:45by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 12:58:45 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 # define PORT 8282
 # define DEFAULTPORT 8080
-# define BUFF_SIZE 589
+# define BUFF_SIZE 30000 
 
 class Socket
 {
