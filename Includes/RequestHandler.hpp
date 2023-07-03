@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:29 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/02 03:30:25 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 10:34:02 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 # include <unistd.h>
 # include <poll.h>
 # include <sys/stat.h>
-# include <sys/sysmacros.h>
 # include <fcntl.h>
 
 # include "Log.hpp"
