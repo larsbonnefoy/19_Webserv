@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/03 11:19:58 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 13:50:40 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ static std::pair<std::string, size_t> requestError(Server server, int code)
 	ws_log("REQUEST ERROR");
 	std::pair<std::string, size_t> res;
 	res.first = getRoot(server);
-	res.second = 301;
+	res.second = code;
 	std::map<size_t, std::string> tmp = server.getErrors();
 	std::map<size_t, std::string>::iterator it = tmp.find(code);
 	if (it != server.getErrors().end())
