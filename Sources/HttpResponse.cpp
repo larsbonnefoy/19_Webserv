@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 
 HttpResponse::HttpResponse(void) : _statusCode(200){
-    std::string body =  StaticInit::DEF_ERROR;
+    std::string body =  StaticInit::DEF_FILE;
 
     this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 
