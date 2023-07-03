@@ -12,7 +12,7 @@ server {
     
     location / {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
-        index home.html;
+        autoIndex true;
         accept GET;
         accept POST;
         accept DELETE;
@@ -43,7 +43,8 @@ server {
     }
 
     location /images {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data;
+        autoIndex true;
         accept GET;
     }
 }
