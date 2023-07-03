@@ -12,6 +12,7 @@ server {
     location / {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
+        accept POST;
         accept DELETE;
         index home.html;
     }

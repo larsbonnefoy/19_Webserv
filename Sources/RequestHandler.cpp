@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/03 13:50:40 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 16:30:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request
 			return (GETRequest(location, server, request));
 		
 		case POST:
-			break;
+			return (requestSuccess(getPath(location, request, GET), 204));
 		
 		case DELETE:
 			break;

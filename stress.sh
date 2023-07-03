@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Number of concurrent users
-num_users=5000
+num_users=50
 
 # URL to simulate requests
-url="http://localhost:80"
+url="http://fu-c4-p2.s19.be/"
 
 # Function to simulate a user making requests
 simulate_user() {
