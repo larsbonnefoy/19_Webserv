@@ -318,12 +318,12 @@ std::string getLocationPath(std::string infoBuffer, size_t startPos) {
 void createLocation(std::string inputBuffer, Server &serv, std::string locationPath) {
 
     Location    loc;
-    std::string directives[5] = {"root", "accept", "autoIndex", "index", "redirect"};
+    std::string directives[6] = {"root", "accept", "autoIndex", "index", "redirect", "CGI"};
     int     pos;
     
     loc.setPath(locationPath);
 
-    for (size_t directiveID = 0; directiveID < 5; directiveID++) {
+    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -360,9 +360,22 @@ void createLocation(std::string inputBuffer, Server &serv, std::string locationP
                 if (pos != -1)
                     setRedir(value, loc);
                 break;
+            case 5:
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (pos != -1)
+                    setCGI(value, loc);
+                break;
         }
     }
     serv.setLocation(loc);
+}
+
+/*
+ * Adds cgi PATH to location 
+ * /!\ having "CGI" in path, check is repo exists?
+ */
+void setCGI(std::string inputBuffer, Location &loc) {
+    loc.setCGIPath(inputBuffer);
 }
 
 /*

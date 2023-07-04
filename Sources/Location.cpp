@@ -2,7 +2,8 @@
 #include <iostream>
 #include <sys/types.h>
 
-Location::Location(void) :_path(""), _root(""), _index(""), _autoindex(UNDEFINED) {
+Location::Location(void) 
+    :_path(""), _root(""), _index(""), _autoindex(UNDEFINED), _cgiPath(""){
     this->setAutorizedMethods(false, false, false);
     this->_redirect.first = 0;
     this->_redirect.second = "";
@@ -10,7 +11,7 @@ Location::Location(void) :_path(""), _root(""), _index(""), _autoindex(UNDEFINED
 
 Location::Location(const Location &other) 
     : _path(other._path), _root(other._root), _index(other._index), 
-    _autoindex(other._autoindex), _redirect(other._redirect) {
+    _autoindex(other._autoindex), _redirect(other._redirect), _cgiPath(other._cgiPath){
     this->setAutorizedMethods(other.getGetVal(), other.getPostVal(), other.getDelVal());
 }
 
@@ -24,6 +25,7 @@ Location &Location::operator=(const Location &other) {
     this->_autoindex = other._autoindex;
     this->_redirect = other._redirect;
     this->setAutorizedMethods(other.getGetVal(), other.getPostVal(), other.getDelVal());
+    this->_cgiPath = other._cgiPath;
     return *this;
 }
 
@@ -59,6 +61,9 @@ bool Location::getDelVal(void) const {
     return (this->_autorizedMethods[DELETE]);
 }
 
+std::string Location::getCGIPath(void) const{
+    return (this->_cgiPath);
+}
 void Location::setPath(std::string path) {
     this->_path = path;
 }
@@ -98,6 +103,10 @@ void Location::setAutorizedMethods(bool get, bool post, bool del) {
     this->_autorizedMethods[DELETE] = del;
 }
 
+void Location::setCGIPath(std::string &cgi) {
+    this->_cgiPath = cgi;
+}
+
 std::ostream &operator<<(std::ostream &out, const Location &loc) {
 
     out << "    ->Location" << std::endl;
@@ -109,6 +118,7 @@ std::ostream &operator<<(std::ostream &out, const Location &loc) {
     out << "    GET : {" << loc.getGetVal() << "}";
     out << "    POST : {" << loc.getPostVal() << "}";
     out << "    DEL : {" << loc.getDelVal() << "}" << std::endl;
+    out << "    CGI : " << loc.getCGIPath() << std::endl;
     
     return (out);
 }

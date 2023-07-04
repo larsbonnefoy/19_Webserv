@@ -15,7 +15,7 @@ server {
         accept GET;
         accept POST;
         accept DELETE;
-        cgi ;
+        CGI test/salut;
     }
 
     location /salut {

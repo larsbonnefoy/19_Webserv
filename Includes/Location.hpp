@@ -19,10 +19,10 @@ class Location {
         std::string                         _path;
         std::string                         _root; 
         std::string                         _index; 
-        size_t                             _autoindex;
-
+        size_t                              _autoindex;
         std::pair<size_t, std::string>      _redirect;
         bool                                _autorizedMethods[NBR_METHODS];
+        std::string                         _cgiPath;
 
     public:
         Location(void);
@@ -38,6 +38,7 @@ class Location {
         bool                            getGetVal(void) const;
         bool                            getPostVal(void) const;
         bool                            getDelVal(void) const;
+        std::string                     getCGIPath(void) const;
 
         void                            setPath(std::string root);
         void                            setRoot(std::string root);
@@ -48,6 +49,7 @@ class Location {
         void                            setGet(bool val);
         void                            setPost(bool val);
         void                            setDel(bool val);
+        void                            setCGIPath(std::string &cgi);
 };
 
 std::ostream &operator<<(std::ostream &out, const Location &loc);
