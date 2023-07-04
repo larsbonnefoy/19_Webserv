@@ -19,8 +19,7 @@ server {
     }
 
     location /salut {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
-        redirect 301 /random.html;
+        redirect 301 random.html;
     }
 
     error_page 410 default/40x/410.html;
