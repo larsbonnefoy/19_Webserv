@@ -2,6 +2,9 @@
 #include <string>
 #include <sys/stat.h>
 
+std::map<size_t, std::string> StaticInit::STATUS_CODE_PHRASE;
+std::map<std::string, std::string> StaticInit::MIME_TYPES;
+
 HttpResponse::HttpResponse(void) : _statusCode(200){
     std::string body =  StaticInit::DEF_FILE;
 
@@ -9,6 +12,7 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
 
     this->setStartLine(_makeStartLine());
     this->addToHeaderField("Content-Type", "text/html");
+
     this->addToHeaderField("Content-Length", _valToString(body.length()));
     this->setBody(body);
 }

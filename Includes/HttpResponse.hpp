@@ -3,7 +3,11 @@
 
 #include "../Includes/Http.hpp"
 #include "../Includes/HttpRequest.hpp"
+
 #include <dirent.h>
+#include <cstddef>
+
+
 
 class HttpResponse : public Http {
     private:
@@ -17,6 +21,7 @@ class HttpResponse : public Http {
         std::string _valToString(size_t num);
         std::string _fileToString(std::string &url);
         std::string _getMIMEType(std::string &url);
+
         bool        _isDirectory(const std::string& path);
         void        _handleAutoIndex(const std::string &path);
         std::string _createHTMLAutoindex(const std::string &url);
@@ -24,6 +29,7 @@ class HttpResponse : public Http {
     public:
         HttpResponse(void);
         HttpResponse(std::string url, size_t code);
+
         HttpResponse(Server &serv, HttpRequest &request);
         HttpResponse(const HttpResponse &other);
         ~HttpResponse(void);

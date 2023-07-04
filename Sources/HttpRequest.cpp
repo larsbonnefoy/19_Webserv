@@ -108,5 +108,3 @@ bool		HttpRequest::gethasBody(void)
 {
 	return(this->_hasBody);
 }
-
-		
