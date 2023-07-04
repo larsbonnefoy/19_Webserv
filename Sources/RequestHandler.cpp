@@ -56,7 +56,7 @@ static std::string	getRoot(Server server)
 {
 	std::string root;
 	
-	root = server.root;
+	root = server.getServerRoot();
 	if (*root.rbegin() == '/')
 		root.erase(root.size() - 1);
 	return (root);
