@@ -6,9 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/04 16:03:48 by hdelmas          ###   ########.fr       */
-/*   Updated: 2023/07/03 16:30:22 by hdelmas          ###   ########.fr       */
-/*   Updated: 2023/07/03 10:36:26 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 23:35:34 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,14 +97,15 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 
 	this->_uri = request.getUri();
 	this->_path = locationRoot + this->_uri;
+	ws_log("path");
+	ws_log(this->_path);
 	int ret = stat(this->_path.c_str(), &statbuf);
-	if (ret < 0)
+	if (ret < 0
+		|| !((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
 	{
 		this->_path = BADPATH;
+		return ;
 	}
-	if (!((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
-		this->_path = BADPATH;
-	
 	this->_pathtype = getType(this->_path);
 	
 	switch (methode)
@@ -118,7 +117,6 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 				ws_log("READ NOT OK");
 				this->_path = BADPATH;
 				this->_pathtype = BADTYPE;
-
 				return ;
 			}
 			ws_log("READ OK");
@@ -152,30 +150,47 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 
 void	HttpResponse::_setIndex(Location location)
 {
+	if ((this->_uri != location.getPath() && this->_pathtype != FILETYPE))
+	{
+		this->_path = BADPATH;
+		return ;
+	}
+	
 	struct stat statbuf;
 	
-	this->_index = "";
-	if (location.getIndex() == "")
+	std::string index =  location.getIndex();
+
+	if ((this->_uri != location.getPath() && this->_pathtype != FILETYPE))
+	{
+		this->_path = BADINDEX;
+		this->_pathtype = BADTYPE;
+		return ;
+	}
+	
+	if (index == ""  || this->_pathtype == FILETYPE || this->_path == BADPATH) 
 		return ;
 	
 	if (*this->_path.rbegin() == '/')
 		this->_path.erase(this->_path.size() - 1);
-	this->_index = this->_path + "/" + location.getIndex();
+	this->_path += "/" + index;
 	ws_log("index");
-	ws_log(this->_index);
-	if (stat(this->_index.c_str(), &statbuf) != 0
+	ws_log(this->_path);
+	if (stat(this->_path.c_str(), &statbuf) != 0
 		|| !((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG)
-		|| this->_index.rfind(".html") != this->_index.size() - 5)
+		|| this->_path.rfind(".html") != this->_path.size() - 5)
 	{
-		this->_index = BADINDEX;
+		this->_path = BADINDEX;
+		this->_pathtype = BADTYPE;
 		return ;
 	}
+	this->_pathtype = FILETYPE;
 }
 
 void HttpResponse::requestError(Server server, int code)
 {
 	ws_log("REQUEST ERROR");
 	this->_path = getRoot(server);
+	ws_log(this->_path);
 	this->_statusCode = code;
 	std::map<size_t, std::string> tmp = server.getErrors();
 	std::map<size_t, std::string>::iterator it = tmp.find(code);
@@ -195,15 +210,17 @@ void HttpResponse::requestSuccess(int code)
 
 static std::string getRedir(Server server, Location location)
 {
-	struct stat statbuf;
+	// struct stat statbuf;
 	
-	std::string redir = getRoot(server) + "/" +  location.getRedirect().second;
+
+	(void)server;
+	std::string redir = location.getRedirect().second;
 	ws_log("redir");
 	ws_log(redir);
-	if (stat(redir.c_str(), &statbuf) != 0)
-		return (BADREDIR);
-	if (!((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
-		return (BADREDIR);
+	// if (stat(redir.c_str(), &statbuf) != 0)
+	// 	return (BADREDIR);
+	// if (!((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
+	// 	return (BADREDIR);
 	return (redir);
 }
 
@@ -211,28 +228,32 @@ void HttpResponse::_GETRequest(Location location, Server server)
 {
 	ws_log("GET");
 	if (this->_path == BADPATH)
-		return (requestError(server, 404));	
-				
-	if (this->_pathtype == BADTYPE)
-		return(requestError(server, 402));
-	if (this->_pathtype == FILETYPE)
-		return(requestSuccess(200));
-		
-	if (this->_index == "badIndex")
-		return (requestError(server, 405));
-	if (this->_index != "")
-		return(requestSuccess(200));
-		
-	ws_log("autoIndex");
-	if (this->_autoindex == 0)
-		return (requestError(server, 406));
-	if (this->_autoindex == 1)
-		return(requestSuccess(200));// ??? no workey
-		
-	std::string	redir = getRedir(server, location);
-	if (redir == "badRedir")	
-		return (requestError(server, 407));
+		return (requestError(server, 404));
+	ws_log("redir");
+	this->_path = getRedir(server, location);
+	if (this->_path  == BADREDIR)	
+		return (requestError(server, 403));
 	return(requestSuccess(301));
+	if (this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
+		return(requestError(server, 403));		
+	if (this->_pathtype == FILETYPE || this->_autoindex == 1 || this->_path != "")
+		return(requestSuccess(200));
+	// if (this->_pathtype == BADTYPE)
+	// 	return(requestError(server, 402));
+	// ws_log("a1");
+	// if (this->_path == BADINDEX)
+	// 	return (requestError(server, 405));
+	// if (this->_path != "")
+	// 	return(requestSuccess(200));
+		
+	// ws_log("autoIndex");
+	// ws_log(this->_autoindex);
+	// if (this->_autoindex == 0)
+	// 	return (requestError(server, 406));
+	// if (this->_autoindex == 1)
+		// return(requestSuccess(200));
+		
+	
 }
 
 
@@ -245,7 +266,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	int methode = getMethode(location, request);
 	
 	this->_setPath(location, request, methode);
-	this->_setIndex(location);
+	this->_setIndex(location);	
 	this->_autoindex = location.getAutoIndex();
 	//body
 	
@@ -253,10 +274,12 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	{
 		case GET:
 			this->_GETRequest(location, serv);
+			break;
 		
 		case POST:
 			break ;
 			// return (requestSuccess(getPath(location, request, GET), 204));
+		
 		case DELETE:
 			break;
 			
@@ -265,10 +288,31 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	}
 	this->setStartLine(_makeStartLine());
 
-    if (this->_statusCode == 200 && this->_pathtype == DIRTYPE) {
+    if (this->_statusCode == 200 && this->_autoindex == 1) {
         this->_handleAutoIndex(this->_path);
     }
-    else { 
+	else if (this->_statusCode == 301)
+	{
+		ws_log(301);
+		this->_path = "URL=" + this->_path;
+		ws_log(this->_path);
+		this->addToHeaderField("Content-Type","Moved Permanently");
+   		;
+		
+   		this->_body = "<!DOCTYPE html>\r\n"
+						"<head>\r\n"
+						"</head>\r\n"
+						"<body>\r\n"
+						"<meta http-equiv=\"Refresh\" content=\"0;\r\n";
+		this->_body += 	 this->_path + '"';
+		this->_body += 	" />\r\n</body>\r\n"
+						"</html>\r\n";
+		this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
+		ws_log(this->_body);
+
+	}
+    else {
+		ws_log(this->_path);
         this->_handleURL(this->_path);
     }
 }

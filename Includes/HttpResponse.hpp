@@ -50,7 +50,7 @@ class HttpResponse : public Http {
         std::string _statusPhrase;
 		std::string _path;
 		int			_pathtype;
-		std::string	_index;
+		// std::string	_index;
 		size_t		_autoindex;
 
 		// Private methode
@@ -69,8 +69,9 @@ class HttpResponse : public Http {
 		void	_GETRequest(Location location, Server server);
 		void	_setPath(Location location, HttpRequest request, int methode);
 		void	_setIndex(Location location);
-		void requestError(Server server, int code);
-		void requestSuccess(int code);
+		void 	requestError(Server server, int code);
+		void 	requestSuccess(int code);
+		// void 	redirection(int code);
     
 	public:
         HttpResponse(void);

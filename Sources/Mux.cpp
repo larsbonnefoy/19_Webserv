@@ -63,7 +63,7 @@ void	Mux::run(void)
 					HttpRequest Request(request);
 					HttpResponse response(this->_serverMap[this->_Sockets[i]->getPort()], Request);
 
-                    //ws_log(response.convertToStr());
+                    // ws_log(response.convertToStr());
 					this->_Sockets[i]->sendResponse(response.convertToStr());	
 					this->_Sockets[i]->closeClient();			
 					this->_pollSocketFds[i].revents = 0;

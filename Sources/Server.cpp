@@ -10,7 +10,7 @@ Server::Server(void)
 }
 
 Server::Server(const Server &other) 
-    : _root(""), _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), 
+    : _root(other._root), _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), 
     _serverName(other._serverName), _errors(other._errors), _locations(other._locations) {
 }
 
