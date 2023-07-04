@@ -2,38 +2,16 @@
 #include <string>
 #include <sys/stat.h>
 
-std::map<size_t, std::string> StaticInit::STATUS_CODE_PHRASE;
-std::map<std::string, std::string> StaticInit::MIME_TYPES;
-
 HttpResponse::HttpResponse(void) : _statusCode(200){
-    std::string body =  "<!DOCTYPE html>\r\n"
-                        "<html lang=\"en\">\r\n"
-                        "<head>\r\n"
-                        "  <meta charset=\"UTF-8\" />\r\n"
-                        "  <title>test test</title>\r\n"
-                        "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r\n"
-                        "  <meta name=\"description\" content=\"\" />\r\n"
-                        "  <link rel=\"icon\" href=\"favicon.ico\">\r\n"
-                        "</head>\r\n"
-                        "<body>\r\n"
-                        "    <h1>Hello</h1>\r\n"
-                        "    <form method=\"POST\">\r\n"
-                        "        <label for=\"fname\">First name:</label><br>\r\n"
-                        "        <input type=\"text\" id=\"fname\" name=\"fname\"><br>\r\n"
-                        "        <label for=\"lname\">Last name:</label><br>\r\n"
-                        "        <input type=\"text\" id=\"lname\" name=\"lname\"><br><br>\r\n"
-                        "        <input type=\"submit\" value=\"Submit\">\r\n"
-                        "    </form>\r\n"
-                        "</body>\r\n"
-                        "</html>";
+    std::string body =  StaticInit::DEF_FILE;
 
     this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 
     this->setStartLine(_makeStartLine());
     this->addToHeaderField("Content-Type", "text/html");
-    this->addToHeaderField("Content-Length", "617");
+
+    this->addToHeaderField("Content-Length", _valToString(body.length()));
     this->setBody(body);
-    std::cout << *this << std::endl;
 }
 
 //Check for valid code!;
@@ -42,7 +20,13 @@ HttpResponse::HttpResponse(std::string url, size_t code) {
     this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[code];
 
     this->setStartLine(_makeStartLine());
-    this->_handleURL(url);
+
+    if (code == 200 && _isDirectory(url)) {
+        this->_handleAutoIndex(url);
+    }
+    else { 
+        this->_handleURL(url);
+    }
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
@@ -60,6 +44,56 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
 }
 
 /******************************PRIVATE FUNCTIONS*******************************/
+void HttpResponse::_handleAutoIndex(const std::string &url) {
+    std::cout << url << std::endl;
+    std::string htmlAutoIndex;
+    this->addToHeaderField("Content-Type", StaticInit::MIME_TYPES["html"]);
+    htmlAutoIndex = _createHTMLAutoindex(url);
+    this->addToHeaderField("Content-Length", _valToString(htmlAutoIndex.size()));
+    this->setBody(htmlAutoIndex);
+}
+
+std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
+    DIR *dir = opendir(url.c_str());
+    if (dir == NULL) {
+        return "";
+    }
+    
+    std::stringstream htmlContent;
+    htmlContent << "<!DOCTYPE html>\n<html>\n<body>\n";
+    htmlContent << "<h1> Index of " << this->_uri<<"</h1>\n"; 
+    htmlContent << "<ul>\n";
+    
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        std::string name = entry->d_name;
+        if (name == ".") {
+            continue;
+        }
+        
+        htmlContent << "<li><a href=\"" << name << "\">" << name << "</a></li>\n";
+    }
+    
+    htmlContent << "</ul>\n</body>\n</html>";
+    closedir(dir);
+    
+    return (htmlContent.str());
+}
+
+void    HttpResponse::_handleURL(std::string &url) {
+    this->addToHeaderField("Content-Type", _getMIMEType(url));
+    this->addToHeaderField("Content-Length", _valToString(_getFileSize(url)));
+    this->setBody(_fileToString(url));
+}
+
+bool HttpResponse::_isDirectory(const std::string& path) {
+    struct stat statbuf;
+    if (stat(path.c_str(), &statbuf) != 0) {
+        return false;
+    }
+    return S_ISDIR(statbuf.st_mode);
+}
+
 std::string HttpResponse::_valToString(size_t num) {
     std::stringstream ss;
     ss << num;
@@ -75,12 +109,6 @@ std::string HttpResponse::_makeStartLine(void) {
     startLine += _statusPhrase;
 
     return (startLine);
-}
-
-void    HttpResponse::_handleURL(std::string &url) {
-    this->addToHeaderField("Content-Type", _getMIMEType(url));
-    this->addToHeaderField("Content-Length", _valToString(_getFileSize(url)));
-    this->setBody(_fileToString(url));
 }
 
 size_t      HttpResponse::_getFileSize(std::string &url) {

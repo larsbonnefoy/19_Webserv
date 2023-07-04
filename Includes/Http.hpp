@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:15 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 11:42:43 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 13:32:53 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@
 struct StaticInit {
 
     static std::map<size_t, std::string>        STATUS_CODE_PHRASE;
-
     static std::map<std::string, std::string>   MIME_TYPES;
+    static std::string                          DEF_FILE;
     
     static void initStatic(void) {
         
@@ -96,6 +96,23 @@ struct StaticInit {
         MIME_TYPES["jpg"] = "image/jpeg";
         MIME_TYPES["jpeg"] = "image/jpeg";
         MIME_TYPES["gif"] = "image/gif";
+
+        DEF_FILE = "<!DOCTYPE html>\r\n"
+                        "<html>\r\n"
+                        "<head>\r\n"
+                        "  <title>Default File</title>\r\n"
+                        "</head>\r\n"
+                        "<body>\r\n"
+                        "   <center>\r\n"
+                        "       <h1>Default File</h1>\r\n"
+                        "       <p>Server could not load any other file</p>\r\n"
+                        "   </center>\r\n"
+                        "   <hr>\r\n"
+                        "   <center>\r\n"
+                        "       <h1>webserv/1.25.1</h1>\r\n"
+                        "   </center>\r\n"
+                        "</body>\r\n"
+                        "</html>\r\n";
     }
 };
 
@@ -114,6 +131,7 @@ class Http
 
 		// Setters
 		void	setStartLine(std::string startLine);
+		void	setUri(std::string Uri);
 		void	setBody(std::string body);
 		void	setHeaderField(std::map<std::string, std::string> headerField);
 		void	addToHeaderField(std::string headerToAdd);
@@ -123,14 +141,15 @@ class Http
 		std::string							getStartLine(void) const;		
 		std::string							getBody(void) const;
 		std::map<std::string, std::string>	getHeaderField(void) const;
+		std::string							getUri(void);
 
-
-        std::string headerToStr(void);
+    	std::string headerToStr(void);
 
 
 	protected:
 
 		std::string							_startLine;
+		std::string 						_uri;
 		std::string 						_body;
 		std::map<std::string, std::string>	_headerField;
 };

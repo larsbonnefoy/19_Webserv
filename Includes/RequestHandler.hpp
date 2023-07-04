@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:29 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/03 10:34:02 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 13:35:51 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@
 # define BADPATH "badPath"
 # define BADINDEX "badIndex"
 # define BADREDIR "badRedir"
+# define BADTYPE -1
+# define FILETYPE 1
+# define DIRTYPE 0
 
-std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request);
+// void	requestHandler(Server server, HttpRequest request);
 
 #endif
