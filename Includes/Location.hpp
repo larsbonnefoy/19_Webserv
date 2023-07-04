@@ -20,6 +20,7 @@ class Location {
         std::string                         _root; 
         std::string                         _index; 
         size_t                             _autoindex;
+
         std::pair<size_t, std::string>      _redirect;
         bool                                _autorizedMethods[NBR_METHODS];
 

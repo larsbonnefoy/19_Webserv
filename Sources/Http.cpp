@@ -11,7 +11,9 @@
 /* ************************************************************************** */
 
 #include "../Includes/Http.hpp"
-
+std::map<size_t, std::string>       StaticInit::STATUS_CODE_PHRASE;
+std::map<std::string, std::string>  StaticInit::MIME_TYPES;
+std::string                         StaticInit::DEF_FILE;
 // Constructors
 Http::Http(void)
 {
