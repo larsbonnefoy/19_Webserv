@@ -65,10 +65,6 @@ class HttpResponse : public Http {
         void        _handleAutoIndex(const std::string &path);
         std::string _createHTMLAutoindex(const std::string &url);
 
-        bool        _isDirectory(const std::string& path);
-        void        _handleAutoIndex(const std::string &path);
-        std::string _createHTMLAutoindex(const std::string &url);
-
 		// Request Handling 
 		void	_GETRequest(Location location, Server server);
 		void	_setPath(Location location, HttpRequest request, int methode);
