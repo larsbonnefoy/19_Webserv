@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:06 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/01 13:31:40 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 11:54:35 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ class HttpRequest : public Http
 		// Getter
 		std::string	getVersion(void);
 		std::string	getMethode(void);
-		std::string	getUri(void);
 		std::string	getProtocol(void);
 		bool		gethasBody(void);
 		
@@ -69,7 +68,6 @@ class HttpRequest : public Http
 	private:
 		std::string _version;
 		std::string _methode;
-		std::string _uri;
 		std::string _protocol;
 		bool		_hasBody;
 

@@ -55,17 +55,17 @@ void HttpResponse::_handleAutoIndex(const std::string &url) {
 
 std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
     DIR *dir = opendir(url.c_str());
-    if (dir == nullptr) {
+    if (dir == NULL) {
         return "";
     }
     
     std::stringstream htmlContent;
     htmlContent << "<!DOCTYPE html>\n<html>\n<body>\n";
-    htmlContent << "<h1> Index of " << url <<"</h1>\n"; 
+    htmlContent << "<h1> Index of " << this->_uri<<"</h1>\n"; 
     htmlContent << "<ul>\n";
     
     struct dirent *entry;
-    while ((entry = readdir(dir)) != nullptr) {
+    while ((entry = readdir(dir)) != NULL) {
         std::string name = entry->d_name;
         if (name == ".") {
             continue;
