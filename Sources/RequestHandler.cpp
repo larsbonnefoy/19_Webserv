@@ -57,7 +57,7 @@ static std::string	getRoot(Server server)
 {
 	std::string root;
 	
-	root = server.root;
+	root = server.getServerRoot();
 	if (*root.rbegin() == '/')
 		root.erase(root.size() - 1);
 	return (root);
@@ -240,7 +240,6 @@ std::pair<std::string, size_t> requestHandler(Server server, HttpRequest request
 		
 		case POST:
 			return (requestSuccess(getPath(location, request, GET), 204));
-		
 		case DELETE:
 			break;
 			

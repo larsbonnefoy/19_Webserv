@@ -141,7 +141,7 @@ class Http
 		std::string							getBody(void) const;
 		std::map<std::string, std::string>	getHeaderField(void) const;
 
-    std::string headerToStr(void);
+        std::string                         headerToStr(void);
 
 
 	protected:
