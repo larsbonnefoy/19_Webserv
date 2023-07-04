@@ -1,8 +1,6 @@
 #ifndef HTTPRESPONSE_HPP
 #define HTTPRESPONSE_HPP
 
-
-
 # include <iostream>
 # include <string>
 # include <vector>
@@ -13,6 +11,7 @@
 # include <exception>
 #include <dirent.h>
 #include <cstddef>
+
 
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -62,6 +61,9 @@ class HttpResponse : public Http {
         std::string _valToString(size_t num);
         std::string _fileToString(std::string &url);
         std::string _getMIMEType(std::string &url);
+        bool        _isDirectory(const std::string& path);
+        void        _handleAutoIndex(const std::string &path);
+        std::string _createHTMLAutoindex(const std::string &url);
 
         bool        _isDirectory(const std::string& path);
         void        _handleAutoIndex(const std::string &path);
@@ -77,7 +79,6 @@ class HttpResponse : public Http {
 	public:
         HttpResponse(void);
         HttpResponse(std::string url, size_t code);
-
         HttpResponse(Server &serv, HttpRequest &request);
         HttpResponse(const HttpResponse &other);
         ~HttpResponse(void);

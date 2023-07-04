@@ -23,6 +23,7 @@ OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 # ===---===---===---===---===---===---===---===---===---===---===---===---
 
 CFLAGS = -Wall -Wextra -Werror #-Wno-unused-variable -Wno-unused-parameter
+<<<<<<< HEAD
 CPPFLAGS = -std=c++98 #-fsanitize=address -g
 
 INCLUDES = -I Includes

@@ -7,6 +7,8 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
 /*   Updated: 2023/07/04 16:03:48 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 16:30:22 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/03 10:36:26 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +81,7 @@ static std::string	getRoot(Server server)
 {
 	std::string root;
 	
-	root = server.root;
+	root = server.getServerRoot();
 	if (*root.rbegin() == '/')
 		root.erase(root.size() - 1);
 	return (root);
@@ -255,7 +257,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		case POST:
 			break ;
 			// return (requestSuccess(getPath(location, request, GET), 204));
-		
 		case DELETE:
 			break;
 			

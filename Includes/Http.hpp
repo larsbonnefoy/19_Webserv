@@ -143,7 +143,8 @@ class Http
 		std::map<std::string, std::string>	getHeaderField(void) const;
 		std::string							getUri(void);
 
-    	std::string headerToStr(void);
+    std::string                         headerToStr(void);
+
 
 
 	protected:

@@ -5,14 +5,12 @@
 #include <vector>
 #include <sys/stat.h>
 
-std::string Server::root = "";
-
 Server::Server(void) 
-    :_ip(""), _port(0), _maxBodySize(0), _serverName("") {
+    :_root(""), _ip(""), _port(0), _maxBodySize(0), _serverName("") {
 }
 
 Server::Server(const Server &other) 
-    : _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), 
+    : _root(""), _ip(other._ip), _port(other._port), _maxBodySize(other.getMaxBodySize()), 
     _serverName(other._serverName), _errors(other._errors), _locations(other._locations) {
 }
 
@@ -20,6 +18,7 @@ Server::~Server(void) {
 }
 
 Server &Server::operator=(const Server &other) {
+    this->_root = other.getServerRoot();
     this->_serverName = other.getName();
     this->_ip = other.getIp();
     this->_port = other.getPort();
@@ -33,7 +32,7 @@ void Server::setServerRoot(std::string rootPath) {
     struct stat dir_stat;
     if (stat(rootPath.c_str(), &dir_stat) == 0) {
         if (S_ISDIR(dir_stat.st_mode)) {
-            Server::root = rootPath;
+            this->_root = rootPath;
         }
         else {
             std::cout << "In ServerRoot 1" <<std::endl;
@@ -69,6 +68,10 @@ void Server::setError(size_t errCode, std::string errPath) {
     this->_errors[errCode] = errPath;
 }
 
+std::string Server::getServerRoot(void) const {
+    return (this->_root);
+}
+
 std::string Server::getIp(void) const {
     return (this->_ip);
 }
@@ -98,7 +101,7 @@ std::vector<Location> Server::getLocations(void) const {
 
 std::ostream &operator<<(std::ostream &out, const Server &serv) {
     
-    out << "Server RootPath : " << Server::root << std::endl;
+    out << "Server RootPath : " << serv.getServerRoot() << std::endl;
     out << "Server Name : " << serv.getName() << std::endl;
     out << "IP : " << serv.getIp() << std::endl;
     out << "Port : " << serv.getPort() << std::endl;

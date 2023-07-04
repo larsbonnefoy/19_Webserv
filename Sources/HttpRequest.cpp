@@ -34,7 +34,6 @@ HttpRequest::~HttpRequest()
 {
 }
 
-
 // Operators
 HttpRequest & HttpRequest::operator=(const HttpRequest &assign)
 {
