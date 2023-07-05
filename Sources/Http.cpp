@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:27 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 11:55:05 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 11:56:17 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,12 @@ void	Http::setBody(std::string body)
 	this->_body = body;
 }
 
+void	Http::setUri(std::string uri)
+{
+	this->_uri = uri;
+}
+
+
 void	Http::setHeaderField(std::map<std::string, std::string> headerField)
 {
 	this->_headerField = headerField;
@@ -88,6 +94,11 @@ std::string							Http::getBody(void) const
 std::map<std::string, std::string>	Http::getHeaderField(void) const
 {
 	return (this->_headerField);
+}
+
+std::string	Http::getUri(void)
+{
+	return(this->_uri);
 }
 
 std::string Http::headerToStr(void) {

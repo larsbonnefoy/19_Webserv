@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:15 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/06/29 11:42:43 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 13:32:53 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ class Http
 
 		// Setters
 		void	setStartLine(std::string startLine);
+		void	setUri(std::string Uri);
 		void	setBody(std::string body);
 		void	setHeaderField(std::map<std::string, std::string> headerField);
 		void	addToHeaderField(std::string headerToAdd);
@@ -140,14 +141,16 @@ class Http
 		std::string							getStartLine(void) const;		
 		std::string							getBody(void) const;
 		std::map<std::string, std::string>	getHeaderField(void) const;
+		std::string							getUri(void);
 
+    std::string                         headerToStr(void);
 
-        std::string headerToStr(void);
 
 
 	protected:
 
 		std::string							_startLine;
+		std::string 						_uri;
 		std::string 						_body;
 		std::map<std::string, std::string>	_headerField;
 };

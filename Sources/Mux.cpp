@@ -61,11 +61,9 @@ void	Mux::run(void)
 					const std::string request = this->_Sockets[i]->receiveRequest();
 					ws_log(request);
 					HttpRequest Request(request);
+					HttpResponse response(this->_serverMap[this->_Sockets[i]->getPort()], Request);
 
-					std::pair<std::string, size_t> responseValues = requestHandler(this->_serverMap[this->_Sockets[i]->getPort()], Request);
-					
-					HttpResponse response(responseValues.first, responseValues.second);
-                    ws_log(response.convertToStr());
+                    //ws_log(response.convertToStr());
 					this->_Sockets[i]->sendResponse(response.convertToStr());	
 					this->_Sockets[i]->closeClient();			
 					this->_pollSocketFds[i].revents = 0;

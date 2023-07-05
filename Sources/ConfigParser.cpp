@@ -36,12 +36,14 @@ Config *parseConfig(std::string configFile) {
 
     while (std::getline(file.seekg(nextPos), line)) {
         std::string infoBuffer;
+        /*
         if (line.find("root") != std::string::npos && Server::root == "") {
             line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
             nextPos = findMatchingValue(line, "root", infoBuffer, nextPos) + 1;
             Server::setServerRoot(infoBuffer);
         }
-        else if (line.find("server") != std::string::npos) {
+        */
+        if (line.find("server") != std::string::npos) {
             nextPos = getInstructionBlock(file, infoBuffer);
             addServer(infoBuffer, *configRes);
         }
@@ -51,9 +53,6 @@ Config *parseConfig(std::string configFile) {
             }
             nextPos += 1;
         }
-    }
-    if (Server::root == "") {
-        throw UnvalidServerRoute();
     }
     return (configRes);
 }
@@ -158,9 +157,9 @@ void    addServer(std::string infoBuffer, Config &conf) {
     infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
 
     int pos;
-    std::string directives[5] = {"listen", "server_name", "error_page", "location", "max_body_size"};
+    std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "serverRoot"};
     
-    for (size_t directiveID = 0; directiveID < 5; directiveID++) {
+    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -187,6 +186,11 @@ void    addServer(std::string infoBuffer, Config &conf) {
                 }
                 addMaxBodySize(value, serv);
                 break; 
+            case 5:
+                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
+                if (pos == -1)
+                    throw MissingDirective();
+                serv.setServerRoot(value);
         }
     }
     if (conf.getServers().count(serv.getPort()) == 1) {
@@ -314,12 +318,12 @@ std::string getLocationPath(std::string infoBuffer, size_t startPos) {
 void createLocation(std::string inputBuffer, Server &serv, std::string locationPath) {
 
     Location    loc;
-    std::string directives[5] = {"root", "accept", "autoIndex", "index", "redirect"};
+    std::string directives[6] = {"root", "accept", "autoIndex", "index", "redirect", "CGI"};
     int     pos;
     
     loc.setPath(locationPath);
 
-    for (size_t directiveID = 0; directiveID < 5; directiveID++) {
+    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
         std::string value;
         switch (directiveID) {
             case 0:
@@ -356,9 +360,22 @@ void createLocation(std::string inputBuffer, Server &serv, std::string locationP
                 if (pos != -1)
                     setRedir(value, loc);
                 break;
+            case 5:
+                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
+                if (pos != -1)
+                    setCGI(value, loc);
+                break;
         }
     }
     serv.setLocation(loc);
+}
+
+/*
+ * Adds cgi PATH to location 
+ * /!\ having "CGI" in path, check is repo exists?
+ */
+void setCGI(std::string inputBuffer, Location &loc) {
+    loc.setCGIPath(inputBuffer);
 }
 
 /*

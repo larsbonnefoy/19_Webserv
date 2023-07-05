@@ -1,0 +1,43 @@
+root /Users/larsbonnefoy/projects/19_Webserv/site/data;
+
+server {
+    listen 127.0.0.1:8080;
+    server_name localhost;
+    
+    error_page 418  default/40x/418.html;
+    error_page 410 default/40x/410.html;
+    
+    location / {
+        root /www;
+        accept GET;
+        accept DELETE;
+        autoindex false;
+    }
+
+    location /images {
+        root www;
+        accept GET;
+        autoindex false;
+    }
+}
+
+server {
+    listen 127.0.0.1:8181;
+    server_name localhost;
+    
+    error_page 418  default/40x/418.html;
+    error_page 410 default/40x/410.html;
+    
+    location / {
+        root www;
+        accept GET;
+        accept DELETE;
+        autoindex false;
+    }
+
+    location /images {
+        root www;
+        accept GET;
+        autoindex false;
+    }
+}

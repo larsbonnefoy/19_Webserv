@@ -32,6 +32,7 @@ void        createLocation(std::string inputBuffer, Server &serv, std::string lo
 void        addMethods(std::string infoBuffer, Location &loc);
 void        setRedir(std::string inputBuffer, Location &loc);
 int         matchMethod(std::string method);
+void        setCGI(std::string inputBuffer, Location &loc);
 
 bool        isNumeric(const std::string &input);
 bool        isEmptyLine(std::string str);

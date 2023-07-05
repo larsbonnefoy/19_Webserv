@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/01 13:37:45 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/04 11:55:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ HttpRequest::HttpRequest(const HttpRequest &copy) : Http(copy)
 HttpRequest::~HttpRequest()
 {
 }
-
 
 // Operators
 HttpRequest & HttpRequest::operator=(const HttpRequest &assign)
@@ -94,10 +93,7 @@ std::string	HttpRequest::getMethode(void)
 	return(this->_methode);
 }
 
-std::string	HttpRequest::getUri(void)
-{
-	return(this->_uri);
-}
+
 
 std::string	HttpRequest::getProtocol(void)
 {
@@ -108,5 +104,3 @@ bool		HttpRequest::gethasBody(void)
 {
 	return(this->_hasBody);
 }
-
-		
