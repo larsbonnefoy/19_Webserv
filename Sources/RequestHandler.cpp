@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/04 23:35:34 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/05 16:47:47 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,25 @@ static Location	getLocation(Server server, HttpRequest request)
 {
 	Location	location;
 	size_t		lastSize = 0;
+	size_t		findRet = 0;
 	
 	for (size_t	i = 0 ; i < server.getLocations().size(); ++i)
 	{
-		server.getLocations()[i];
-		size_t findRet = server.getLocations()[i].getPath().find(request.getUri().c_str(), 0, server.getLocations()[i].getPath().size());
+		
+		std::string locationPath = server.getLocations()[i].getPath();
+		if (*locationPath.rbegin() == '/') 
+			locationPath.erase(locationPath.size() - 1);
+		ws_log(locationPath);
+		ws_log(request.getUri());
+		findRet = request.getUri().find(locationPath,  0);
+		ws_log(findRet);
 		if (findRet == 0 && server.getLocations()[i].getPath().size() >= lastSize)
+		{
 			location = server.getLocations()[i];
-		lastSize = server.getLocations()[i].getPath().size();
+			lastSize = server.getLocations()[i].getPath().size();
+		}
 	}
+	ws_log(location.getPath());
 	return (location);
 }
 
@@ -97,6 +107,7 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 
 	this->_uri = request.getUri();
 	this->_path = locationRoot + this->_uri;
+	this->_statusCode = 200;
 	ws_log("path");
 	ws_log(this->_path);
 	int ret = stat(this->_path.c_str(), &statbuf);
@@ -150,17 +161,14 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 
 void	HttpResponse::_setIndex(Location location)
 {
-	if ((this->_uri != location.getPath() && this->_pathtype != FILETYPE))
-	{
-		this->_path = BADPATH;
-		return ;
-	}
-	
 	struct stat statbuf;
 	
 	std::string index =  location.getIndex();
 
-	if ((this->_uri != location.getPath() && this->_pathtype != FILETYPE))
+	ws_log("set index");
+	ws_log(this->_uri);
+	ws_log(location.getPath());
+	if ((this->_uri != location.getPath() && this->_uri != location.getPath() + "/") && this->_pathtype == DIRTYPE)
 	{
 		this->_path = BADINDEX;
 		this->_pathtype = BADTYPE;
@@ -206,54 +214,38 @@ void HttpResponse::requestSuccess(int code)
 	return ;
 }
  
-
-
-static std::string getRedir(Server server, Location location)
+void	HttpResponse::_setRedir(Location location)
 {
-	// struct stat statbuf;
-	
-
-	(void)server;
-	std::string redir = location.getRedirect().second;
+//	if (/*this->_pathtype == FILETYPE ||*/ this->_path == BADPATH) 
+//		return ;
+	ws_log(location.getRedirect().first);
+	ws_log(location.getPath());
+	if (location.getRedirect().first == 0)
+		return ;
+	this->_statusCode = location.getRedirect().first;
+	std::string	redir = location.getRedirect().second;
+	if (*redir.rbegin() == '/')
+		redir.erase(redir.size() - 1);
+	size_t locationSize = location.getPath().size();
+	std::string query = this->_uri.substr(locationSize, this->_uri.size() - locationSize);
+	if (*query.begin() != '/') 
+		query = "/" + query;
+	this->_path = redir +  query;
+	this->_pathtype = FILETYPE;
 	ws_log("redir");
-	ws_log(redir);
-	// if (stat(redir.c_str(), &statbuf) != 0)
-	// 	return (BADREDIR);
-	// if (!((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
-	// 	return (BADREDIR);
-	return (redir);
+	ws_log(this->_path);
 }
 
 void HttpResponse::_GETRequest(Location location, Server server)
 {
+	(void)location;
 	ws_log("GET");
 	if (this->_path == BADPATH)
 		return (requestError(server, 404));
-	ws_log("redir");
-	this->_path = getRedir(server, location);
-	if (this->_path  == BADREDIR)	
-		return (requestError(server, 403));
-	return(requestSuccess(301));
-	if (this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
+	if (this->_path == BADREDIR || this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
 		return(requestError(server, 403));		
 	if (this->_pathtype == FILETYPE || this->_autoindex == 1 || this->_path != "")
-		return(requestSuccess(200));
-	// if (this->_pathtype == BADTYPE)
-	// 	return(requestError(server, 402));
-	// ws_log("a1");
-	// if (this->_path == BADINDEX)
-	// 	return (requestError(server, 405));
-	// if (this->_path != "")
-	// 	return(requestSuccess(200));
-		
-	// ws_log("autoIndex");
-	// ws_log(this->_autoindex);
-	// if (this->_autoindex == 0)
-	// 	return (requestError(server, 406));
-	// if (this->_autoindex == 1)
-		// return(requestSuccess(200));
-		
-	
+		return(requestSuccess(this->_statusCode));
 }
 
 
@@ -266,13 +258,16 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	int methode = getMethode(location, request);
 	
 	this->_setPath(location, request, methode);
-	this->_setIndex(location);	
-	this->_autoindex = location.getAutoIndex();
 	//body
 	
 	switch (methode)
 	{
 		case GET:
+			ws_log(this->_path);
+			this->_setIndex(location);	
+			ws_log(this->_path);
+			this->_setRedir(location);	
+			this->_autoindex = location.getAutoIndex();
 			this->_GETRequest(location, serv);
 			break;
 		
@@ -294,21 +289,21 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	else if (this->_statusCode == 301)
 	{
 		ws_log(301);
-		this->_path = "URL=" + this->_path;
+//		this->_path = "URL=" + this->_path;
 		ws_log(this->_path);
 		this->addToHeaderField("Content-Type","Moved Permanently");
-   		;
-		
-   		this->_body = "<!DOCTYPE html>\r\n"
-						"<head>\r\n"
-						"</head>\r\n"
-						"<body>\r\n"
-						"<meta http-equiv=\"Refresh\" content=\"0;\r\n";
-		this->_body += 	 this->_path + '"';
-		this->_body += 	" />\r\n</body>\r\n"
-						"</html>\r\n";
+		this->addToHeaderField("Location", this->_path);
+		this->_body = "";
+//   		this->_body = "<!DOCTYPE html>\r\n"
+//						"<head>\r\n"
+//						"</head>\r\n"
+//						"<body>\r\n"
+//						"<meta http-equiv=\"Refresh\" content=\"0;\r\n";
+//		this->_body += 	 this->_path + '"';
+//		this->_body += 	" />\r\n</body>\r\n"
+//						"</html>\r\n";
 		this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
-		ws_log(this->_body);
+//		ws_log(this->_body);
 
 	}
     else {

@@ -69,6 +69,7 @@ class HttpResponse : public Http {
 		void	_GETRequest(Location location, Server server);
 		void	_setPath(Location location, HttpRequest request, int methode);
 		void	_setIndex(Location location);
+		void	_setRedir(Location location);
 		void 	requestError(Server server, int code);
 		void 	requestSuccess(int code);
 		// void 	redirection(int code);
