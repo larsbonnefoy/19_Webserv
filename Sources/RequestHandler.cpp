@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/05 16:47:47 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/06 12:10:02 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,16 +168,15 @@ void	HttpResponse::_setIndex(Location location)
 	ws_log("set index");
 	ws_log(this->_uri);
 	ws_log(location.getPath());
+	ws_log(this->_pathtype);
+	if (index == ""  || this->_pathtype == FILETYPE || this->_path == BADPATH) 
+		return ;
 	if ((this->_uri != location.getPath() && this->_uri != location.getPath() + "/") && this->_pathtype == DIRTYPE)
 	{
 		this->_path = BADINDEX;
 		this->_pathtype = BADTYPE;
 		return ;
 	}
-	
-	if (index == ""  || this->_pathtype == FILETYPE || this->_path == BADPATH) 
-		return ;
-	
 	if (*this->_path.rbegin() == '/')
 		this->_path.erase(this->_path.size() - 1);
 	this->_path += "/" + index;
@@ -216,10 +215,6 @@ void HttpResponse::requestSuccess(int code)
  
 void	HttpResponse::_setRedir(Location location)
 {
-//	if (/*this->_pathtype == FILETYPE ||*/ this->_path == BADPATH) 
-//		return ;
-	ws_log(location.getRedirect().first);
-	ws_log(location.getPath());
 	if (location.getRedirect().first == 0)
 		return ;
 	this->_statusCode = location.getRedirect().first;
@@ -232,8 +227,6 @@ void	HttpResponse::_setRedir(Location location)
 		query = "/" + query;
 	this->_path = redir +  query;
 	this->_pathtype = FILETYPE;
-	ws_log("redir");
-	ws_log(this->_path);
 }
 
 void HttpResponse::_GETRequest(Location location, Server server)
@@ -248,11 +241,33 @@ void HttpResponse::_GETRequest(Location location, Server server)
 		return(requestSuccess(this->_statusCode));
 }
 
+void	HttpResponse::_createResponse(void)
+{
+
+	this->setStartLine(_makeStartLine());
+
+	switch (this->_statusCode)
+	{
+		case 200 :
+ 			if (this->_autoindex == 1)
+    		    this->_handleAutoIndex(this->_path);
+			else
+    	    	this->_handleURL(this->_path);
+			break;
+		
+		case 301 :
+	  	    this->_handleRedirection();
+			break ;
+	
+		default:
+    	    this->_handleURL(this->_path);
+			break;
+	}
+}
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
 	ws_log("Response constructor");
-	// next to change: redir then _getrequest
 	Location	location = getLocation(serv, request); //check for server name
 	
 	int methode = getMethode(location, request);
@@ -281,33 +296,5 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		default:
 			requestError(serv, 400);
 	}
-	this->setStartLine(_makeStartLine());
-
-    if (this->_statusCode == 200 && this->_autoindex == 1) {
-        this->_handleAutoIndex(this->_path);
-    }
-	else if (this->_statusCode == 301)
-	{
-		ws_log(301);
-//		this->_path = "URL=" + this->_path;
-		ws_log(this->_path);
-		this->addToHeaderField("Content-Type","Moved Permanently");
-		this->addToHeaderField("Location", this->_path);
-		this->_body = "";
-//   		this->_body = "<!DOCTYPE html>\r\n"
-//						"<head>\r\n"
-//						"</head>\r\n"
-//						"<body>\r\n"
-//						"<meta http-equiv=\"Refresh\" content=\"0;\r\n";
-//		this->_body += 	 this->_path + '"';
-//		this->_body += 	" />\r\n</body>\r\n"
-//						"</html>\r\n";
-		this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
-//		ws_log(this->_body);
-
-	}
-    else {
-		ws_log(this->_path);
-        this->_handleURL(this->_path);
-    }
+	this->_createResponse();
 }

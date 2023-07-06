@@ -13,7 +13,9 @@ server {
         root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
-		redirect 301 https://www.youtube.com/;
+		index home.html;
+
+
     }
 
     location /images {
@@ -21,6 +23,11 @@ server {
         accept GET;
         autoIndex false;
     }
+	location /redir {
+        root /home/space/Documents/19_Webserv/site/data/www;
+        accept GET;
+		redirect 301 https://google.com;
+	}
 }
 
 server {

@@ -72,7 +72,8 @@ class HttpResponse : public Http {
 		void	_setRedir(Location location);
 		void 	requestError(Server server, int code);
 		void 	requestSuccess(int code);
-		// void 	redirection(int code);
+		void	_createResponse(void);
+		void	_handleRedirection(void);
     
 	public:
         HttpResponse(void);
