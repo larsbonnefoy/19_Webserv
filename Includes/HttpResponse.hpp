@@ -38,10 +38,6 @@
 # define BADINDEX "badIndex"
 # define BADREDIR "badRedir"
 
-
-
-
-
 class HttpResponse : public Http {
     private:
 
