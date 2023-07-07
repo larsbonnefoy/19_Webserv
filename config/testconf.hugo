@@ -1,6 +1,6 @@
-root /home/space/Documents/19_Webserv/site/data;
 
 server {
+    serverRoot /home/space/Documents/19_Webserv/site/data;
     listen 127.0.0.1:8080;
     server_name localhost;
     
@@ -13,7 +13,9 @@ server {
         root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
-        index home.html;
+		index home.html;
+
+
     }
 
     location /images {
@@ -21,9 +23,15 @@ server {
         accept GET;
         autoIndex false;
     }
+	location /redir {
+        root /home/space/Documents/19_Webserv/site/data/www;
+        accept GET;
+		redirect 301 https://google.com;
+	}
 }
 
 server {
+    serverRoot /home/space/Documents/19_Webserv/site/data;
     listen 127.0.0.1:8181;
     server_name localhost;
     

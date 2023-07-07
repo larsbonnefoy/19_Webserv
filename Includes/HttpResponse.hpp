@@ -11,6 +11,7 @@
 # include <exception>
 #include <dirent.h>
 #include <cstddef>
+# include <cstdio>
 
 
 # include <sys/socket.h>
@@ -50,7 +51,7 @@ class HttpResponse : public Http {
         std::string _statusPhrase;
 		std::string _path;
 		int			_pathtype;
-		std::string	_index;
+		// std::string	_index;
 		size_t		_autoindex;
 
 		// Private methode
@@ -67,10 +68,14 @@ class HttpResponse : public Http {
 
 		// Request Handling 
 		void	_GETRequest(Location location, Server server);
+		void	_DELETERequest(Server server);
 		void	_setPath(Location location, HttpRequest request, int methode);
 		void	_setIndex(Location location);
-		void requestError(Server server, int code);
-		void requestSuccess(int code);
+		void	_setRedir(Location location);
+		void 	_requestError(Server server, int code);
+		void 	_requestSuccess(int code);
+		void	_createResponse(void);
+		void	_handleRedirection(void);
     
 	public:
         HttpResponse(void);

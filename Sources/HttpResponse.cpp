@@ -81,11 +81,27 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
 }
 
 void    HttpResponse::_handleURL(std::string &url) {
+	ws_log("handleURL");
+	ws_log(url);
     this->addToHeaderField("Content-Type", _getMIMEType(url));
     this->addToHeaderField("Content-Length", _valToString(_getFileSize(url)));
     this->setBody(_fileToString(url));
 }
 
+void    HttpResponse::_handleRedirection(void)
+{
+	this->addToHeaderField("Content-Type","Moved Permanently");
+	this->addToHeaderField("Location", this->_path);
+	this->_body = "";
+	this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
+}
+
+//void	HttpResponse::_handlePost(void)
+//{
+//    this->addToHeaderField("Content-Type", _getMIMEType(url));
+//    this->addToHeaderField("Content-Length", _valToString();
+
+//}
 bool HttpResponse::_isDirectory(const std::string& path) {
     struct stat statbuf;
     if (stat(path.c_str(), &statbuf) != 0) {
