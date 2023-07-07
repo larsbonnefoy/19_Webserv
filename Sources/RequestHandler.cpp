@@ -260,7 +260,7 @@ void	HttpResponse::_createResponse(void)
 		case 200 :
  			if (this->_autoindex == 1)
     		    this->_handleAutoIndex(this->_path);
-			else
+            else
     	    	this->_handleURL(this->_path);
 			break;
 		
