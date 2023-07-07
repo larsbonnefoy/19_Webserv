@@ -96,12 +96,6 @@ void    HttpResponse::_handleRedirection(void)
 	this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
 }
 
-//void	HttpResponse::_handlePost(void)
-//{
-//    this->addToHeaderField("Content-Type", _getMIMEType(url));
-//    this->addToHeaderField("Content-Length", _valToString();
-
-//}
 bool HttpResponse::_isDirectory(const std::string& path) {
     struct stat statbuf;
     if (stat(path.c_str(), &statbuf) != 0) {

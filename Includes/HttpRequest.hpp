@@ -70,8 +70,6 @@ class HttpRequest : public Http
 		std::string _methode;
 		std::string _protocol;
 		bool		_hasBody;
-
-
 };
 
 #endif
