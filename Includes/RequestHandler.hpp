@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:29 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/04 13:35:51 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/07 15:39:11 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <algorithm>
 # include <set>
 # include <cstring>
+# include <cstdio>
 # include <exception>
 
 # include <sys/socket.h>

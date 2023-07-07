@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/06 12:10:02 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/07 15:39:09 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void	HttpResponse::_setIndex(Location location)
 	this->_pathtype = FILETYPE;
 }
 
-void HttpResponse::requestError(Server server, int code)
+void HttpResponse::_requestError(Server server, int code)
 {
 	ws_log("REQUEST ERROR");
 	this->_path = getRoot(server);
@@ -206,7 +206,7 @@ void HttpResponse::requestError(Server server, int code)
 	return ;
 }
 
-void HttpResponse::requestSuccess(int code)
+void HttpResponse::_requestSuccess(int code)
 {
 	ws_log("REQUEST SUCCESS");
 	this->_statusCode = code;
@@ -234,18 +234,27 @@ void HttpResponse::_GETRequest(Location location, Server server)
 	(void)location;
 	ws_log("GET");
 	if (this->_path == BADPATH)
-		return (requestError(server, 404));
+		return (_requestError(server, 404));
 	if (this->_path == BADREDIR || this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
-		return(requestError(server, 403));		
+		return(_requestError(server, 403));		
 	if (this->_pathtype == FILETYPE || this->_autoindex == 1 || this->_path != "")
-		return(requestSuccess(this->_statusCode));
+		return(_requestSuccess(this->_statusCode));
+}
+
+void	HttpResponse::_DELETERequest(Server server)
+{
+	if (this->_path == BADPATH)
+		return (_requestError(server, 404));
+	if (std::remove(this->_path.c_str()) != 0)
+		return(_requestError(server, 500)); //Accept);		
+	return (_requestSuccess(204));
 }
 
 void	HttpResponse::_createResponse(void)
 {
 
 	this->setStartLine(_makeStartLine());
-
+	ws_log(this->_startLine);
 	switch (this->_statusCode)
 	{
 		case 200 :
@@ -258,7 +267,10 @@ void	HttpResponse::_createResponse(void)
 		case 301 :
 	  	    this->_handleRedirection();
 			break ;
-	
+
+		case 204 : 
+			break ;		
+		
 		default:
     	    this->_handleURL(this->_path);
 			break;
@@ -273,7 +285,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	int methode = getMethode(location, request);
 	
 	this->_setPath(location, request, methode);
-	//body
+	//this->_body = parse(request.getBody()); ??
 	
 	switch (methode)
 	{
@@ -287,14 +299,15 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 			break;
 		
 		case POST:
+			_requestSuccess(204); //NO CGI
 			break ;
-			// return (requestSuccess(getPath(location, request, GET), 204));
 		
 		case DELETE:
+			this->_DELETERequest(serv);
 			break;
 			
 		default:
-			requestError(serv, 400);
+			_requestError(serv, 400);
 	}
 	this->_createResponse();
 }
