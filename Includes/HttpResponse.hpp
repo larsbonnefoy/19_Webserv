@@ -53,6 +53,7 @@ class HttpResponse : public Http {
 		int			_pathtype;
 		// std::string	_index;
 		size_t		_autoindex;
+		int			_methode;
 
 		// Private methode
         std::string _makeStartLine(void);
@@ -65,6 +66,7 @@ class HttpResponse : public Http {
         bool        _isDirectory(const std::string& path);
         void        _handleAutoIndex(const std::string &path);
         std::string _createHTMLAutoindex(const std::string &url);
+		void		_setMethode(Location location, HttpRequest request);
 
 		// Request Handling 
 		void	_GETRequest(Location location, Server server);
