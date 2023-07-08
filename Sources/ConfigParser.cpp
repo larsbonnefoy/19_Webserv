@@ -448,6 +448,7 @@ int matchMethod(std::string method) {
     } 
     return (retVal);
 }
+
 bool isEmptyLine(std::string str) {
     for (size_t i = 0; i < str.length(); i++) {
         if (!isspace(str[i])) {

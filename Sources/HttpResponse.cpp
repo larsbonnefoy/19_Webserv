@@ -10,7 +10,7 @@ HttpResponse::HttpResponse(void) : _statusCode(200){
     this->setStartLine(_makeStartLine());
     this->addToHeaderField("Content-Type", "text/html");
 
-    this->addToHeaderField("Content-Length", _valToString(body.length()));
+    this->addToHeaderField("Content-Length", valToString(body.length()));
     this->setBody(body);
 }
 
@@ -49,7 +49,7 @@ void HttpResponse::_handleAutoIndex(const std::string &url) {
     std::string htmlAutoIndex;
     this->addToHeaderField("Content-Type", StaticInit::MIME_TYPES["html"]);
     htmlAutoIndex = _createHTMLAutoindex(url);
-    this->addToHeaderField("Content-Length", _valToString(htmlAutoIndex.size()));
+    this->addToHeaderField("Content-Length", valToString(htmlAutoIndex.size()));
     this->setBody(htmlAutoIndex);
 }
 
@@ -84,7 +84,7 @@ void    HttpResponse::_handleURL(std::string &url) {
 	ws_log("handleURL");
 	ws_log(url);
     this->addToHeaderField("Content-Type", _getMIMEType(url));
-    this->addToHeaderField("Content-Length", _valToString(_getFileSize(url)));
+    this->addToHeaderField("Content-Length", valToString(_getFileSize(url)));
     this->setBody(_fileToString(url));
 }
 
@@ -93,7 +93,7 @@ void    HttpResponse::_handleRedirection(void)
 	this->addToHeaderField("Content-Type","Moved Permanently");
 	this->addToHeaderField("Location", this->_path);
 	this->_body = "";
-	this->addToHeaderField("Content-Length", _valToString(this->_body.size()));
+	this->addToHeaderField("Content-Length", valToString(this->_body.size()));
 }
 
 bool HttpResponse::_isDirectory(const std::string& path) {
@@ -104,17 +104,11 @@ bool HttpResponse::_isDirectory(const std::string& path) {
     return S_ISDIR(statbuf.st_mode);
 }
 
-std::string HttpResponse::_valToString(size_t num) {
-    std::stringstream ss;
-    ss << num;
-    return (ss.str());
-}
-
 std::string HttpResponse::_makeStartLine(void) {
     std::string startLine = "HTTP/1.1";
 
     startLine += " ";
-    startLine += _valToString(_statusCode);
+    startLine += valToString(_statusCode);
     startLine += " ";
     startLine += _statusPhrase;
 

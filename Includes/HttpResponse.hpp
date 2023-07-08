@@ -49,6 +49,7 @@ class HttpResponse : public Http {
 		int			_pathtype;
 		// std::string	_index;
 		size_t		_autoindex;
+		bool		_cgi;
 
 		// Private methode
         std::string _makeStartLine(void);
@@ -72,6 +73,9 @@ class HttpResponse : public Http {
 		void 	_requestSuccess(int code);
 		void	_createResponse(void);
 		void	_handleRedirection(void);
+        
+        //tmp func to make cgi work;
+        bool    _isCgi(std::string path, Location loc);
     
 	public:
         HttpResponse(void);

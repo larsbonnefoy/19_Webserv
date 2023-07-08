@@ -7,32 +7,93 @@
 #include <fcntl.h>
 
 #define BUFFERSIZE 500
-
+/*
 int main(int ac, char **av) {
-    CGI test;
+    cgi test;
     std::string out = test.run();
     std::cout << "[" << out << "]" << std::endl;
     return 0;
 }
-
-CGI::CGI(void) {
+*/
+cgi::cgi(void) {
 }
 
-CGI::CGI(const CGI &other) : _env(other._env) {
+//Si GET: CONTENT_LENGTH = body len,  on met les infos dans query QUERY_STRING 
+//Si POST: CONTENT_LENGHT = NULL, write le body dans pipe et dup pipe sur stdin;
+cgi::cgi(HttpRequest &request, std::string path) {
+    std::cout << "---CGI Constructor---" << std::endl;
+
+    this->_pathInfo = path;
+    ws_log(path);
+
+    this->_av.push_back("");
+
+    this->_env["REQUEST_METHOD="] = request.getMethode();
+    std::cout << request.getMethode() << std::endl;
+    //un peu degeu d'utiliser valToString de Http
+    if (request.getMethode() == "GET") {
+        this->_method = GET;
+        this->_data = "placeholder";
+        this->_env["CONTENT_LENGTH="] = "NULL";
+        this->_env["QUERY_STRING="] = this->_data;
+    } 
+    else if (request.getMethode() == "POST") {
+        this->_method = POST;
+        this->_data = request.getBody() + '\0';
+        this->_env["CONTENT_LENGTH="] = request.valToString(_data.length());
+        this->_env["QUERY_STRING="] = "NULL";
+    }
+    this->_env["CONTENT_TYPE="] = "";
+    this->_env["PATH_INFO="] = "";
+    std::cout << "------" << std::endl;
 }
 
-CGI::~CGI(void) {
+cgi::cgi(const cgi &other) : _env(other._env) {
 }
 
-CGI &CGI::operator=(const CGI &other) {
+cgi::~cgi(void) {
+}
+
+cgi &cgi::operator=(const cgi &other) {
     this->_env = other._env;
     return *this;
 }
+/*------------------------Private member functions----------------------------*/
+//_convToTab should be template but un peu la flemme comme on dit chez moi
+//Dans le cas d'un pd d'execve ou d'alloc ici il faut FREEEEEE!!!!
+char **cgi::_convToTab(std::map<std::string, std::string> env) {
+    size_t size = env.size();
 
+    char**envp = new char*[size + 1];
+    size_t i = 0;
+    for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it) {
+        std::string str = it->first + it->second;
+        envp[i] = new char[str.length() + 1];
+        strcpy(envp[i], str.c_str());
+        i++; 
+    }
+    envp[i] = NULL;
+    return (envp);
+}
+
+char **cgi::_convToTab(std::vector<std::string> av) {
+    size_t size = av.size();
+
+    char**avp = new char*[size + 1];
+    size_t i = 0;
+    for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
+        avp[i] = new char[av[i].length() + 1];
+        strcpy(avp[i], av[i].c_str());
+        i++; 
+    }
+    avp[i] = NULL;
+    return (avp);
+}
+/*-------------------------Public member functions----------------------------*/
 /*
- * Return internal error if CGI fails;
+ * Return internal error if cgi fails;
  */ 
-std::string CGI::run(void) {
+std::string cgi::run(void) {
     int fdPipe[2];
     pid_t pid;
     std::string CgiOut;
@@ -45,17 +106,30 @@ std::string CGI::run(void) {
         std::cout << "Error" << std::endl;
     }
     else if (pid == 0) {
-        close(fdPipe[0]);
+        if (this->_method == POST) {
+            char const *toWrite = this->_data.c_str();
+            std::cerr << "Write to pipe " << toWrite << std::endl;
+            if (write(fdPipe[0], &toWrite, this->_data.length()) == -1) {
+                std::cerr << "Write failed" << std::endl;
+            };
+            dup2(fdPipe[0], STDIN_FILENO);
+            close(fdPipe[0]);
+        }
+        else {
+            close(fdPipe[0]);
+        }
         dup2(fdPipe[1], STDOUT_FILENO);
         close(fdPipe[1]);
 
-        char *cgi_path = "/Users/larsbonnefoy/projects/19_Webserv/site/data/cgi-bin/add.cgi";
+        char **av = _convToTab(this->_av);
+        char **env = _convToTab(this->_env);
 
         //eft somehow osef que argv[0] == cgi name, ce qui comte c'est cgi_path;
-        char *argv[] = {"", NULL};
-        char *envp[] = {"test=salut", "MEEP=ALLO", NULL};
-        if (execve(cgi_path, argv, envp) == -1) {
+        if (execve(this->_pathInfo.c_str(), av, env) == -1) {
             std::cerr << "Execve failed" << std::endl;
+            delete[] av;
+            delete[] env;
+            exit(1);
         }
     }
     else {
@@ -64,7 +138,6 @@ std::string CGI::run(void) {
         int status;
         waitpid(-1, &status , WNOHANG);
         
-
         //check for new return if fail
         char    *buffer = new char[BUFFERSIZE + 1];
         int     charRead;

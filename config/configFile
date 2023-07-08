@@ -12,7 +12,7 @@ server {
     
     location / {
         root /Users/larsbonnefoy/projects/19_Webserv/site/data;
-        index www/home.html;
+        index www/add.html;
         accept POST;
         accept GET;
         accept DELETE;

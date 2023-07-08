@@ -9,6 +9,7 @@
 #define GET 0
 #define POST 1
 #define DELETE 2
+#define CGI 3
 
 #define FALSE 0
 #define TRUE 1

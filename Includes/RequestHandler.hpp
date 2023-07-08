@@ -41,6 +41,7 @@
 # include "Http.hpp"
 # include "HttpRequest.hpp"
 #include "../Includes/ConfigParser.hpp"
+# include "Cgi.hpp"
 
 # define BADPATH "badPath"
 # define BADINDEX "badIndex"

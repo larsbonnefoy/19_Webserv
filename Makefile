@@ -14,7 +14,7 @@
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpResponse.cpp HttpRequest.cpp  RequestHandler.cpp
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpResponse.cpp HttpRequest.cpp  RequestHandler.cpp Cgi.cpp
 
 SRCS = $(addprefix Sources/, $(FILES))
 
@@ -22,9 +22,9 @@ OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 # ===---===---===---===---===---===---===---===---===---===---===---===---
 
-CFLAGS = -Wall -Wextra -Werror #-Wno-unused-variable -Wno-unused-parameter
+CFLAGS = -Wall -Wextra #-Werror -g #-Wno-unused-variable -Wno-unused-parameter
 
-CPPFLAGS = -std=c++98 #-fsanitize=address -g
+CPPFLAGS = -std=c++98 #-fsanitize=address
 
 INCLUDES = -I Includes
 

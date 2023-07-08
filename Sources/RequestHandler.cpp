@@ -277,6 +277,19 @@ void	HttpResponse::_createResponse(void)
 	}
 }
 
+bool HttpResponse::_isCgi(std::string path, Location loc) {
+    ws_log("CGI CHECK");
+    ws_log(path);
+    ws_log(loc.getCGIPath());
+    ws_log("-----");
+    if (path.find(loc.getCGIPath()) != std::string::npos) {
+        ws_log("true");
+        return (true);
+    }
+    ws_log("false");
+    return (false);
+}
+
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
 	ws_log("Response constructor");
@@ -286,28 +299,46 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	
 	this->_setPath(location, request, methode);
 	//this->_body = parse(request.getBody()); ??
-	
-	switch (methode)
-	{
-		case GET:
-			ws_log(this->_path);
-			this->_setIndex(location);	
-			ws_log(this->_path);
-			this->_setRedir(location);	
-			this->_autoindex = location.getAutoIndex();
-			this->_GETRequest(location, serv);
-			break;
-		
-		case POST:
-			_requestSuccess(204); //NO CGI
-			break ;
-		
-		case DELETE:
-			this->_DELETERequest(serv);
-			break;
-			
-		default:
-			_requestError(serv, 400);
-	}
+
+    //cgi response can have
+    //  startline with response code 
+    //  Http Headers (file type,...)
+    //  Body
+    if (_isCgi(this->_path, location)) {
+        cgi res(request, this->_path);
+        //Interal error if something wrong happens with CGI;
+        try { 
+            std::string response = res.run();
+            std::cout << response << std::endl;
+        }
+        catch (std::exception &e) {
+            ws_log(e.what());
+        }
+        this->_cgi = true;
+    }
+    else {
+        switch (methode)
+        {
+            case GET:
+                ws_log(this->_path);
+                this->_setIndex(location);	
+                ws_log(this->_path);
+                this->_setRedir(location);	
+                this->_autoindex = location.getAutoIndex();
+                this->_GETRequest(location, serv);
+                break;
+            
+            case POST:
+                _requestSuccess(204); //NO CGI
+                break ;
+            
+            case DELETE:
+                this->_DELETERequest(serv);
+                break;
+                
+            default:
+                _requestError(serv, 400);
+        }
+    }
 	this->_createResponse();
 }
