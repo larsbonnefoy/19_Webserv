@@ -13,6 +13,7 @@
 
 #include "../Includes/HttpResponse.hpp"
 #include "../Includes/RequestHandler.hpp"
+#include <sstream>
 
 // Change most error code to 403
 
@@ -250,27 +251,37 @@ void	HttpResponse::_DELETERequest(Server server)
 	return (_requestSuccess(204));
 }
 
+//Do nothing in case of a cgi as everything as already been set in the cgiResponseParser
+void HttpResponse::_handleSuccessRequest(void) {
+
+    if (this->_autoindex == 1) {
+        this->_handleAutoIndex(this->_path);
+    }
+    else if (this->_cgi == true) {
+        return ;
+    }
+    else {
+        this->_handleURL(this->_path);
+    }
+}
+
 void	HttpResponse::_createResponse(void)
 {
-
 	this->setStartLine(_makeStartLine());
 	ws_log(this->_startLine);
 	switch (this->_statusCode)
 	{
 		case 200 :
- 			if (this->_autoindex == 1)
-    		    this->_handleAutoIndex(this->_path);
-            else
-    	    	this->_handleURL(this->_path);
-			break;
+            this->_handleSuccessRequest();
+            break;
 		
-		case 301 :
+        case 301 :
 	  	    this->_handleRedirection();
 			break ;
-
-		case 204 : 
-			break ;		
 		
+        case 204 : 
+			break ;		
+
 		default:
     	    this->_handleURL(this->_path);
 			break;
@@ -290,6 +301,26 @@ bool HttpResponse::_isCgi(std::string path, Location loc) {
     return (false);
 }
 
+void HttpResponse::_handleCgiResponse(std::string response) {
+    std::stringstream ss(response);
+    std::string line;
+    bool body = false;
+
+    while (std::getline(ss, line)) {
+        std::cout << line << std::endl;
+        if (line == "") {
+            body = true;
+        }
+        if (body) {
+            this->_body += (line + "\n");
+        }
+        else {
+            addToHeaderField(line);
+        }
+    }
+    addToHeaderField("Content-Length", valToString(this->_body.size()));
+}
+
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
 	ws_log("Response constructor");
@@ -304,17 +335,19 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
     //  startline with response code 
     //  Http Headers (file type,...)
     //  Body
-    if (_isCgi(this->_path, location)) {
+    if (_isCgi(this->_path, location) && (methode == GET || methode == POST)) {
         cgi res(request, this->_path);
         //Interal error if something wrong happens with CGI;
         try { 
             std::string response = res.run();
-            std::cout << "Response in Handler ["<<response << "]"<< std::endl;
+            this->_cgi = true;
+            _requestSuccess(200);
+            _handleCgiResponse(response);
         }
         catch (std::exception &e) {
             ws_log(e.what());
+            _requestError(serv, 500);
         }
-        this->_cgi = true;
     }
     else {
         switch (methode)

@@ -17,6 +17,7 @@ class cgi {
 
         char **_convToTab(std::map<std::string, std::string> env);
         char **_convToTab(std::vector<std::string> av);
+        std::string _readFromPipe(int pipeRead);
     public:
         cgi(void);
         cgi(HttpRequest &request, std::string path);
