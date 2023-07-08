@@ -1,4 +1,5 @@
 #include "../Includes/Cgi.hpp" 
+#include <cstdio>
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -64,7 +65,11 @@ cgi &cgi::operator=(const cgi &other) {
 char **cgi::_convToTab(std::map<std::string, std::string> env) {
     size_t size = env.size();
 
-    char**envp = new char*[size + 1];
+    char **envp = new char*[size + 1];
+    if (envp == NULL) {
+        std::cerr << "bad alloc" << std::endl;
+        return (NULL);
+    }
     size_t i = 0;
     for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it) {
         std::string str = it->first + it->second;
@@ -79,7 +84,11 @@ char **cgi::_convToTab(std::map<std::string, std::string> env) {
 char **cgi::_convToTab(std::vector<std::string> av) {
     size_t size = av.size();
 
-    char**avp = new char*[size + 1];
+    char **avp = new char*[size + 1];
+    if (avp == NULL) {
+        std::cerr << "bad alloc" << std::endl;
+        return (NULL);
+    }
     size_t i = 0;
     for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
         avp[i] = new char[av[i].length() + 1];
@@ -99,25 +108,27 @@ std::string cgi::run(void) {
     std::string CgiOut;
 
     if (pipe(fdPipe) == -1) {
-        std::cout << "Error" << std::endl;
+        std::cerr<< "Error" << std::endl;
     }
     pid = fork();
     if (pid == -1) {
-        std::cout << "Error" << std::endl;
+        std::cerr << "Error" << std::endl;
     }
+
+    //child
     else if (pid == 0) {
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
-            std::cerr << "Write to pipe " << toWrite << std::endl;
-            if (write(fdPipe[0], &toWrite, this->_data.length()) == -1) {
+            std::cerr << "-----------\nIN CHILD: Write data to pipe for cgi script\n" << toWrite << " (len = " << this->_data.length()<< ")\n------------\n" << std::endl;
+            if (write(fdPipe[1], &toWrite, this->_data.length()) == -1) {
+                perror("Write");
                 std::cerr << "Write failed" << std::endl;
             };
-            dup2(fdPipe[0], STDIN_FILENO);
-            close(fdPipe[0]);
+            //script cannot read from pipe, or has to much info double pipe?
+            //dup2(fdPipe[0], STDIN_FILENO);
         }
-        else {
-            close(fdPipe[0]);
-        }
+        close(fdPipe[0]);
+
         dup2(fdPipe[1], STDOUT_FILENO);
         close(fdPipe[1]);
 
@@ -132,24 +143,31 @@ std::string cgi::run(void) {
             exit(1);
         }
     }
+
+    //Parent
     else {
         close(fdPipe[1]);
 
-        int status;
+        int status, charRead;
         waitpid(-1, &status , WNOHANG);
         
         //check for new return if fail
         char    *buffer = new char[BUFFERSIZE + 1];
-        int     charRead;
+        if (buffer == NULL) {
+            std::cerr << "Bad alloc" << std::endl;
+        }
 
+        //for some reason y a de la merde dans le tuyeaux
         while ((charRead = read(fdPipe[0], buffer, BUFFERSIZE))) {
-                buffer[charRead] = '\0';
-                CgiOut.append(buffer);
             if (charRead == -1) {
-                std::cout << "[ERROR charRead == -1]" << std::endl;
+                std::cerr << "[ERROR charRead == -1]" << std::endl;
                 CgiOut += '\0';
                 break;
             }
+            std::cout << "bufstart {" << buffer[0] << "} bufend {" << buffer[charRead] << "}\n";
+            buffer[charRead] = '\0';
+            std::cerr << "PARENT buffer content [" << buffer << "]" << std::endl;
+            CgiOut.append(buffer);
         }
         if (charRead == 0) {
             std::cout << "[EOF REACHED]" << std::endl;

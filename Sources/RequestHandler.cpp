@@ -309,7 +309,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         //Interal error if something wrong happens with CGI;
         try { 
             std::string response = res.run();
-            std::cout << response << std::endl;
+            std::cout << "Response in Handler ["<<response << "]"<< std::endl;
         }
         catch (std::exception &e) {
             ws_log(e.what());

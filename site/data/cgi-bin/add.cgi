@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-# import cgi
+import cgi
 import os
 import sys
 
+# print("IN SCRIPT")
 # form = cgi.FieldStorage()
 
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 print(content_length)
 
-#request_body = sys.stdin.read(content_length)
+#request_body = sys.stdin.read(10)
 #print(request_body)
 # print(input_data)
 
