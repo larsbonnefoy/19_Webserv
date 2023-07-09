@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:06 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/04 11:54:35 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/07 15:39:17 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ class HttpRequest : public Http
 		std::string _methode;
 		std::string _protocol;
 		bool		_hasBody;
-
-
 };
 
 #endif

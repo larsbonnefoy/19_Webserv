@@ -28,7 +28,6 @@ HttpRequest::HttpRequest(const HttpRequest &copy) : Http(copy)
 	*this = copy;
 }
 
-
 // Destructor
 HttpRequest::~HttpRequest()
 {
@@ -46,7 +45,6 @@ HttpRequest & HttpRequest::operator=(const HttpRequest &assign)
 }
 
 // Member Function
-
 void	HttpRequest::requestParser(std::string request)
 {
 	std::stringstream	requestStream(request);
@@ -82,7 +80,6 @@ void	HttpRequest::parseFirstLine(void)
 }
 
 // Getter
-
 std::string	HttpRequest::getVersion(void)
 {
 	return(this->_version);	
@@ -92,8 +89,6 @@ std::string	HttpRequest::getMethode(void)
 {
 	return(this->_methode);
 }
-
-
 
 std::string	HttpRequest::getProtocol(void)
 {

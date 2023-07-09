@@ -11,6 +11,7 @@
 # include <exception>
 #include <dirent.h>
 #include <cstddef>
+# include <cstdio>
 
 
 # include <sys/socket.h>
@@ -38,10 +39,6 @@
 # define BADINDEX "badIndex"
 # define BADREDIR "badRedir"
 
-
-
-
-
 class HttpResponse : public Http {
     private:
 
@@ -50,8 +47,9 @@ class HttpResponse : public Http {
         std::string _statusPhrase;
 		std::string _path;
 		int			_pathtype;
-		std::string	_index;
+		// std::string	_index;
 		size_t		_autoindex;
+		bool		_cgi;
 
 		// Private methode
         std::string _makeStartLine(void);
@@ -67,10 +65,19 @@ class HttpResponse : public Http {
 
 		// Request Handling 
 		void	_GETRequest(Location location, Server server);
+		void	_DELETERequest(Server server);
 		void	_setPath(Location location, HttpRequest request, int methode);
 		void	_setIndex(Location location);
-		void requestError(Server server, int code);
-		void requestSuccess(int code);
+		void	_setRedir(Location location);
+		void 	_requestError(Server server, int code);
+		void 	_requestSuccess(int code);
+		void	_createResponse(void);
+		void	_handleRedirection(void);
+        void    _handleSuccessRequest(void);
+        void    _handleCgiResponse(std::string response);
+        
+        //tmp func to make cgi work;
+        bool    _isCgi(std::string path, Location loc);
     
 	public:
         HttpResponse(void);

@@ -110,3 +110,9 @@ std::string Http::headerToStr(void) {
     }
     return (headerStr);
 }
+
+std::string Http::valToString(size_t num) {
+    std::stringstream ss;
+    ss << num;
+    return (ss.str());
+}
