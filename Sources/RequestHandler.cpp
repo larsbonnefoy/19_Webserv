@@ -290,9 +290,10 @@ void	HttpResponse::_createResponse(void)
 }
 
 bool HttpResponse::_isCgi(std::string path, Location loc) {
-    ws_log("CGI CHECK");
+    ws_log("----CGI CHECK----");
     ws_log(path);
     ws_log(loc.getCGIPath());
+    ws_log(this->_methode);
     ws_log("-----");
     if (path.find(loc.getCGIPath()) != std::string::npos) {
         ws_log("true");
@@ -324,13 +325,15 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
+    /*
 	ws_log(request.getName());
 	if (serv.getName() != request.getName())
 		this->_requestError(serv, 403);
 	else if (request.getBody().size() > serv.getMaxBodySize())
 		this->_requestError(serv, 400); //or 416 ??
-	else
-	{
+	*/
+   // else
+//	{
 		ws_log("Response constructor");
 		Location	location = getLocation(serv, request); //check for server name
 		
@@ -381,6 +384,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					_requestError(serv, 400);
 			}
 		}
-	}
+//	}
 	this->_createResponse();
 }
