@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/04 11:55:22 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/09 10:19:28 by lbonnefo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ HttpRequest & HttpRequest::operator=(const HttpRequest &assign)
 	this->_uri = assign._uri;
 	this->_protocol = assign._protocol;
 	this->_hasBody = assign._hasBody;
+	this->_payload = assign._payload;
 	return *this;
 }
 
@@ -58,6 +59,11 @@ void	HttpRequest::requestParser(std::string request)
 	std::getline(requestStream, line);
 	while(*line.begin() != 13 && requestStream.eof() == 0)
 	{
+		std::string tmp;
+		for (size_t i = 0; i < line.size(); ++i)
+			if (!std::isspace(line[i]))
+				tmp += line[i];
+		line = tmp;
 		this->addToHeaderField(line);
 		std::getline(requestStream, line);
 	}
@@ -69,17 +75,37 @@ void	HttpRequest::requestParser(std::string request)
 		this->_body.append(bodyLine);
 }
 
+void	HttpRequest::_parseUrl(std::string url)
+{
+		std::stringstream urlStream(url);
+
+		this->_payload = "";
+		std::getline(urlStream, this->_uri, '?');
+		std::getline(urlStream, this->_payload);
+		//this->_payload = "?" + this->_payload;
+}
 void	HttpRequest::parseFirstLine(void)
 {
 		std::stringstream startStream(this->_startLine);
-
+		std::string		  url;
+		
 		std::getline(startStream, this->_methode, ' ');	
-		std::getline(startStream, this->_uri, ' ');	
+		std::getline(startStream, url, ' ');	
+		this->_parseUrl(url);
 		std::getline(startStream, this->_protocol, '/');	
 		std::getline(startStream, this->_version);	
 }
 
 // Getter
+std::string	HttpRequest::getName(void)
+{
+	std::stringstream	host(this->getHeaderField()["Host"]);
+	std::string			name;
+
+	std::getline(host, name, ':');
+	return (name);
+}
+
 std::string	HttpRequest::getVersion(void)
 {
 	return(this->_version);	
@@ -88,6 +114,11 @@ std::string	HttpRequest::getVersion(void)
 std::string	HttpRequest::getMethode(void)
 {
 	return(this->_methode);
+}
+
+std::string	HttpRequest::getPayload(void)
+{
+	return(this->_payload);
 }
 
 std::string	HttpRequest::getProtocol(void)

@@ -4,6 +4,8 @@ server {
     listen 127.0.0.1:8080;
     server_name localhost;
     
+    max_body_size 2048576;
+
     error_page 418 www/default/40x/418.html;
     error_page 410 www/default/40x/410.html;
     error_page 404 www/default/40x/404.html;
@@ -14,8 +16,6 @@ server {
         accept GET;
         accept DELETE;
 		index home.html;
-
-
     }
 
     location /images {
@@ -35,6 +35,8 @@ server {
     listen 127.0.0.1:8181;
     server_name localhost;
     
+    max_body_size 2048576;
+
     error_page 418 www/default/40x/418.html;
     error_page 410 www/default/40x/410.html;
     error_page 403 www/default/40x/403.html;

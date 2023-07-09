@@ -38,7 +38,6 @@ void	Socket::socketInit(const uint32_t port)
 					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
 					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
 		throw InitSocketException();
-	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (listen(this->_serverSocket, 1) == -1)
 		throw InitSocketException();
 }
@@ -138,13 +137,13 @@ int	Socket::connectClient(void)
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (this->_clientSocket == -1)
 		throw std::exception();
+	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
 	stream << "Client connected on port: "
 			<< ntohs(this->_socketAddress.sin_port)
 			<< " from ip: " << this->_clientIp;
 	ws_log(stream.str());
-	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
 	return (this->_clientSocket);
 }
 
@@ -163,12 +162,10 @@ const std::string	Socket::receiveRequest(void)
 		{
 			this->_request.append("\0");
 			break ;
-			// ws_log("Need to send error page not kill the server");
-			// throw IoException();
 		}
 		buffer[returnRead] = 0;
 		this->_request.append(buffer);
-		if (returnRead < BUFF_SIZE) // if request size is multiple of BUFF_SIZE
+		if (returnRead < BUFF_SIZE)
 			break ;
 	}	
 	return (this->_request);
