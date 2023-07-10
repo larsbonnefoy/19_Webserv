@@ -3,11 +3,12 @@
 
 #include "HttpRequest.hpp"
 #include "Location.hpp"
+#include <exception>
 #include<map>
 #include<unistd.h>
 #include <vector>
 
-class cgi {
+class Cgi {
     private:
         size_t                              _method;
         std::string                         _data;
@@ -18,13 +19,20 @@ class cgi {
         char **_convToTab(std::map<std::string, std::string> env);
         char **_convToTab(std::vector<std::string> av);
         std::string _readFromPipe(int pipeRead);
+
     public:
-        cgi(void);
-        cgi(HttpRequest &request, std::string path);
-        cgi(const cgi &other);
-        ~cgi(void);
-        cgi &operator=(const cgi &other);
+        Cgi(void);
+        Cgi(HttpRequest &request, std::string path);
+        Cgi(const Cgi &other);
+        ~Cgi(void);
+
+        Cgi &operator=(const Cgi &other);
         std::string run(void);
+
+        class InternalError : public std::exception {
+            public:
+                const char* what(void) const throw();
+        };
 };
 
 

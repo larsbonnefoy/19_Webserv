@@ -4,9 +4,14 @@ import os
 import sys
 import urllib.parse
 
-content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+content_length = os.environ.get('CONTENT_LENGTH', 0)
 
-request_body = sys.stdin.read(content_length - 1)
+if content_length == "NULL":
+    request_body = os.environ.get("QUERY_STRING", 0)
+else:
+    content_length = int(content_length)
+    request_body = sys.stdin.read(content_length - 1)
+
 params = urllib.parse.parse_qs(request_body)
 print("Content-Type: text/html")  # HTML is following
 print("")                         # Leave a blank line

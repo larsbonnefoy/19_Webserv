@@ -271,7 +271,9 @@ void HttpResponse::_handleSuccessRequest(void) {
 
 void	HttpResponse::_createResponse(void)
 {
+    this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 	this->setStartLine(_makeStartLine());
+
 	ws_log(this->_startLine);
 	switch (this->_statusCode)
 	{
@@ -307,12 +309,13 @@ bool HttpResponse::_isCgi(std::string path, Location loc) {
 }
 
 void HttpResponse::_handleCgiResponse(std::string response) {
+    ws_log("CGI Response Handler");
     std::stringstream ss(response);
     std::string line;
     bool body = false;
 
+    std::cout << line << std::endl;
     while (std::getline(ss, line)) {
-        std::cout << line << std::endl;
         if (line == "") {
             body = true;
         }
@@ -350,7 +353,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		//  Http Headers (file type,...)
 		//  Body
 		if (_isCgi(this->_path, location) && (this->_methode == GET || this->_methode == POST)) {
-			cgi res(request, this->_path);
+			Cgi res(request, this->_path);
 			//Interal error if something wrong happens with CGI;
 			try { 
 				std::string response = res.run();
@@ -359,7 +362,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 				_handleCgiResponse(response);
 			}
 			catch (std::exception &e) {
-				ws_log(e.what());
+				ws_log(InternalError().what());
 				_requestError(serv, 500);
 			}
 		}
@@ -389,4 +392,10 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		}
     }
 	this->_createResponse();
+}
+
+/*-----------------------------EXCEPTION--------------------------------------*/
+
+const char* InternalError::what(void) const throw() {
+        return("[RequestHandler::InternalError] : Interal Server Error Cgi.");
 }

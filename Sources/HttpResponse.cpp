@@ -31,15 +31,6 @@ HttpResponse::HttpResponse(std::string url, size_t code) {
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
     : Http(other), _statusCode(other._statusCode), _statusPhrase(other._statusPhrase), _path(other._path), _autoindex(other._autoindex), _cgi(other._cgi), _methode(other._methode) {
-    /*
-        size_t      _statusCode;
-        std::string _statusPhrase;
-		std::string _path;
-		int			_pathtype;
-		size_t		_autoindex;
-		bool		_cgi;
-		int			_methode;
-    */
 }
 
 HttpResponse::~HttpResponse(void) {
@@ -182,9 +173,9 @@ std::string HttpResponse::convertToStr(void) {
     responseStr += headerToStr();
     responseStr += "\r\n";
     responseStr += getBody();
-
     return (responseStr);
 }
+
 std::ostream &operator<<(std::ostream &out, HttpResponse &httpRes) {
     out << httpRes.convertToStr();
     return (out);

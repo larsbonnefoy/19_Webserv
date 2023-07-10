@@ -52,4 +52,9 @@
 
 // void	requestHandler(Server server, HttpRequest request);
 
+class InternalError : public std::exception {
+    public:
+        const char* what(void) const throw();
+};
+
 #endif

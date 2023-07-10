@@ -1,6 +1,7 @@
 #include "../Includes/Cgi.hpp" 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <iostream>
 #include <unistd.h>
@@ -9,24 +10,25 @@
 
 #define BUFFERSIZE 500
 
-cgi::cgi(void) {
+Cgi::Cgi(void) {
 }
 
 //Si GET: CONTENT_LENGTH = body len,  on met les infos dans query QUERY_STRING 
 //Si POST: CONTENT_LENGHT = NULL, write le body dans pipe et dup pipe sur stdin;
-cgi::cgi(HttpRequest &request, std::string path) {
+Cgi::Cgi(HttpRequest &request, std::string path) {
     std::cout << "===CGI Constructor===" << std::endl;
 
-    this->_pathInfo = path;
+    this->_pathInfo = path; //change once path as been added to request;
     ws_log(path);
+    ws_log(request.getPayload());
+    ws_log(request.getMethode());
 
     this->_av.push_back("");
 
     this->_env["REQUEST_METHOD="] = request.getMethode();
-    std::cout << request.getMethode() << std::endl;
     if (request.getMethode() == "GET") {
         this->_method = GET;
-        this->_data = "placeholder";
+        this->_data = request.getPayload();
         this->_env["CONTENT_LENGTH="] = "NULL";
         this->_env["QUERY_STRING="] = this->_data;
     } 
@@ -42,31 +44,35 @@ cgi::cgi(HttpRequest &request, std::string path) {
     std::cout << "======" << std::endl;
 }
 
-cgi::cgi(const cgi &other) : _env(other._env) {
+Cgi::Cgi(const Cgi &other) : _env(other._env) {
 }
 
-cgi::~cgi(void) {
+Cgi::~Cgi(void) {
 }
 
-cgi &cgi::operator=(const cgi &other) {
+Cgi &Cgi::operator=(const Cgi &other) {
     this->_env = other._env;
     return *this;
 }
 /*------------------------Private member functions----------------------------*/
 //_convToTab should be template but un peu la flemme comme on dit chez moi
 //Dans le cas d'un pd d'execve ou d'alloc ici il faut FREEEEEE!!!!
-char **cgi::_convToTab(std::map<std::string, std::string> env) {
+char **Cgi::_convToTab(std::map<std::string, std::string> env) {
     size_t size = env.size();
 
     char **envp = new char*[size + 1];
     if (envp == NULL) {
-        std::cerr << "bad alloc" << std::endl;
-        return (NULL);
+        ws_log(strerror(errno));
+        throw InternalError();
     }
     size_t i = 0;
     for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it) {
         std::string str = it->first + it->second;
         envp[i] = new char[str.length() + 1];
+        if (envp[i] == NULL) {
+            ws_log(strerror(errno));
+            throw InternalError();
+        }
         strcpy(envp[i], str.c_str());
         i++; 
     }
@@ -74,17 +80,21 @@ char **cgi::_convToTab(std::map<std::string, std::string> env) {
     return (envp);
 }
 
-char **cgi::_convToTab(std::vector<std::string> av) {
+char **Cgi::_convToTab(std::vector<std::string> av) {
     size_t size = av.size();
 
     char **avp = new char*[size + 1];
     if (avp == NULL) {
-        std::cerr << "bad alloc" << std::endl;
-        return (NULL);
+        ws_log(strerror(errno));
+        throw InternalError();
     }
     size_t i = 0;
     for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
         avp[i] = new char[av[i].length() + 1];
+        if (avp[i] == NULL) {
+            ws_log(strerror(errno));
+            throw InternalError();
+        }
         strcpy(avp[i], av[i].c_str());
         i++; 
     }
@@ -95,21 +105,22 @@ char **cgi::_convToTab(std::vector<std::string> av) {
 /*
  *  
  */ 
-std::string cgi::_readFromPipe(int pipeRead){
+std::string Cgi::_readFromPipe(int pipeRead){
     int charRead;
     std::string out = "";
 
     char *buffer = new char[BUFFERSIZE + 1];
     if (buffer == NULL) {
-        std::cerr << "PTDR ERROR MALLOC" << std::endl;
+        ws_log(strerror(errno));
+        throw InternalError();
     }
 
     //Dans quel cas peut on ne pas avoir de '\0' quand charRead == 0?
     while ((charRead = read(pipeRead, buffer, BUFFERSIZE))) {
         if (charRead == -1) {
-            perror("read");
-            out += '\0';
-            break;
+            delete[] buffer;
+            ws_log("read");
+            throw InternalError();
         }
         buffer[charRead] = '\0';
         out += buffer;
@@ -118,19 +129,21 @@ std::string cgi::_readFromPipe(int pipeRead){
     return (out);
 }
 /*
- * Return internal error if cgi fails;
+ * Return internal error if Cgi fails;
  */ 
-std::string cgi::run(void) {
+std::string Cgi::run(void) {
     int pipeData[2], pipeCGI[2];
     pid_t pid;
     std::string cgiOut;
 
     if (pipe(pipeData) == -1 || pipe(pipeCGI) == -1) {
-        std::cerr<< "Error" << std::endl;
+        ws_log(strerror(errno));
+        throw InternalError();
     }
     pid = fork();
     if (pid == -1) {
-        std::cerr << "Error" << std::endl;
+        ws_log(strerror(errno));
+        throw InternalError();
     }
     
     //CHILD (executes CGI)
@@ -146,8 +159,8 @@ std::string cgi::run(void) {
             std::cerr << toWrite << " (len = " << this->_data.length()<< ")\n------------\n";
             
             if (write(pipeData[1], toWrite, this->_data.length()) == -1) {
-                perror("Write");
-                std::cerr << "Write failed" << std::endl;
+                ws_log(strerror(errno));
+                throw InternalError();
             };
         }
 
@@ -159,13 +172,11 @@ std::string cgi::run(void) {
 
         char **av = _convToTab(this->_av);
         char **env = _convToTab(this->_env);
-
-        //eft somehow osef que argv[0] == cgi name, ce qui comte c'est cgi_path;
+        
         if (execve(this->_pathInfo.c_str(), av, env) == -1) {
-            std::cerr << "Execve failed" << std::endl;
             delete[] av;
             delete[] env;
-            exit(1);
+            std::exit(1);
         }
     }
 
@@ -178,10 +189,22 @@ std::string cgi::run(void) {
         close(pipeCGI[1]);
 
         int status;
-        waitpid(-1, &status , WNOHANG);
-    
+        waitpid(pid, &status , 0);
+        if (WIFEXITED(status)) {
+            int exitCode = WEXITSTATUS(status);
+            if (exitCode != 0) {
+                ws_log("CGI script failed\n");
+                throw InternalError();
+            }
+        }
         cgiOut = _readFromPipe(pipeCGI[0]);
         close(pipeCGI[0]);
     }
     return (cgiOut);
+}
+
+/*-----------------------------EXCEPTIONS-----------------------------------*/
+
+const char *Cgi::InternalError::what() const throw() {
+        return("[Cgi::InternalError] : Interal Server Error Cgi.");
 }
