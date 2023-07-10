@@ -256,15 +256,12 @@ void	HttpResponse::_DELETERequest(Server server)
 void HttpResponse::_handleSuccessRequest(void) {
 
     if (this->_autoindex == 1) {
-        std::cerr << "1" << std::endl;
         this->_handleAutoIndex(this->_path);
     }
     else if (this->_cgi == true) {
-        std::cerr << "2" << std::endl;
         return ;
     }
     else {
-        std::cerr << "3" << std::endl;
         this->_handleURL(this->_path);
     }
 }
@@ -299,12 +296,13 @@ bool HttpResponse::_isCgi(std::string path, Location loc) {
     ws_log(path);
     ws_log(loc.getCGIPath());
     ws_log(this->_methode);
-    ws_log("-----");
     if (path.find(loc.getCGIPath()) != std::string::npos) {
         ws_log("true");
+        ws_log("-----");
         return (true);
     }
     ws_log("false");
+    ws_log("-----");
     return (false);
 }
 
@@ -370,9 +368,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 			switch (this->_methode)
 			{
 				case GET:
-					ws_log(this->_path);
 					this->_setIndex(location);	
-					ws_log(this->_path);
 					this->_setRedir(location);	
 					this->_autoindex = location.getAutoIndex();
 					this->_GETRequest(location, serv);
@@ -397,5 +393,5 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 /*-----------------------------EXCEPTION--------------------------------------*/
 
 const char* InternalError::what(void) const throw() {
-        return("[RequestHandler::InternalError] : Interal Server Error Cgi.");
+        return("[RequestHandler::InternalError] : Interal Server Error : Cgi failed.");
 }
