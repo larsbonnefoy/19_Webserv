@@ -256,12 +256,15 @@ void	HttpResponse::_DELETERequest(Server server)
 void HttpResponse::_handleSuccessRequest(void) {
 
     if (this->_autoindex == 1) {
+        std::cerr << "1" << std::endl;
         this->_handleAutoIndex(this->_path);
     }
     else if (this->_cgi == true) {
+        std::cerr << "2" << std::endl;
         return ;
     }
     else {
+        std::cerr << "3" << std::endl;
         this->_handleURL(this->_path);
     }
 }
@@ -325,19 +328,22 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
+    ws_log("Response constructor");
+    this->_cgi = false;
+
 	ws_log(request.getName());
-	if (serv.getName() != request.getName())
+    if (serv.getName() != request.getName()) {
 		this->_requestError(serv, 403);
-	else if (request.getBody().size() > serv.getMaxBodySize())
+    }
+    else if (request.getBody().size() > serv.getMaxBodySize()) {
 		this->_requestError(serv, 400); //or 416 ??
-    {
-		ws_log("Response constructor");
+    }
+    else {
 		Location	location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
 		
 		this->_setPath(location, request, this->_methode);
-		//this->_body = parse(request.getBody()); ??
 
 		//cgi response can have
 		//  startline with response code 
@@ -381,6 +387,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					_requestError(serv, 400);
 			}
 		}
-//	}
+    }
 	this->_createResponse();
 }
