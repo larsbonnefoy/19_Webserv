@@ -16,17 +16,20 @@ server {
         accept POST;
         accept DELETE;
 		index home.html;
+        CGI /cgi-bin;
     }
 
     location /images {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
 		autoIndex true;
+        CGI /cgi-bin;
     }
     location /redir {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
 		redirect 301 https://google.com;
+        CGI /cgi-bin;
 	}
 }
 
@@ -44,11 +47,13 @@ server {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
         accept DELETE;
+        CGI /cgi-bin;
     }
 
     location /images {
         root /Users/hdelmas/19_Webserv/site/data/www;
         accept GET;
         autoindex false;
+        CGI /cgi-bin;
     }
 }

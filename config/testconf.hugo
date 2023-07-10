@@ -16,6 +16,9 @@ server {
         accept GET;
         accept DELETE;
 		index home.html;
+        CGI /cgi-bin;
+:q
+:q
     }
 
     location /images {

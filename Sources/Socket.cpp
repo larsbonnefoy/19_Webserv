@@ -38,13 +38,12 @@ void	Socket::socketInit(const uint32_t port)
 					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
 					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
 		throw InitSocketException();
-	if (listen(this->_serverSocket, 1) == -1)
+	if (listen(this->_serverSocket, 50) == -1)
 		throw InitSocketException();
 }
 
 // Constructors
 Socket::Socket()
-
 {
 }
 

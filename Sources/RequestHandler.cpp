@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/09 10:27:51 by lbonnefo         ###   ########.fr       */
+/*   Updated: 2023/07/10 17:16:24 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@
 #include <sstream>
 
 // Change most error code to 403
+
+bool HttpResponse::_isCgi(void) {
+	if (this->_uri.rfind(".cgi") != this->_uri.size() - 4)
+			return false;
+
+	return true;
+}
 
 static int	getType(std::string path)
 {
@@ -106,9 +113,18 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 	locationRoot =  location.getRoot();
 	if (*locationRoot.rbegin() == '/')
 		locationRoot.erase(locationRoot.size() - 1);
-
 	this->_uri = request.getUri();
-	this->_path = locationRoot + this->_uri;
+	this->_isCgi();
+	if (this->_cgi)
+	{
+		std::string locationCgi;
+		locationCgi =  location.getCgi();
+		if (*locationCgi.rbegin() == '/')
+			locationCgi.erase(locationCgi.size() - 1);
+		this->_path = locationRoot + locationCgi  + this->_uri;
+	}
+	else
+		this->_path = locationRoot + this->_uri;
 	this->_statusCode = 200;
 	ws_log("path");
 	ws_log(this->_path);
@@ -289,18 +305,7 @@ void	HttpResponse::_createResponse(void)
 	}
 }
 
-bool HttpResponse::_isCgi(std::string path, Location loc) {
-    ws_log("CGI CHECK");
-    ws_log(path);
-    ws_log(loc.getCGIPath());
-    ws_log("-----");
-    if (path.find(loc.getCGIPath()) != std::string::npos) {
-        ws_log("true");
-        return (true);
-    }
-    ws_log("false");
-    return (false);
-}
+
 
 void HttpResponse::_handleCgiResponse(std::string response) {
     std::stringstream ss(response);
@@ -321,6 +326,7 @@ void HttpResponse::_handleCgiResponse(std::string response) {
     }
     addToHeaderField("Content-Length", valToString(this->_body.size()));
 }
+
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
@@ -343,24 +349,27 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		//  startline with response code 
 		//  Http Headers (file type,...)
 		//  Body
-		if (_isCgi(this->_path, location) && (this->_methode == GET || this->_methode == POST)) {
-			cgi res(request, this->_path);
+		if (this->_cgi  && (this->_methode == GET || this->_methode == POST)) {
 			//Interal error if something wrong happens with CGI;
-			try { 
-				std::string response = res.run();
-				this->_cgi = true;
-				_requestSuccess(200);
-				_handleCgiResponse(response);
-			}
-			catch (std::exception &e) {
-				ws_log(e.what());
-				_requestError(serv, 500);
-			}
 		}
 		else {
 			switch (this->_methode)
 			{
 				case GET:
+					if (this->_cgi)
+					{
+						try { 
+							cgi res(request, this->_path);
+							std::string response = res.run();
+							_requestSuccess(200);
+							_handleCgiResponse(response);
+						}
+						catch (std::exception &e) {
+							ws_log(e.what());
+							_requestError(serv, 500);
+						}
+						break ;
+					}
 					ws_log(this->_path);
 					this->_setIndex(location);	
 					ws_log(this->_path);
@@ -370,6 +379,20 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					break;
 				
 				case POST:
+					if (this->_cgi)
+					{
+						try { 
+							cgi res(request, this->_path);
+							std::string response = res.run();
+							_requestSuccess(200);
+							_handleCgiResponse(response);
+						}
+						catch (std::exception &e) {
+							ws_log(e.what());
+							_requestError(serv, 500);
+						}
+						break ;
+					}
 					_requestSuccess(204); //NO CGI
 					break ;
 				
