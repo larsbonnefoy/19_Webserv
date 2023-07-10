@@ -76,7 +76,7 @@ class HttpResponse : public Http {
 		void	_handleRedirection(void);
         void    _handleSuccessRequest(void);
         void    _handleCgiResponse(std::string response);
-		bool 	_isCgi(void);
+		void 	_isCgi(void);
     
 	public:
         HttpResponse(void);

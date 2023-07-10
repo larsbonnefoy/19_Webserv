@@ -12,13 +12,12 @@ server {
     error_page 403 www/default/40x/403.html;
     
     location / {
-        root /home/space/Documents/19_Webserv/site/data/www;
+        root /home/space/Documents/19_Webserv/site/data/;
         accept GET;
+        accept POST;
         accept DELETE;
-		index home.html;
+		index www/add.html;
         CGI /cgi-bin;
-:q
-:q
     }
 
     location /images {
