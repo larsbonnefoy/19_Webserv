@@ -325,15 +325,12 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
-    /*
 	ws_log(request.getName());
 	if (serv.getName() != request.getName())
 		this->_requestError(serv, 403);
 	else if (request.getBody().size() > serv.getMaxBodySize())
 		this->_requestError(serv, 400); //or 416 ??
-	*/
-   // else
-//	{
+    {
 		ws_log("Response constructor");
 		Location	location = getLocation(serv, request); //check for server name
 		
