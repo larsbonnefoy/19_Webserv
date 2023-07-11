@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/11 00:31:13 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/11 11:24:14 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 		locationCgi =  location.getCGIPath();
 		if (*locationCgi.rbegin() == '/')
 			locationCgi.erase(locationCgi.size() - 1);
-		this->_path = locationRoot + locationCgi  + this->_uri;
+		this->_path = locationRoot + "/"  + locationCgi + this->_uri;
 	}
 	else
 		this->_path = locationRoot + this->_uri;
@@ -145,7 +145,16 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 		this->_path = BADPATH;
 		return ;
 	}
-	//add X check cgi
+	if (this->_cgi)
+	{
+		if (!((statbuf.st_mode & S_IXUSR )|| (statbuf.st_mode & S_IXGRP) || (statbuf.st_mode & S_IXOTH)))
+		{
+			this->_path = BADPATH;
+			this->_pathtype = BADTYPE;
+			return ;
+		}
+		return ;
+	}
 	switch (methode)
 	{
 		case GET :
