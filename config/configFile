@@ -11,12 +11,12 @@ server {
     error_page 400  www/default/40x/400.html;
     
     location / {
-        root /Users/larsbonnefoy/projects/19_Webserv/site/data;
-        index www/add.html;
+        root /Users/larsbonnefoy/projects/19_Webserv/site/data/www;
+        index add.html;
         accept POST;
         accept GET;
         accept DELETE;
-        CGI /cgi-bin;
+        CGI ../cgi-bin;
     }
 
     location /salut {

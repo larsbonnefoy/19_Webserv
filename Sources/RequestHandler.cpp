@@ -346,14 +346,14 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
-	if (serv.getName() != request.getName()) {
-	  this->_requestError(serv, 403)
-  }
-  else if (request.getBody().size() > serv.getMaxBodySize()) {
+    if (serv.getName() != request.getName()) {
+	    this->_requestError(serv, 403);
+    }
+    else if (request.getBody().size() > serv.getMaxBodySize()) {
 		this->_requestError(serv, 400); //or 416 ??
-   }
-   else {
-    Location	location = getLocation(serv, request); //check for server name
+    }
+    else {
+        Location    location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
 		
@@ -362,61 +362,56 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		//  startline with response code 
 		//  Http Headers (file type,...)
 		//  Body
-		if (false) {
-			//Interal error if something wrong happens with CGI;
-		}
-		else {
-			switch (this->_methode)
-			{
-				case GET:
-					if (this->_cgi)
-					{
-						try { 
-							cgi res(request, this->_path);
-							std::string response = res.run();
-							_requestSuccess(200);
-							_handleCgiResponse(response);
-						}
-						catch (std::exception &e) {
-							ws_log(e.what());
-							_requestError(serv, 500);
-						}
-						break ;
-					}
-					this->_setIndex(location);	
-					this->_setRedir(location);	
-					this->_autoindex = location.getAutoIndex();
-					this->_GETRequest(location, serv);
-					break;
-				
-				case POST:
-					if (this->_cgi)
-					{
-						try { 
-							cgi res(request, this->_path);
-							std::string response = res.run();
-							_requestSuccess(200);
-							_handleCgiResponse(response);
-						}
-						catch (std::exception &e) {
-							ws_log(e.what());
-							_requestError(serv, 500);
-						}
-						break ;
-					}
-					_requestSuccess(204); 
-					break ;
-				
-				case DELETE:
-					this->_DELETERequest(serv);
-					break;
-					
-				default:
-					_requestError(serv, 400);
-			}
-		}
-   }
-	this->_createResponse();
+        switch (this->_methode)
+        {
+            case GET:
+                if (this->_cgi)
+                {
+                    try { 
+                        Cgi res(request, this->_path);
+                        std::string response = res.run();
+                        _requestSuccess(200);
+                        _handleCgiResponse(response);
+                    }
+                    catch (std::exception &e) {
+                        ws_log(e.what());
+                        _requestError(serv, 500);
+                    }
+                    break ;
+                }
+                this->_setIndex(location);	
+                this->_setRedir(location);	
+                this->_autoindex = location.getAutoIndex();
+                this->_GETRequest(location, serv);
+                break;
+            
+            case POST:
+                if (this->_cgi)
+                {
+                    try { 
+                        Cgi res(request, this->_path);
+                        std::string response = res.run();
+                        _requestSuccess(200);
+                        _handleCgiResponse(response);
+                    }
+                    catch (std::exception &e) {
+                        ws_log(e.what());
+                        _requestError(serv, 500);
+                    }
+                    break ;
+                }
+                _requestSuccess(204); 
+                break ;
+            
+            case DELETE:
+                this->_DELETERequest(serv);
+                break;
+                
+            default:
+                _requestError(serv, 400);
+        }
+    }
+    this->_createResponse();
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/
