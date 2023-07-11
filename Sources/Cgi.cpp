@@ -24,7 +24,7 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
     ws_log(request.getMethode());
 
     this->_av.push_back("");
-
+    
     this->_env["REQUEST_METHOD="] = request.getMethode();
     if (request.getMethode() == "GET") {
         this->_method = GET;
@@ -35,12 +35,21 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
     else if (request.getMethode() == "POST") {
         this->_method = POST;
         this->_data = request.getBody() + '\0';
-        //un peu degeu d'utiliser valToString de Http
         this->_env["CONTENT_LENGTH="] = request.valToString(_data.length());
         this->_env["QUERY_STRING="] = "NULL";
     }
-    this->_env["CONTENT_TYPE="] = "";
-    this->_env["PATH_INFO="] = "";
+
+    std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();
+
+    this->_env["HTTP_ACCEPT="] = requestHeaderFields["Accept"];
+    this->_env["HTTP_ACCEPT_ENCODING="] = requestHeaderFields["Accept-Encoding"];
+    this->_env["HTTP_ACCEPT_LANGUAGE="] = requestHeaderFields["Accept-Language"];
+    this->_env["PATH_INFO="] = this->_pathInfo;
+    this->_env["SERVER_PROTOCOL="] = "HTTP/1.1";
+    this->_env["HOST="] = requestHeaderFields["Host"];
+    this->_env["HTTP_USER_AGENT="] = requestHeaderFields["User-Agent"];
+    this->_env["HTTP_CONNECTION="] = requestHeaderFields["Connection"];
+
     std::cout << "======" << std::endl;
 }
 
