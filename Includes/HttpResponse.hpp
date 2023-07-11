@@ -76,9 +76,7 @@ class HttpResponse : public Http {
 		void	_handleRedirection(void);
         void    _handleSuccessRequest(void);
         void    _handleCgiResponse(std::string response);
-        
-        //tmp func to make cgi work;
-        bool    _isCgi(std::string path, Location loc);
+		void 	_isCgi(void);
     
 	public:
         HttpResponse(void);

@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/09 10:27:51 by lbonnefo         ###   ########.fr       */
+/*   Updated: 2023/07/11 11:24:14 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,17 @@
 #include <sstream>
 
 // Change most error code to 403
+
+void HttpResponse::_isCgi(void) {
+	ws_log("isCgi");	
+	ws_log(this->_uri);
+	ws_log(this->_uri.rfind(".cgi"));
+	if (this->_uri.rfind(".cgi") != this->_uri.size() - 4)
+			this->_cgi = false;
+	else
+			this->_cgi = true;
+	return ;
+}
 
 static int	getType(std::string path)
 {
@@ -106,33 +117,54 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 	locationRoot =  location.getRoot();
 	if (*locationRoot.rbegin() == '/')
 		locationRoot.erase(locationRoot.size() - 1);
-
 	this->_uri = request.getUri();
-	this->_path = locationRoot + this->_uri;
+	this->_isCgi();
+	if (this->_cgi)
+	{
+		std::string locationCgi;
+		locationCgi =  location.getCGIPath();
+		if (*locationCgi.rbegin() == '/')
+			locationCgi.erase(locationCgi.size() - 1);
+		this->_path = locationRoot + "/"  + locationCgi + this->_uri;
+	}
+	else
+		this->_path = locationRoot + this->_uri;
 	this->_statusCode = 200;
 	ws_log("path");
 	ws_log(this->_path);
 	int ret = stat(this->_path.c_str(), &statbuf);
-	if (ret < 0
-		|| !((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG))
+	if (ret < 0)
+	{
+		this->_path = BADPATH;
+		this->_pathtype = BADTYPE;
+		return ;
+	}
+	this->_pathtype = getType(this->_path);
+	if (this->_pathtype == BADTYPE)
 	{
 		this->_path = BADPATH;
 		return ;
 	}
-	this->_pathtype = getType(this->_path);
-	
+	if (this->_cgi)
+	{
+		if (!((statbuf.st_mode & S_IXUSR )|| (statbuf.st_mode & S_IXGRP) || (statbuf.st_mode & S_IXOTH)))
+		{
+			this->_path = BADPATH;
+			this->_pathtype = BADTYPE;
+			return ;
+		}
+		return ;
+	}
 	switch (methode)
 	{
 		case GET :
 		{
 			if (!((statbuf.st_mode & S_IRUSR )|| (statbuf.st_mode & S_IRGRP) || (statbuf.st_mode & S_IROTH)))
 			{
-				ws_log("READ NOT OK");
 				this->_path = BADPATH;
 				this->_pathtype = BADTYPE;
 				return ;
 			}
-			ws_log("READ OK");
 			break;
 		}
 		case POST :
@@ -159,7 +191,6 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 		}
 	}
 }
-
 
 void	HttpResponse::_setIndex(Location location)
 {
@@ -291,21 +322,6 @@ void	HttpResponse::_createResponse(void)
 	}
 }
 
-bool HttpResponse::_isCgi(std::string path, Location loc) {
-    ws_log("----CGI CHECK----");
-    ws_log(path);
-    ws_log(loc.getCGIPath());
-    ws_log(this->_methode);
-    if (path.find(loc.getCGIPath()) != std::string::npos) {
-        ws_log("true");
-        ws_log("-----");
-        return (true);
-    }
-    ws_log("false");
-    ws_log("-----");
-    return (false);
-}
-
 void HttpResponse::_handleCgiResponse(std::string response) {
     ws_log("CGI Response Handler");
     std::stringstream ss(response);
@@ -327,47 +343,46 @@ void HttpResponse::_handleCgiResponse(std::string response) {
     addToHeaderField("Content-Length", valToString(this->_body.size()));
 }
 
+
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
-    ws_log("Response constructor");
-    this->_cgi = false;
-
-	ws_log(request.getName());
-    if (serv.getName() != request.getName()) {
-		this->_requestError(serv, 403);
-    }
-    else if (request.getBody().size() > serv.getMaxBodySize()) {
+	if (serv.getName() != request.getName()) {
+	  this->_requestError(serv, 403)
+  }
+  else if (request.getBody().size() > serv.getMaxBodySize()) {
 		this->_requestError(serv, 400); //or 416 ??
-    }
-    else {
-		Location	location = getLocation(serv, request); //check for server name
+   }
+   else {
+    Location	location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
 		
 		this->_setPath(location, request, this->_methode);
-
 		//cgi response can have
 		//  startline with response code 
 		//  Http Headers (file type,...)
 		//  Body
-		if (_isCgi(this->_path, location) && (this->_methode == GET || this->_methode == POST)) {
-			Cgi res(request, this->_path);
+		if (false) {
 			//Interal error if something wrong happens with CGI;
-			try { 
-				std::string response = res.run();
-				this->_cgi = true;
-				_requestSuccess(200);
-				_handleCgiResponse(response);
-			}
-			catch (std::exception &e) {
-				ws_log(InternalError().what());
-				_requestError(serv, 500);
-			}
 		}
 		else {
 			switch (this->_methode)
 			{
 				case GET:
+					if (this->_cgi)
+					{
+						try { 
+							cgi res(request, this->_path);
+							std::string response = res.run();
+							_requestSuccess(200);
+							_handleCgiResponse(response);
+						}
+						catch (std::exception &e) {
+							ws_log(e.what());
+							_requestError(serv, 500);
+						}
+						break ;
+					}
 					this->_setIndex(location);	
 					this->_setRedir(location);	
 					this->_autoindex = location.getAutoIndex();
@@ -375,7 +390,21 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					break;
 				
 				case POST:
-					_requestSuccess(204); //NO CGI
+					if (this->_cgi)
+					{
+						try { 
+							cgi res(request, this->_path);
+							std::string response = res.run();
+							_requestSuccess(200);
+							_handleCgiResponse(response);
+						}
+						catch (std::exception &e) {
+							ws_log(e.what());
+							_requestError(serv, 500);
+						}
+						break ;
+					}
+					_requestSuccess(204); 
 					break ;
 				
 				case DELETE:
@@ -386,7 +415,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					_requestError(serv, 400);
 			}
 		}
-    }
+   }
 	this->_createResponse();
 }
 
