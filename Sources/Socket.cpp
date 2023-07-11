@@ -171,7 +171,9 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 	std::string	res = "";
 	std::string	line;
 
+	ws_log("YOOO");
 	std::getline(stream, line);
+	ws_log(line);
 	if (!stream.good())
 		return (res);
 	if (line.size() < size)
@@ -192,10 +194,16 @@ static std::string	unChounkInit(std::string request)
 	{
 		if (!inBody)
 		{
-			if (line == "\r\n")
+			if (line == "\r")
+			{
 				inBody = true;
+				newRequest.append("\r\n");
+			}
 			else
+			{
 				newRequest.append(line);
+				newRequest.append("\r\n");
+			}
 		}
 		else
 		{
@@ -232,6 +240,7 @@ const std::string	Socket::receiveRequest(void)
 	if (chounkedCheck)
 	{
 		returnRead = 1;
+		ws_log("hmmm");
 		this->_request = unChounkInit(this->_request);
 		this->sendResponse("HTTP/1.1 100 Continue");
 		size_t	size = 1;
@@ -239,6 +248,7 @@ const std::string	Socket::receiveRequest(void)
 
 		while (size != 0)
 		{
+			ws_log("LESGOOOO");
 			returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
 			if (returnRead < 0)
 				return (this->_request);
