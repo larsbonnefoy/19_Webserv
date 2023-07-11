@@ -13,25 +13,21 @@
 
 int main (int argc, char *argv[])
 {
+    //should check for input file validity here
+    //If file exists and if permissions on file
+    //or empty file
     if (argc != 2) {
         std::cout << "Unvalid Input Files" << std::endl;
         return (1);
     }
 
-    try {
-        Config *defaultConfig = parseConfig(argv[1]);
-		try
-		{
-            StaticInit::initStatic();
-			Mux	mux(*defaultConfig);
-			mux.run();
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
-		delete defaultConfig;
+    Config conf;
 
+    try {
+        parseConfig(argv[1], conf);
+        //StaticInit::initStatic();
+        //Mux	mux(conf);
+        //mux.run();
     }
     catch (std::exception &e) {
         std::cout << e.what() << std::endl;
