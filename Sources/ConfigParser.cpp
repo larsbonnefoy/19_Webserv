@@ -23,12 +23,10 @@
  */ 
 
 /*
- * When seeing a key word (server,root tbc) jump to the next closing terminating char
- * (bracket or ;) and start configuring server obj that will be added in Config object
- *
+ * When seeing Server Block between brackets, isolates it and sends the whole 
+ * block to addServer 
  */ 
-Config *parseConfig(std::string configFile) {
-    Config *configRes = new Config();
+void parseConfig(std::string configFile, Config &conf) {
 
     std::ifstream file(configFile.c_str()); 
     std::string line;
@@ -36,16 +34,9 @@ Config *parseConfig(std::string configFile) {
 
     while (std::getline(file.seekg(nextPos), line)) {
         std::string infoBuffer;
-        /*
-        if (line.find("root") != std::string::npos && Server::root == "") {
-            line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
-            nextPos = findMatchingValue(line, "root", infoBuffer, nextPos) + 1;
-            Server::setServerRoot(infoBuffer);
-        }
-        */
         if (line.find("server") != std::string::npos) {
             nextPos = getInstructionBlock(file, infoBuffer);
-            addServer(infoBuffer, *configRes);
+            addServer(infoBuffer, conf);
         }
         else {
             if (!isEmptyLine(line)) {
@@ -54,7 +45,6 @@ Config *parseConfig(std::string configFile) {
             nextPos += 1;
         }
     }
-    return (configRes);
 }
 
  

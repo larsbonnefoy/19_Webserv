@@ -15,7 +15,7 @@
 #include <netinet/in.h>
 #include "../Includes/Config.hpp"
 
-Config *parseConfig(std::string configFile);
+void parseConfig(std::string configFile, Config &conf);
 
 int             nextMatchingBracket(std::string input, std::string &outputBuffer, size_t startPos = 0);
 int             findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, size_t startPosition = 0);
