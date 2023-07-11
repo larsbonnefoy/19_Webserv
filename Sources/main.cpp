@@ -25,9 +25,9 @@ int main (int argc, char *argv[])
 
     try {
         parseConfig(argv[1], conf);
-        //StaticInit::initStatic();
-        //Mux	mux(conf);
-        //mux.run();
+        StaticInit::initStatic();
+        Mux	mux(conf);
+        mux.run();
     }
     catch (std::exception &e) {
         std::cout << e.what() << std::endl;
