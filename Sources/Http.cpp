@@ -67,9 +67,9 @@ void	Http::addToHeaderField(std::string headerToAdd)
 	
 	
 	std::string::iterator checkIt = std::find(headerToAdd.begin(), headerToAdd.end(), ':');
-	if (checkIt == headerToAdd.end())
+	if (checkIt == headerToAdd.end()) {
 		throw std::exception(); //TODO
-
+    }
 	std::getline(headerStream, pair.first, ':');
 	std::getline(headerStream, pair.second);
 

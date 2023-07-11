@@ -30,7 +30,7 @@ HttpResponse::HttpResponse(std::string url, size_t code) {
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other) 
-    : Http(other), _statusCode(other._statusCode), _statusPhrase(other._statusPhrase) {
+    : Http(other), _statusCode(other._statusCode), _statusPhrase(other._statusPhrase), _path(other._path), _autoindex(other._autoindex), _cgi(other._cgi), _methode(other._methode) {
 }
 
 HttpResponse::~HttpResponse(void) {
@@ -40,10 +40,16 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
 
     this->_statusCode = other._statusCode;
     this->_statusPhrase = other._statusPhrase;
+    this->_path = other._path;
+    this->_autoindex = other._autoindex;
+    this->_cgi = other._cgi;
+    this->_methode = other._methode; 
+
     return *this;
-}
+} 
 
 /******************************PRIVATE FUNCTIONS*******************************/
+
 void HttpResponse::_handleAutoIndex(const std::string &url) {
     std::cout << url << std::endl;
     std::string htmlAutoIndex;
@@ -167,9 +173,9 @@ std::string HttpResponse::convertToStr(void) {
     responseStr += headerToStr();
     responseStr += "\r\n";
     responseStr += getBody();
-
     return (responseStr);
 }
+
 std::ostream &operator<<(std::ostream &out, HttpResponse &httpRes) {
     out << httpRes.convertToStr();
     return (out);

@@ -192,7 +192,6 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 	}
 }
 
-
 void	HttpResponse::_setIndex(Location location)
 {
 	struct stat statbuf;
@@ -300,7 +299,9 @@ void HttpResponse::_handleSuccessRequest(void) {
 
 void	HttpResponse::_createResponse(void)
 {
+    this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 	this->setStartLine(_makeStartLine());
+
 	ws_log(this->_startLine);
 	switch (this->_statusCode)
 	{
@@ -321,15 +322,14 @@ void	HttpResponse::_createResponse(void)
 	}
 }
 
-
-
 void HttpResponse::_handleCgiResponse(std::string response) {
+    ws_log("CGI Response Handler");
     std::stringstream ss(response);
     std::string line;
     bool body = false;
 
+    std::cout << line << std::endl;
     while (std::getline(ss, line)) {
-        std::cout << line << std::endl;
         if (line == "") {
             body = true;
         }
@@ -346,13 +346,14 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
-	if (serv.getName() != request.getName())
-		this->_requestError(serv, 403);
-	else if (request.getBody().size() > serv.getMaxBodySize())
+	if (serv.getName() != request.getName()) {
+	  this->_requestError(serv, 403)
+  }
+  else if (request.getBody().size() > serv.getMaxBodySize()) {
 		this->_requestError(serv, 400); //or 416 ??
-	else
-	{
-		Location	location = getLocation(serv, request); //check for server name
+   }
+   else {
+    Location	location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
 		
@@ -414,8 +415,12 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 					_requestError(serv, 400);
 			}
 		}
-	}
-	ws_log("Path before createResponse");
-	ws_log(this->_path);
+   }
 	this->_createResponse();
+}
+
+/*-----------------------------EXCEPTION--------------------------------------*/
+
+const char* InternalError::what(void) const throw() {
+        return("[RequestHandler::InternalError] : Interal Server Error : Cgi failed.");
 }
