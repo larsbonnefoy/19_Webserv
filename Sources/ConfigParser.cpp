@@ -2,7 +2,17 @@
 #include "../Includes/Config.hpp"
 #include "../Includes/ConfigParser.hpp"
 #include "../Includes/Location.hpp"
+#include <fstream>
+#include <sstream>
+#include <string>
+#define LISTEN 0
+#define SERVER_NAME 1
+#define ERROR_PAGE 2
+#define LOCATION 3
+#define MAX_BODY_SIZE 4
+#define SERVER_ROOT 5
 
+//std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "serverRoot"};
 /* TO DO 
  * Check possible parsing errors 
  *      -> non ending ;
@@ -46,7 +56,6 @@ void parseConfig(std::string configFile, Config &conf) {
         }
     }
 }
-
  
 /*
  * Returns str enclosed by two matching brackets 
@@ -75,12 +84,48 @@ std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuff
                 throw UnterminatedBlock();
             }
         }
-        outputBuffer += (line);
+        outputBuffer += (line + '\n');
     }
     if (!bracketStack.empty()) {
         throw UnterminatedBlock();
     }
     return(file.tellg());
+}
+
+/*
+ * Writes string into an outputBuffer
+ * /!\ First opening bracket has already been seen, have to add it manually
+ *
+ */
+void getLocationBlock(std::stringstream &ss, std::string &outputBuffer) {
+
+    std::stack<char>    bracketStack;
+    std::string         line;
+    
+    bracketStack.push('{');
+    outputBuffer += '\n';
+
+    while (std::getline(ss, line)) {
+        line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+        if (line.find('{') != std::string::npos) {
+            bracketStack.push('{');
+        }
+        else if (line.find('}') != std::string::npos) {
+            if (!bracketStack.empty()) {
+                bracketStack.pop(); 
+                if (bracketStack.empty()) {
+                    break;
+                }
+            }
+            else {
+                throw UnterminatedBlock();
+            }
+        }
+        outputBuffer += (line + '\n');
+    }
+    if (!bracketStack.empty()) {
+        throw UnterminatedBlock();
+    }
 }
 
 /*
@@ -121,7 +166,11 @@ int nextMatchingBracket(std::string input, std::string &outputBuffer, size_t sta
  * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
  */ 
 int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, size_t startPos) {
+    //std::cout << "Matching value input: " << inputString << std::endl;
+    
+    //quand str == line directive pos = 0 i!!
     std::size_t directivePos =  inputString.find(directive, startPos);
+    //std::cout << directivePos << std::endl;
 
     if (directivePos != std::string::npos) {
         std::size_t valuePos = directivePos + directive.length();
@@ -138,56 +187,89 @@ int findMatchingValue(std::string inputString, std::string directive, std::strin
 }
 
 /*
+ * Checks if line contains a directive form directives 
+ * If TRUE returns directiveID
+ * If FALSE returns -1
+ */ 
+int matchDirective(std::string line, std::string *directives) {
+    
+    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
+        if (line.find(directives[directiveID]) == 0) {
+            return (directiveID);
+        }
+    }
+    return (-1);
+}
+
+/*
  * Find key words "listen", "server_name" and "error_page" and saves those information in the Server instance that is then copied into the config;
- * Find a way to add multiple errors and locations i guess
+ * Should be able to make certain directives mandatory
+ * Using Array of value to true or false?
  */
 void    addServer(std::string infoBuffer, Config &conf) {
 
+    std::cout << infoBuffer << std::endl;
     Server serv;
-    infoBuffer.erase(remove_if(infoBuffer.begin(), infoBuffer.end(), isspace), infoBuffer.end());
+    std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "root"};
 
-    int pos;
-    std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "serverRoot"};
-    
-    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
-        std::string value;
-        switch (directiveID) {
-            case 0:
-                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
-                if (pos == -1)
-                    throw MissingDirective(); 
-                addIpPort(value, serv);
-                break; 
-            case 1:
-                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
-                if (pos != -1)
+    std::stringstream ss(infoBuffer);
+    std::string line;
+
+    while (std::getline(ss, line)) {
+        std::string value = "";
+        line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+        if (line == "" || line == "{" || line == "}") {
+            continue ;
+        }
+        else { 
+            int directiveID = matchDirective(line, directives);
+            std::cout << line << " | " << directiveID << std::endl;
+
+            switch (directiveID) {
+                case LISTEN:
+                    findMatchingValue(line, directives[directiveID], value);
+                    addIpPort(value, serv);
+                    break; 
+
+                case SERVER_NAME:
+                    findMatchingValue(line, directives[directiveID], value);
                     serv.setName(value);
-                break; 
-            case 2:
-                addErrorPages(infoBuffer, serv);
-                break; 
-            case 3:
-                addLocation(infoBuffer, serv);
-                break; 
-            case 4:
-                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
-                if (pos == -1) {
+                    break; 
+                    
+                case ERROR_PAGE:
+                    addErrorPages(line, serv);
+                    break; 
+
+                case LOCATION:
+                    std::cout << "========LOCATION PARSING=========" << std::endl;
+                    getLocationBlock(ss, line);
+                    createLocation(line, serv);
+                    std::cout << "==========LOCATION PARSING END======" << std::endl;
+                    break; 
+
+                case MAX_BODY_SIZE:
+                    findMatchingValue(line, directives[directiveID], value);
+                    addMaxBodySize(value, serv);
+                    break; 
+
+                case SERVER_ROOT:
+                    findMatchingValue(line, directives[directiveID], value);
+                    serv.setServerRoot(value);
                     break;
-                }
-                addMaxBodySize(value, serv);
-                break; 
-            case 5:
-                pos = findMatchingValue(infoBuffer, directives[directiveID], value);
-                if (pos == -1)
-                    throw MissingDirective();
-                serv.setServerRoot(value);
+
+                default:
+                    throw UnvalidValue();
+            }
         }
     }
+
     if (conf.getServers().count(serv.getPort()) == 1) {
         throw DuplicateValueError();
     }
     conf.getServers()[serv.getPort()] = serv; 
+    std::cout << "---------------------Parsed Server--------------------" << std::endl;
     std::cout << serv << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
 }
 
 /*
@@ -270,21 +352,10 @@ void addIpPort(std::string values, Server &serv) {
  */ 
 void addLocation(std::string infoBuffer, Server &serv) {
 
-    uint16_t    endPos = 0;
-    size_t      searchFrom;
-    std::string outputBuffer;
-    std::string locationPath;
-    
-    while (true) {
-        searchFrom = infoBuffer.find("location", endPos);
-        if (searchFrom == std::string::npos) {
-            break;
-        }
-        locationPath = getLocationPath(infoBuffer, searchFrom + 8);
+    std::cout << "Location infoBuffer" << std::endl;
+    std::cout << infoBuffer << std::endl;
 
-        endPos = nextMatchingBracket(infoBuffer, outputBuffer, searchFrom);
-        createLocation(outputBuffer, serv, locationPath);
-    }
+    createLocation(infoBuffer, serv);
 }
 
 /*
@@ -305,13 +376,14 @@ std::string getLocationPath(std::string infoBuffer, size_t startPos) {
     return (path);
 }
 
-void createLocation(std::string inputBuffer, Server &serv, std::string locationPath) {
+void createLocation(std::string inputBuffer, Server &serv) {
+    std::cout << "Create location "<< std::endl << inputBuffer << std::endl;
 
     Location    loc;
     std::string directives[6] = {"root", "accept", "autoIndex", "index", "redirect", "CGI"};
     int     pos;
     
-    loc.setPath(locationPath);
+    loc.setPath(getLocationPath(inputBuffer, 8));
 
     for (size_t directiveID = 0; directiveID < 6; directiveID++) {
         std::string value;
@@ -509,4 +581,8 @@ const char *MissingDirective::what(void) const throw() {
 
 const char *UnvalidInstructionBlock::what(void) const throw() {
     return ("[ConfigFileError] : Unknown Instruction Block ");
+}
+
+const char *UnvalidDirective::what(void) const throw() {
+    return ("[ConfigFileError] :  Unvalid Configuration Directive");
 }

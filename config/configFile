@@ -2,7 +2,7 @@ server {
     listen 127.0.0.1:80;
     server_name localhost;
 
-    serverRoot /Users/larsbonnefoy/projects/19_Webserv/site/data;
+    root /Users/larsbonnefoy/projects/19_Webserv/site/data;
     max_body_size 2048576;
 
     error_page 403  www/default/40x/403.html;
@@ -30,7 +30,7 @@ server {
 server {
     listen 127.0.0.1:40;
     server_name localhost;
-    serverRoot /Users/larsbonnefoy/projects/19_Webserv/site/data;
+    root /Users/larsbonnefoy/projects/19_Webserv/site/data;
     
     error_page 418 www/default/40x/418.html;
     error_page 410 www/default/40x/410.html;

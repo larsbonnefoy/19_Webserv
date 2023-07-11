@@ -28,7 +28,7 @@ void        addErrorPages(std::string infoBuffer, Server &serv);
 void        addLocation(std::string infoBuffer, Server &serv);
 
 std::string getLocationPath(std::string infoBuffer, size_t startPos);
-void        createLocation(std::string inputBuffer, Server &serv, std::string locationPath);
+void        createLocation(std::string inputBuffer, Server &serv);
 void        addMethods(std::string infoBuffer, Location &loc);
 void        setRedir(std::string inputBuffer, Location &loc);
 int         matchMethod(std::string method);
@@ -103,4 +103,8 @@ class UnvalidInstructionBlock : public std::exception {
         const char *what(void) const throw();
 }; 
 
+class UnvalidDirective : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
 #endif
