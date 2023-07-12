@@ -63,10 +63,14 @@ Socket::Socket(const Socket &copy)
 
 
 // Destructor
-Socket::~Socket()
+void	Socket::sc_close(void)
 {
 	close(this->_clientSocket);
 	close(this->_serverSocket);
+}
+Socket::~Socket()
+{
+	this->sc_close();
 }
 
 
@@ -224,7 +228,6 @@ const std::string	Socket::receiveRequest(void)
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
 		ws_log(errno);
-		ws_log(EAGAIN);
 		ws_log(returnRead);
 		if (returnRead < 0)
 		{
@@ -248,7 +251,6 @@ const std::string	Socket::receiveRequest(void)
 
 		while (size != 0)
 		{
-			ws_log("LESGOOOO");
 			returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
 			if (returnRead < 0)
 				return (this->_request);
@@ -268,7 +270,6 @@ const std::string	Socket::receiveRequest(void)
 			}
 		}		
 	}	
-	ws_log(this->_request);
 	return (this->_request);
 }
 

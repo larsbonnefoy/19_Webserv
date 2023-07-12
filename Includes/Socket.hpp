@@ -66,6 +66,7 @@ class Socket
 		void				sendResponse(const std::string response);		
 		void				socketInit(const uint32_t port);
 		void				closeClient(void);
+		void				sc_close(void);
 
 	private:
 		int 				_serverSocket;

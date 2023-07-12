@@ -56,17 +56,26 @@ void	Mux::run(void)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
 				{
-					//connect client maybe change program flow from receive parse read to receive all parse all send all 
-					this->_Sockets[i]->connectClient();
-					const std::string request = this->_Sockets[i]->receiveRequest();
-					ws_log(request);
-					HttpRequest Request(request);
-					HttpResponse response(this->_serverMap[this->_Sockets[i]->getPort()], Request);
+					//connect client maybe change program flow from receive parse read to receive all parse all send all
+					try
+					{
+						this->_Sockets[i]->connectClient();
+						const std::string request = this->_Sockets[i]->receiveRequest();
+						ws_log(request);
+						HttpRequest Request(request);
+						HttpResponse response(this->_serverMap[this->_Sockets[i]->getPort()], Request);
 
-                    // ws_log(response.convertToStr());
-					this->_Sockets[i]->sendResponse(response.convertToStr());	
-					this->_Sockets[i]->closeClient();			
-					this->_pollSocketFds[i].revents = 0;
+                    	// ws_log(response.convertToStr());
+						this->_Sockets[i]->sendResponse(response.convertToStr());	
+						this->_Sockets[i]->closeClient();			
+						this->_pollSocketFds[i].revents = 0;
+					}
+					catch(const std::exception& e)
+					{
+						this->_pollSocketFds[i].fd = 0;
+						this->_Sockets[i]->sc_close();
+						ws_logErr(e.what());
+					}
 				}
 			}			
 		}

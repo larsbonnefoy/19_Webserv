@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/09 10:19:28 by lbonnefo         ###   ########.fr       */
+/*   Updated: 2023/07/12 16:43:02 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,11 @@ void	HttpRequest::requestParser(std::string request)
 		
 	this->_hasBody = 1;
 	for (std::string bodyLine; std::getline(requestStream, bodyLine);)
+	{
 		this->_body.append(bodyLine);
+		this->_body.append("\r\n");
+	}
+	this->_body.append("\0");
 }
 
 void	HttpRequest::_parseUrl(std::string url)

@@ -46,8 +46,10 @@ server {
     location / {
         root /home/space/Documents/19_Webserv/site/data/www;
         accept GET;
+		post
         accept DELETE;
-        redirect 301 /home/space/Documents/19_Webserv/site/data/www/default/40x/418.html;
+		index home.html;
+
     }
 
     location /images {
