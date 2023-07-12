@@ -34,7 +34,7 @@
 
 # define PORT 8282
 # define DEFAULTPORT 8080
-# define BUFF_SIZE 30000 
+# define BUFF_SIZE 2048
 
 class Socket
 {
@@ -66,6 +66,7 @@ class Socket
 		void				sendResponse(const std::string response);		
 		void				socketInit(const uint32_t port);
 		void				closeClient(void);
+		void				sc_close(void);
 
 	private:
 		int 				_serverSocket;
