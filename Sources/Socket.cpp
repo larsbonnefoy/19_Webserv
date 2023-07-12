@@ -274,10 +274,24 @@ const std::string	Socket::receiveRequest(void)
 
 void	Socket::sendResponse(const std::string response)
 {
-	if (write(this->_clientSocket, response.c_str(), response.size()) < 0)
+	size_t	i;
+	size_t	size = BUFF_SIZE;
+	const char *toWrite = response.c_str();
+	size_t	remainingSize = response.size();
+
+	i = 0;
+	while (i < response.size())
 	{
-		ws_log("Need to close socket and not kill the server");
-		throw IoException();
+		if (remainingSize < BUFF_SIZE)
+			size = remainingSize;
+		ssize_t	retWrite = write(this->_clientSocket, &toWrite[i], size);
+		if (retWrite < 0)
+		{
+			ws_log("Need to close socket and not kill the server");
+			throw IoException();
+		}
+		remainingSize -= retWrite;
+		i += retWrite;
 	}
 }
 
