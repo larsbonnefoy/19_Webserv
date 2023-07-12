@@ -94,7 +94,7 @@ void	Mux::initSockets()
 	for (size_t i = 0; i <this->_nbrSocket; ++i)
 	{
 		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
-		this->_pollSocketFds[i].events = POLLIN | POLLPRI;
+		this->_pollSocketFds[i].events = POLLIN;
 	}
 }
 

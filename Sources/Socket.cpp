@@ -229,6 +229,8 @@ const std::string	Socket::receiveRequest(void)
 		returnRead = recv(this->_clientSocket , buffer, BUFF_SIZE, 0);
 		ws_log(strerror(errno));
 		ws_log(returnRead);
+		ws_log("client");
+		ws_log(this->_clientSocket);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
