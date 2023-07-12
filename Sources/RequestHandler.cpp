@@ -18,9 +18,6 @@
 // Change most error code to 403
 
 void HttpResponse::_isCgi(void) {
-	ws_log("isCgi");	
-	ws_log(this->_uri);
-	ws_log(this->_uri.rfind(".cgi"));
 	if (this->_uri.rfind(".cgi") != this->_uri.size() - 4)
 			this->_cgi = false;
 	else
@@ -36,12 +33,10 @@ static int	getType(std::string path)
 		return (BADTYPE);
 	if ((statbuf.st_mode & S_IFMT) == S_IFREG)
 	{
-		ws_log("FILE");
 		return (FILETYPE);	
 	}
 	if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
 	{
-		ws_log("DIRECTORY");
 		return (DIRTYPE);
 	}
 	return (-1);
@@ -59,17 +54,13 @@ static Location	getLocation(Server server, HttpRequest request)
 		std::string locationPath = server.getLocations()[i].getPath();
 		if (*locationPath.rbegin() == '/') 
 			locationPath.erase(locationPath.size() - 1);
-		ws_log(locationPath);
-		ws_log(request.getUri());
 		findRet = request.getUri().find(locationPath,  0);
-		ws_log(findRet);
 		if (findRet == 0 && server.getLocations()[i].getPath().size() >= lastSize)
 		{
 			location = server.getLocations()[i];
 			lastSize = server.getLocations()[i].getPath().size();
 		}
 	}
-	ws_log(location.getPath());
 	return (location);
 }
 
@@ -130,8 +121,6 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 	else
 		this->_path = locationRoot + this->_uri;
 	this->_statusCode = 200;
-	ws_log("path");
-	ws_log(this->_path);
 	int ret = stat(this->_path.c_str(), &statbuf);
 	if (ret < 0)
 	{
@@ -198,10 +187,6 @@ void	HttpResponse::_setIndex(Location location)
 	
 	std::string index =  location.getIndex();
 
-	ws_log("set index");
-	ws_log(this->_uri);
-	ws_log(location.getPath());
-	ws_log(this->_pathtype);
 	if (index == ""  || this->_pathtype == FILETYPE || this->_path == BADPATH) 
 		return ;
 	if ((this->_uri != location.getPath() && this->_uri != location.getPath() + "/") && this->_pathtype == DIRTYPE)
@@ -213,8 +198,6 @@ void	HttpResponse::_setIndex(Location location)
 	if (*this->_path.rbegin() == '/')
 		this->_path.erase(this->_path.size() - 1);
 	this->_path += "/" + index;
-	ws_log("index");
-	ws_log(this->_path);
 	if (stat(this->_path.c_str(), &statbuf) != 0
 		|| !((statbuf.st_mode & S_IFMT) == S_IFDIR || (statbuf.st_mode & S_IFMT) == S_IFREG)
 		|| this->_path.rfind(".html") != this->_path.size() - 5)
@@ -228,9 +211,7 @@ void	HttpResponse::_setIndex(Location location)
 
 void HttpResponse::_requestError(Server server, int code)
 {
-	ws_log("REQUEST ERROR");
 	this->_path = getRoot(server);
-	ws_log(this->_path);
 	this->_statusCode = code;
 	std::map<size_t, std::string> tmp = server.getErrors();
 	std::map<size_t, std::string>::iterator it = tmp.find(code);
@@ -241,7 +222,6 @@ void HttpResponse::_requestError(Server server, int code)
 
 void HttpResponse::_requestSuccess(int code)
 {
-	ws_log("REQUEST SUCCESS");
 	this->_statusCode = code;
 	return ;
 }
@@ -265,7 +245,6 @@ void	HttpResponse::_setRedir(Location location)
 void HttpResponse::_GETRequest(Location location, Server server)
 {
 	(void)location;
-	ws_log("GET");
 	if (this->_path == BADPATH)
 		return (_requestError(server, 404));
 	if (this->_path == BADREDIR || this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
@@ -302,7 +281,6 @@ void	HttpResponse::_createResponse(void)
     this->_statusPhrase = StaticInit::STATUS_CODE_PHRASE[_statusCode];
 	this->setStartLine(_makeStartLine());
 
-	ws_log(this->_startLine);
 	switch (this->_statusCode)
 	{
 		case 200 :
@@ -323,7 +301,6 @@ void	HttpResponse::_createResponse(void)
 }
 
 void HttpResponse::_handleCgiResponse(std::string response) {
-    ws_log("CGI Response Handler");
     std::stringstream ss(response);
     std::string line;
     bool body = false;
@@ -374,7 +351,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                         _handleCgiResponse(response);
                     }
                     catch (std::exception &e) {
-                        ws_log(e.what());
                         _requestError(serv, 500);
                     }
                     break ;
@@ -395,7 +371,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                         _handleCgiResponse(response);
                     }
                     catch (std::exception &e) {
-                        ws_log(e.what());
                         _requestError(serv, 500);
                     }
                     break ;

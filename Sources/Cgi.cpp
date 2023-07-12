@@ -31,12 +31,14 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
         this->_data = request.getPayload();
         this->_env["CONTENT_LENGTH="] = "NULL";
         this->_env["QUERY_STRING="] = this->_data;
+        ws_log(this->_data);
     } 
     else if (request.getMethode() == "POST") {
         this->_method = POST;
         this->_data = request.getBody() + '\0';
         this->_env["CONTENT_LENGTH="] = request.valToString(_data.length());
         this->_env["QUERY_STRING="] = "NULL";
+        ws_log(this->_data);
     }
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();
@@ -164,8 +166,8 @@ std::string Cgi::run(void) {
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
 
-            std::cerr << "-----------\nIN CHILD: Write data to pipe for cgi script\n";
-            std::cerr << toWrite << " (len = " << this->_data.length()<< ")\n------------\n";
+//            std::cerr << "-----------\nIN CHILD: Write data to pipe for cgi script\n";
+  //          std::cerr << toWrite << " (len = " << this->_data.length()<< ")\n------------\n";
             
             if (write(pipeData[1], toWrite, this->_data.length()) == -1) {
                 ws_log(strerror(errno));
