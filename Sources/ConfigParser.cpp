@@ -12,25 +12,13 @@
 #define MAX_BODY_SIZE 4
 #define SERVER_ROOT 5
 
-//std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "serverRoot"};
-/* TO DO 
- * Check possible parsing errors 
- *      -> non ending ;
- *      -> non valid ip address xxx.xxx.xxx.xxx
- *      -> if server is declared without brackets preceeding another server declaration
- *
- * Be able to not set server_name [ok] -> set to ""
- *
- * Location (->Route??)
- *  ->Default file to answer if request is a directory
- *  ->Exec CGI on certain file extension
- *  ->Make route able to accept uploaded files and configure where they should be saved
- *
- *
- *  if index, autoindex and redir are not defined what happens?
- * 
- *  check for valid Error url ?
- */ 
+#define LOC 0 
+#define ROOT 1
+#define ACCEPT 2
+#define CGI_LOC 3
+#define INDEX 4
+#define AUTOINDEX 5
+#define REDIRECT 6
 
 /*
  * When seeing Server Block between brackets, isolates it and sends the whole 
@@ -38,15 +26,22 @@
  */ 
 void parseConfig(std::string configFile, Config &conf) {
 
-    std::ifstream file(configFile.c_str()); 
+    std::ifstream file(configFile);
+
+    if (file.fail() || !endsWithConf(configFile)) {
+        throw UnvalidInputFile();
+    }
+
     std::string line;
     std::streampos nextPos = 0;
+    bool createdServer = false;
 
     while (std::getline(file.seekg(nextPos), line)) {
         std::string infoBuffer;
         if (line.find("server") != std::string::npos) {
             nextPos = getInstructionBlock(file, infoBuffer);
             addServer(infoBuffer, conf);
+            createdServer = true;
         }
         else {
             if (!isEmptyLine(line)) {
@@ -55,8 +50,20 @@ void parseConfig(std::string configFile, Config &conf) {
             nextPos += 1;
         }
     }
+    if (createdServer == false) {
+        throw NoServerCreated();
+    }
 }
  
+/*
+ * Returns True if file ends in .conf, false otherwise;
+ */ 
+bool endsWithConf(const std::string& filename) {
+    if (filename.length() < 5) 
+        return (false);
+    return (filename.substr(filename.length() - 5) == ".conf");
+}
+
 /*
  * Returns str enclosed by two matching brackets 
  * /!\ First opening bracket has already been seen, have to add it manually
@@ -165,23 +172,18 @@ int nextMatchingBracket(std::string input, std::string &outputBuffer, size_t sta
  * Returns ends position of value that has been found or -1 if no match has been found
  * /!\Jumps to next ; so if value is not ended by semicolumn BIG pb
  */ 
-int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer, size_t startPos) {
-    //std::cout << "Matching value input: " << inputString << std::endl;
-    
-    //quand str == line directive pos = 0 i!!
-    std::size_t directivePos =  inputString.find(directive, startPos);
-    //std::cout << directivePos << std::endl;
-
-    if (directivePos != std::string::npos) {
-        std::size_t valuePos = directivePos + directive.length();
-        std::size_t endPos = inputString.find(";", valuePos);
-        if (endPos != std::string::npos) {
-            outputBuffer = inputString.substr(valuePos, endPos - valuePos);
-            return (endPos + 1);
+int findMatchingValue(std::string inputString, std::string directive, std::string &outputBuffer) {
+    std::size_t valuePos = directive.length();
+    std::size_t endPos = inputString.find(";", valuePos);
+    if (endPos != std::string::npos) {
+        outputBuffer = inputString.substr(valuePos, endPos - valuePos);
+        if (inputString.length() != outputBuffer.length() + directive.length() + 1) {
+            throw UnvalidDirective();
         }
-        else {
-            throw UnterminatedDirective();
-        }
+        return (endPos + 1);
+    }
+    else {
+        throw UnterminatedDirective();
     }
     return (-1);
 }
@@ -191,9 +193,9 @@ int findMatchingValue(std::string inputString, std::string directive, std::strin
  * If TRUE returns directiveID
  * If FALSE returns -1
  */ 
-int matchDirective(std::string line, std::string *directives) {
+int matchDirective(std::string line, std::string *directives, size_t nbrDirectives) {
     
-    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
+    for (size_t directiveID = 0; directiveID < nbrDirectives; directiveID++) {
         if (line.find(directives[directiveID]) == 0) {
             return (directiveID);
         }
@@ -208,7 +210,6 @@ int matchDirective(std::string line, std::string *directives) {
  */
 void    addServer(std::string infoBuffer, Config &conf) {
 
-    std::cout << infoBuffer << std::endl;
     Server serv;
     std::string directives[6] = {"listen", "server_name", "error_page", "location", "max_body_size", "root"};
 
@@ -222,8 +223,7 @@ void    addServer(std::string infoBuffer, Config &conf) {
             continue ;
         }
         else { 
-            int directiveID = matchDirective(line, directives);
-            std::cout << line << " | " << directiveID << std::endl;
+            int directiveID = matchDirective(line, directives, 6);
 
             switch (directiveID) {
                 case LISTEN:
@@ -237,14 +237,13 @@ void    addServer(std::string infoBuffer, Config &conf) {
                     break; 
                     
                 case ERROR_PAGE:
-                    addErrorPages(line, serv);
+                    findMatchingValue(line, directives[directiveID], value);
+                    addErrorPages(value, serv);
                     break; 
 
                 case LOCATION:
-                    std::cout << "========LOCATION PARSING=========" << std::endl;
                     getLocationBlock(ss, line);
                     createLocation(line, serv);
-                    std::cout << "==========LOCATION PARSING END======" << std::endl;
                     break; 
 
                 case MAX_BODY_SIZE:
@@ -254,11 +253,14 @@ void    addServer(std::string infoBuffer, Config &conf) {
 
                 case SERVER_ROOT:
                     findMatchingValue(line, directives[directiveID], value);
+                    if (value.empty() || value[0] != '/') {
+                        throw RootIsNotAbs();
+                    }
                     serv.setServerRoot(value);
                     break;
 
                 default:
-                    throw UnvalidValue();
+                    throw UnvalidDirective();
             }
         }
     }
@@ -266,10 +268,14 @@ void    addServer(std::string infoBuffer, Config &conf) {
     if (conf.getServers().count(serv.getPort()) == 1) {
         throw DuplicateValueError();
     }
+    if (serv.getServerRoot() == "" || serv.getIp() == "") {
+        throw MissingDirective();
+    }
+    if (serv.getLocations().size() == 0) {
+        throw MissingDefaultLocation();
+    }
     conf.getServers()[serv.getPort()] = serv; 
-    std::cout << "---------------------Parsed Server--------------------" << std::endl;
     std::cout << serv << std::endl;
-    std::cout << "------------------------------------------------------" << std::endl;
 }
 
 /*
@@ -294,28 +300,20 @@ void addMaxBodySize(std::string value, Server &serv) {
  */ 
 void addErrorPages(std::string infoBuffer, Server &serv) {
 
-    std::string outputBuffer;
-    int searchPos = 0;
     std::string errCode;
     std::string errPath;
     size_t convErrCode;
 
-    while (true) {
-        searchPos = findMatchingValue(infoBuffer, "error_page", outputBuffer, searchPos);
-        if (searchPos == -1)
-            break ;
+    errCode = infoBuffer.substr(0, 3);
+    errPath = infoBuffer.substr(3, infoBuffer.length());
+    
+    if (!isNumeric(errCode))
+        throw UnvalidErrCode();
 
-        errCode = outputBuffer.substr(0, 3);
-        errPath = outputBuffer.substr(3, outputBuffer.length());
-        
-        if (!isNumeric(errCode))
-            throw UnvalidErrCode();
+    std::stringstream ss(errCode);
+    ss >> convErrCode;
 
-        std::stringstream ss(errCode);
-        ss >> convErrCode;
-
-        serv.setError(convErrCode, errPath);
-    }
+    serv.setError(convErrCode, errPath);
 }
 
 void addIpPort(std::string values, Server &serv) {
@@ -347,18 +345,6 @@ void addIpPort(std::string values, Server &serv) {
 }
 
 /*
- * Adds Location class to servers 
- * If no route is specified or if brackets are missings throws an error
- */ 
-void addLocation(std::string infoBuffer, Server &serv) {
-
-    std::cout << "Location infoBuffer" << std::endl;
-    std::cout << infoBuffer << std::endl;
-
-    createLocation(infoBuffer, serv);
-}
-
-/*
  * Finds Location Path. Location path is between "Location Tag" and brackets 
  * If no brackets are found after the location, throws an error.
  * If Location path is empty, throws an error.
@@ -370,63 +356,90 @@ std::string getLocationPath(std::string infoBuffer, size_t startPos) {
         throw UnterminatedBlock();
     }
     path = infoBuffer.substr(startPos, endPos - startPos);
-    if (path.empty()) {
+    if (path.empty() || path[0] != '/') {
         throw UnvalidRoute();
     }
     return (path);
 }
 
 void createLocation(std::string inputBuffer, Server &serv) {
-    std::cout << "Create location "<< std::endl << inputBuffer << std::endl;
 
     Location    loc;
-    std::string directives[6] = {"root", "accept", "autoIndex", "index", "redirect", "CGI"};
-    int     pos;
-    
-    loc.setPath(getLocationPath(inputBuffer, 8));
+    std::string directives[7] = {"location", "root", "accept", "cgi", "index", "autoindex", "redirect"};
+    std::stringstream ss(inputBuffer);
+    std::string line;
+    bool definedActionOnLoading = false;
 
-    for (size_t directiveID = 0; directiveID < 6; directiveID++) {
-        std::string value;
-        switch (directiveID) {
-            case 0:
-                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1) { 
+    while (std::getline(ss, line)) {
+        std::string value = "";
+        line.erase(remove_if(line.begin(), line.end(), isspace), line.end());
+        if (line == "" || line == "{" || line == "}") {
+            continue ;
+        }
+        else {
+            int directiveID = matchDirective(line, directives, 7);
+
+            switch(directiveID) {
+                case LOC:
+                    loc.setPath(getLocationPath(line, 8));
+                    break;
+
+                case ROOT:
+                    findMatchingValue(line, directives[directiveID], value);
+                    if (value.empty() || value[0] != '/') {
+                        throw RootIsNotAbs();
+                    }
                     loc.setRoot(value);
-                }
-                break; 
-            case 1:
-                addMethods(inputBuffer, loc);
-                break; 
-            case 2:
-                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1) {
-                    if (value == "true")
-                        loc.setAutoIndex(TRUE);
-                    else if (value == "false")
-                        loc.setAutoIndex(FALSE);
-                    else 
-                        throw UnvalidValue();
-                }
-                break; 
-            case 3:
-                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1) {
-                    if (loc.getAutoIndex() == UNDEFINED)
-                        loc.setIndex(value);
-                    else
-                        throw ConfigFileError(); 
-                }
-                break;
-            case 4:
-                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1)
-                    setRedir(value, loc);
-                break;
-            case 5:
-                pos = findMatchingValue(inputBuffer, directives[directiveID], value);
-                if (pos != -1)
+                    break;
+
+                case ACCEPT:
+                    findMatchingValue(line, directives[directiveID], value);
+                    addMethods(value, loc); 
+                    break;
+                
+                case CGI_LOC:
+                    findMatchingValue(line, directives[directiveID], value);
                     setCGI(value, loc);
-                break;
+                    break;
+
+                case INDEX:
+                    if (definedActionOnLoading == false) {
+                        findMatchingValue(line, directives[directiveID], value);
+                        loc.setIndex(value);
+                        definedActionOnLoading = true;
+                    }
+                    else  
+                        throw ConflictingInstruction();
+                    break;
+
+                case AUTOINDEX:
+                    if (definedActionOnLoading == false) {
+                        findMatchingValue(line, directives[directiveID], value);
+                        if (value == "true")
+                            loc.setAutoIndex(TRUE);
+                        else if (value == "false")
+                            loc.setAutoIndex(FALSE);
+                        else 
+                            throw UnvalidValue();
+                        definedActionOnLoading = true;
+                    }
+                    else
+                        throw ConflictingInstruction();
+                    break;
+
+                case REDIRECT:
+                    if (definedActionOnLoading == false) {
+                        findMatchingValue(line, directives[directiveID], value);
+                        setRedir(value, loc);
+                        definedActionOnLoading = true;
+                    }
+                    else
+                        throw ConflictingInstruction();
+                    break;
+
+                default:
+                    throw UnvalidDirective();
+            }
         }
     }
     serv.setLocation(loc);
@@ -447,25 +460,19 @@ void setCGI(std::string inputBuffer, Location &loc) {
  */ 
 void setRedir(std::string inputBuffer, Location &loc) {
 
-    if (loc.getIndex().empty() && loc.getAutoIndex() == UNDEFINED) {
+    std::string redirCode = inputBuffer.substr(0, 3);
+    std::string redirPath = inputBuffer.substr(3, inputBuffer.length());
+    
+    size_t      convCode; 
+    if (!isNumeric(redirCode))
+        throw UnvalidValue();
 
-        std::string redirCode = inputBuffer.substr(0, 3);
-        std::string redirPath = inputBuffer.substr(3, inputBuffer.length());
-        
-        size_t      convCode; 
-        if (!isNumeric(redirCode))
-            throw UnvalidValue();
-
-        std::stringstream ss(redirCode);
-        ss >> convCode;
-        if (ss.fail()) {
-            throw UnvalidValue();
-        }
-        loc.setRedirect(convCode, redirPath);
+    std::stringstream ss(redirCode);
+    ss >> convCode;
+    if (ss.fail()) {
+        throw UnvalidValue();
     }
-    else {
-        throw ConflictingInstruction();
-    }
+    loc.setRedirect(convCode, redirPath);
 }
 
 /*
@@ -473,29 +480,22 @@ void setRedir(std::string inputBuffer, Location &loc) {
  * ATM: accepts multiple defintions of the same method
  */ 
 void addMethods(std::string infoBuffer, Location &loc) {
-    int     searchPos = 0;
-    std::string outputBuffer;
     int     methodID;
 
-    while (true) {
-        searchPos = findMatchingValue(infoBuffer, "accept", outputBuffer, searchPos);
-        if (searchPos == -1)
+    methodID = matchMethod(infoBuffer);
+    switch (methodID) {
+        case GET:
+            loc.setGet(true);
             break;
-        methodID = matchMethod(outputBuffer);
-        switch (methodID) {
-            case GET:
-                loc.setGet(true);
-                break;
-            case POST:
-                loc.setPost(true);
-                break;
-            case DELETE:
-                loc.setDel(true);
-                break;
-            default:
-                throw UnvalidValue();
-        }
-    }    
+        case POST:
+            loc.setPost(true);
+            break;
+        case DELETE:
+            loc.setDel(true);
+            break;
+        default:
+            throw UnvalidValue();
+    }
 }
 
 int matchMethod(std::string method) {
@@ -560,7 +560,7 @@ const char *UnvalidErrCode::what(void) const throw() {
 }
 
 const char *UnvalidRoute::what(void) const throw() {
-    return ("[ConfigFileError] : Unvalid Location Route");
+    return ("[ConfigFileError] : Unvalid Location Route. Is Empty or not abs");
 }
 
 const char *UnvalidServerRoute::what(void) const throw() {
@@ -572,7 +572,7 @@ const char *ConflictingInstruction::what(void) const throw() {
 }
 
 const char *DuplicateValueError::what(void) const throw() {
-    return ("[ConfigFileError] : Duplicate Value");
+    return ("[ConfigFileError] : Duplicate Port");
 }
 
 const char *MissingDirective::what(void) const throw() {
@@ -585,4 +585,20 @@ const char *UnvalidInstructionBlock::what(void) const throw() {
 
 const char *UnvalidDirective::what(void) const throw() {
     return ("[ConfigFileError] :  Unvalid Configuration Directive");
+}
+
+const char *MissingDefaultLocation::what(void) const throw() {
+    return ("[ConfigFileError] :  Missing Location Configuration");
+}
+
+const char *UnvalidInputFile::what(void) const throw() {
+    return ("[ConfigFileError] :  Unvalid Input File");
+}
+
+const char *NoServerCreated::what(void) const throw() {
+    return ("[ConfigFileError] :  No Server Was Created");
+}
+
+const char *RootIsNotAbs::what(void) const throw() {
+    return ("[ConfigFileError] :  Root Path should be absolute");
 }

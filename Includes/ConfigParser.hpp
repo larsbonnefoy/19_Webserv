@@ -16,9 +16,10 @@
 #include "../Includes/Config.hpp"
 
 void parseConfig(std::string configFile, Config &conf);
+bool endsWithConf(const std::string& filename);
 
 int             nextMatchingBracket(std::string input, std::string &outputBuffer, size_t startPos = 0);
-int             findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer, size_t startPosition = 0);
+int             findMatchingValue(std::string inputString, std::string directive,std::string &outputBuffer);
 std::streampos  getInstructionBlock(std::ifstream &file, std::string &outputBuffer);
 
 void        addServer(std::string infoBuffer, Config &conf);
@@ -107,4 +108,25 @@ class UnvalidDirective : public std::exception {
     public:
         const char *what(void) const throw();
 }; 
+
+class MissingDefaultLocation : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class UnvalidInputFile : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class NoServerCreated : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class RootIsNotAbs : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
 #endif

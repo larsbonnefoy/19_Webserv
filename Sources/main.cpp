@@ -17,7 +17,7 @@ int main (int argc, char *argv[])
     //If file exists and if permissions on file
     //or empty file
     if (argc != 2) {
-        std::cout << "Unvalid Input Files" << std::endl;
+        std::cout << "Unvalid Input File" << std::endl;
         return (1);
     }
 
