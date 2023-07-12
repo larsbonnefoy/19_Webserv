@@ -38,7 +38,7 @@ void	Socket::socketInit(const uint32_t port)
 					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
 					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
 		throw InitSocketException();
-	if (listen(this->_serverSocket, 100) == -1)
+	if (listen(this->_serverSocket, 50) == -1)
 		throw InitSocketException();
 }
 
@@ -57,8 +57,8 @@ Socket::Socket(const uint32_t port) :	_serverSocket(socket(AF_INET, SOCK_STREAM,
 Socket::Socket(const Socket &copy)
 {
 	*this = copy;
-	if (listen(this->_serverSocket, 1) == -1)
-		throw std::exception();
+	if (listen(this->_serverSocket, 50) == -1)
+		throw InitSocketException();
 }
 
 
@@ -139,7 +139,7 @@ int	Socket::connectClient(void)
 	this->_clientSocket = accept(this->_serverSocket,
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (this->_clientSocket == -1)
-		throw std::exception();
+		throw InitSocketException();
 	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
@@ -226,8 +226,8 @@ const std::string	Socket::receiveRequest(void)
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
-		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
-		ws_log(errno);
+		returnRead = recv(this->_clientSocket , buffer, BUFF_SIZE, 0);
+		ws_log(strerror(errno));
 		ws_log(returnRead);
 		if (returnRead < 0)
 		{
@@ -251,7 +251,7 @@ const std::string	Socket::receiveRequest(void)
 
 		while (size != 0)
 		{
-			returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
+			returnRead = recv(this->_clientSocket , buffer, BUFF_SIZE, 0);
 			if (returnRead < 0)
 				return (this->_request);
 			buffer[returnRead] = 0;

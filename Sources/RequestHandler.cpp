@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/12 12:53:55 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/12 19:09:19 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 // Change most error code to 403
 
 void HttpResponse::_isCgi(void) {
-	ws_log("isCgi");	
-	ws_log(this->_uri);
-	ws_log(this->_uri.rfind(".cgi"));
 	if (this->_uri.rfind(".cgi") != this->_uri.size() - 4)
 			this->_cgi = false;
 	else
@@ -47,7 +44,7 @@ static int	getType(std::string path)
 	return (-1);
 }
 
-static Location	getLocation(Server server, HttpRequest request)
+static Location	getLocation(Server &server, HttpRequest &request)
 {
 	Location	location;
 	size_t		lastSize = 0;
@@ -57,10 +54,11 @@ static Location	getLocation(Server server, HttpRequest request)
 	{
 		
 		std::string locationPath = server.getLocations()[i].getPath();
-		if (*locationPath.rbegin() == '/') 
-			locationPath.erase(locationPath.size() - 1);
+		ws_log("getlocation");
 		ws_log(locationPath);
 		ws_log(request.getUri());
+		if (*locationPath.rbegin() == '/') 
+			locationPath.erase(locationPath.size() - 1);
 		findRet = request.getUri().find(locationPath,  0);
 		ws_log(findRet);
 		if (findRet == 0 && server.getLocations()[i].getPath().size() >= lastSize)
@@ -69,14 +67,16 @@ static Location	getLocation(Server server, HttpRequest request)
 			lastSize = server.getLocations()[i].getPath().size();
 		}
 	}
+	ws_log("result");
 	ws_log(location.getPath());
 	return (location);
 }
 
-void	HttpResponse::_setMethode(Location location, HttpRequest request)
+void	HttpResponse::_setMethode(Location &location, HttpRequest &request)
 {
 	int methode = matchMethod(request.getMethode());
-	
+	ws_log ("setMethode");
+	this->_methode = -1;
 	switch (methode)
 	{
 		case GET :
@@ -86,7 +86,10 @@ void	HttpResponse::_setMethode(Location location, HttpRequest request)
 		
 		case POST : 
 			if (location.getPostVal())
+			{
 				this->_methode = POST;
+				ws_log("non enfait");
+			}
 			break ;
 	
 		case DELETE :
@@ -98,7 +101,7 @@ void	HttpResponse::_setMethode(Location location, HttpRequest request)
 	}
 }
 
-static std::string	getRoot(Server server)
+static std::string	getRoot(Server &server)
 {
 	std::string root;
 	
@@ -108,7 +111,7 @@ static std::string	getRoot(Server server)
 	return (root);
 }
 
-void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
+void	HttpResponse::_setPath(Location &location, HttpRequest &request, int methode)
 {
 	std::string path;
 	std::string locationRoot;
@@ -192,7 +195,7 @@ void	HttpResponse::_setPath(Location location, HttpRequest request, int methode)
 	}
 }
 
-void	HttpResponse::_setIndex(Location location)
+void	HttpResponse::_setIndex(Location &location)
 {
 	struct stat statbuf;
 	
@@ -226,7 +229,7 @@ void	HttpResponse::_setIndex(Location location)
 	this->_pathtype = FILETYPE;
 }
 
-void HttpResponse::_requestError(Server server, int code)
+void HttpResponse::_requestError(Server &server, int code)
 {
 	ws_log("REQUEST ERROR");
 	this->_path = getRoot(server);
@@ -246,7 +249,7 @@ void HttpResponse::_requestSuccess(int code)
 	return ;
 }
  
-void	HttpResponse::_setRedir(Location location)
+void	HttpResponse::_setRedir(Location &location)
 {
 	if (location.getRedirect().first == 0)
 		return ;
@@ -262,9 +265,8 @@ void	HttpResponse::_setRedir(Location location)
 	this->_pathtype = FILETYPE;
 }
 
-void HttpResponse::_GETRequest(Location location, Server server)
+void HttpResponse::_GETRequest(Server &server)
 {
-	(void)location;
 	ws_log("GET");
 	if (this->_path == BADPATH)
 		return (_requestError(server, 404));
@@ -274,7 +276,7 @@ void HttpResponse::_GETRequest(Location location, Server server)
 		return(_requestSuccess(this->_statusCode));
 }
 
-void	HttpResponse::_DELETERequest(Server server)
+void	HttpResponse::_DELETERequest(Server &server)
 {
 	if (this->_path == BADPATH)
 		return (_requestError(server, 404));
@@ -356,12 +358,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         Location    location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
-		
+	
 		this->_setPath(location, request, this->_methode);
-		//cgi response can have
-		//  startline with response code 
-		//  Http Headers (file type,...)
-		//  Body
         switch (this->_methode)
         {
             case GET:
@@ -382,7 +380,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 this->_setIndex(location);	
                 this->_setRedir(location);	
                 this->_autoindex = location.getAutoIndex();
-                this->_GETRequest(location, serv);
+                this->_GETRequest(serv);
                 break;
             
             case POST:
@@ -408,7 +406,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 break;
                 
             default:
-                _requestError(serv, 400);
+                _requestError(serv, 405);
         }
     }
     this->_createResponse();
