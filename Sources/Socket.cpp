@@ -38,7 +38,7 @@ void	Socket::socketInit(const uint32_t port)
 					reinterpret_cast<struct sockaddr *>(&this->_socketAddress),
 					static_cast<socklen_t>(this->_socketAddressLen)) == -1)
 		throw InitSocketException();
-	if (listen(this->_serverSocket, 50) == -1)
+	if (listen(this->_serverSocket, 100) == -1)
 		throw InitSocketException();
 }
 
@@ -63,10 +63,14 @@ Socket::Socket(const Socket &copy)
 
 
 // Destructor
-Socket::~Socket()
+void	Socket::sc_close(void)
 {
 	close(this->_clientSocket);
 	close(this->_serverSocket);
+}
+Socket::~Socket()
+{
+	this->sc_close();
 }
 
 
@@ -146,16 +150,84 @@ int	Socket::connectClient(void)
 	return (this->_clientSocket);
 }
 
+static bool	isChounked(std::string request)
+{
+	bool				res = false;
+	std::stringstream	requestStream(request);
+
+	while (!res && requestStream.good())
+	{
+		std::string line;
+		std::getline(requestStream, line);
+		if(line.find("Transfer-Encoding:") == 0)
+			if(line.find("chunked") < std::string::npos)
+				res = true;
+	}
+	ws_log("isChounked");
+	ws_log(res);
+	return (res);
+}
+
+static std::string	unChounk(std::stringstream &stream, size_t size)
+{
+	if (size == 0)
+		return ("");
+	std::string	res = "";
+	std::string	line;
+
+	ws_log("YOOO");
+	std::getline(stream, line);
+	ws_log(line);
+	if (!stream.good())
+		return (res);
+	if (line.size() < size)
+			size = line.size();
+	for (size_t	i = 0; i < size; ++i) 
+		res += line[i];
+	res.append("\r\n");
+	return (res);
+}
+
+static std::string	unChounkInit(std::string request)
+{
+	std::string			newRequest;
+	std::stringstream	requestStream(request);
+	bool				inBody = false;
+
+	for  (std::string line; std::getline(requestStream, line); requestStream.good())
+	{
+		if (!inBody)
+		{
+			if (line == "\r")
+			{
+				inBody = true;
+				newRequest.append("\r\n");
+			}
+			else
+			{
+				newRequest.append(line);
+				newRequest.append("\r\n");
+			}
+		}
+		else
+		{
+			size_t	size;
+			std::istringstream(line) >> std::hex >> size;
+			newRequest.append(unChounk(requestStream, size));
+		}
+	}
+	return (newRequest);
+}
+
 const std::string	Socket::receiveRequest(void)
 {
 	ssize_t	returnRead = 1;
 	this->_request = "";
-	while (returnRead > 0)
+	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
 		ws_log(errno);
-		ws_log(EAGAIN);
 		ws_log(returnRead);
 		if (returnRead < 0)
 		{
@@ -166,16 +238,61 @@ const std::string	Socket::receiveRequest(void)
 		this->_request.append(buffer);
 		if (returnRead < BUFF_SIZE)
 			break ;
+	}
+	bool chounkedCheck = isChounked(this->_request);
+	if (chounkedCheck)
+	{
+		returnRead = 1;
+		ws_log("hmmm");
+		this->_request = unChounkInit(this->_request);
+		this->sendResponse("HTTP/1.1 100 Continue");
+		size_t	size = 1;
+		char	buffer[BUFF_SIZE + 1];
+
+		while (size != 0)
+		{
+			returnRead = read(this->_clientSocket , buffer, BUFF_SIZE);
+			if (returnRead < 0)
+				return (this->_request);
+			buffer[returnRead] = 0;
+
+			std::stringstream	bufferStream(buffer);
+			while (bufferStream.good())
+			{
+				std::string	sizeStr;
+				std::getline(bufferStream, sizeStr);
+				if (!bufferStream.good())
+					break ;
+				std::istringstream(sizeStr) >> std::hex >> size;
+				if (size == 0)
+					break ;
+				this->_request.append(unChounk(bufferStream, size));
+			}
+		}		
 	}	
 	return (this->_request);
 }
 
 void	Socket::sendResponse(const std::string response)
 {
-	if (write(this->_clientSocket, response.c_str(), response.size()) < 0)
+	size_t	i;
+	size_t	size = BUFF_SIZE;
+	const char *toWrite = response.c_str();
+	size_t	remainingSize = response.size();
+
+	i = 0;
+	while (i < response.size())
 	{
-		ws_log("Need to send error page not kill the server");
-		throw IoException();
+		if (remainingSize < BUFF_SIZE)
+			size = remainingSize;
+		ssize_t	retWrite = write(this->_clientSocket, &toWrite[i], size);
+		if (retWrite < 0)
+		{
+			ws_log("Need to close socket and not kill the server");
+			throw IoException();
+		}
+		remainingSize -= retWrite;
+		i += retWrite;
 	}
 }
 

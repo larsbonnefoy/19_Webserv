@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/11 11:24:14 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/12 12:53:55 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,8 +346,8 @@ void HttpResponse::_handleCgiResponse(std::string response) {
 
 HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 {
-    if (serv.getName() != request.getName()) {
-	    this->_requestError(serv, 403);
+    if (serv.getName() != "" && serv.getName() != request.getName() && !((serv.getName() == "localhost" && request.getName() == "127.0.0.1") || (serv.getName() == "127.0.0.1" && request.getName() == "localhost" ))) {
+		this->_requestError(serv, 403);
     }
     else if (request.getBody().size() > serv.getMaxBodySize()) {
 		this->_requestError(serv, 400); //or 416 ??
