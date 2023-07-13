@@ -42,7 +42,7 @@
 class HttpResponse : public Http {
     private:
 
-		// Private Varaible
+		// Private Variable
         size_t      _statusCode;
         std::string _statusPhrase;
 		std::string _path;

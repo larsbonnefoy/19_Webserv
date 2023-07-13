@@ -61,11 +61,11 @@ class Socket
 		uint32_t			getPort(void) const;
 
 		// MemberFunctions
-		const std::string	receiveRequest(void);
+		const std::string	receiveRequest(int clientFd);
 		int					connectClient(void);
-		void				sendResponse(const std::string response);		
+		void				sendResponse(int clientFd, const std::string response);		
 		void				socketInit(const uint32_t port);
-		void				closeClient(void);
+		// void				closeClient(int client);
 		void				sc_close(void);
 
 	private:
@@ -73,7 +73,7 @@ class Socket
 		int					_socketAddressLen;
 		uint32_t			_port; //ID
 	 	struct sockaddr_in	_socketAddress;
-		int 				_clientSocket;
+		// int 				_clientSocket;
 		std::string			_clientIp;
 		std::string			_request;
 

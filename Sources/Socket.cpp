@@ -21,7 +21,7 @@ void	Socket::socketInit(const uint32_t port)
 	option = 1;
 	if (this->_serverSocket == -1)
 		throw InitSocketException();
-
+	// fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
 					static_cast<socklen_t>(sizeof(option))))
 		throw InitSocketException();
@@ -65,9 +65,10 @@ Socket::Socket(const Socket &copy)
 // Destructor
 void	Socket::sc_close(void)
 {
-	close(this->_clientSocket);
+	// close(this->_clientSocket);
 	close(this->_serverSocket);
 }
+
 Socket::~Socket()
 {
 	this->sc_close();
@@ -77,7 +78,7 @@ Socket::~Socket()
 // Operators
 Socket & Socket::operator=(const Socket &assign)
 {
-	this->_clientSocket = assign._clientSocket;
+	// this->_clientSocket = assign._clientSocket;
 	this->_serverSocket = assign._serverSocket;
 	this->_socketAddress = assign._socketAddress;
 	this->_port = assign._port;
@@ -130,24 +131,25 @@ uint32_t	Socket::getPort(void) const
 
 // Member Functions
 
-int	Socket::connectClient(void)
+int	Socket::
+connectClient(void)
 {
 
 	struct sockaddr_in	clientAddress;
 	int					clientAddressLen = sizeof(clientAddress);
 	
-	this->_clientSocket = accept(this->_serverSocket,
+	int	clientSocket = accept(this->_serverSocket,
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
-	if (this->_clientSocket == -1)
+	if (clientSocket == -1)
 		throw InitSocketException();
-	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
+	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
 	stream << "Client connected on port: "
 			<< ntohs(this->_socketAddress.sin_port)
 			<< " from ip: " << this->_clientIp;
 	ws_log(stream.str());
-	return (this->_clientSocket);
+	return (clientSocket);
 }
 
 static bool	isChounked(std::string request)
@@ -219,18 +221,18 @@ static std::string	unChounkInit(std::string request)
 	return (newRequest);
 }
 
-const std::string	Socket::receiveRequest(void)
+const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
 	this->_request = "";
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
-		returnRead = recv(this->_clientSocket , buffer, BUFF_SIZE, 0);
+		returnRead = recv(clientFd, buffer, BUFF_SIZE, 0);
 		ws_log(strerror(errno));
 		ws_log(returnRead);
 		ws_log("client");
-		ws_log(this->_clientSocket);
+		ws_log(clientFd);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
@@ -247,13 +249,13 @@ const std::string	Socket::receiveRequest(void)
 		returnRead = 1;
 		ws_log("hmmm");
 		this->_request = unChounkInit(this->_request);
-		this->sendResponse("HTTP/1.1 100 Continue");
+		this->sendResponse(clientFd, "HTTP/1.1 100 Continue");
 		size_t	size = 1;
 		char	buffer[BUFF_SIZE + 1];
 
 		while (size != 0)
 		{
-			returnRead = recv(this->_clientSocket , buffer, BUFF_SIZE, 0);
+			returnRead = recv(clientFd, buffer, BUFF_SIZE, 0);
 			if (returnRead < 0)
 				return (this->_request);
 			buffer[returnRead] = 0;
@@ -275,7 +277,7 @@ const std::string	Socket::receiveRequest(void)
 	return (this->_request);
 }
 
-void	Socket::sendResponse(const std::string response)
+void	Socket::sendResponse(int clientFd, const std::string response)
 {
 	size_t	i;
 	size_t	size = BUFF_SIZE;
@@ -287,7 +289,7 @@ void	Socket::sendResponse(const std::string response)
 	{
 		if (remainingSize < BUFF_SIZE)
 			size = remainingSize;
-		ssize_t	retWrite = write(this->_clientSocket, &toWrite[i], size);
+		ssize_t	retWrite = write(clientFd, &toWrite[i], size);
 		if (retWrite < 0)
 		{
 			ws_log("Need to close socket and not kill the server");
@@ -298,15 +300,15 @@ void	Socket::sendResponse(const std::string response)
 	}
 }
 
-void	Socket::closeClient(void)
-{
-	std::stringstream stream;
-	stream << "Client disconnected on port: "
-			<< ntohs(this->_socketAddress.sin_port)
-			<< " from ip: " << this->_clientIp; 
-	ws_log(stream.str());
-	close(this->_clientSocket);
-}
+// void	Socket::closeClient(void)
+// {
+// 	std::stringstream stream;
+// 	stream << "Client disconnected on port: "
+// 			<< ntohs(this->_socketAddress.sin_port)
+// 			<< " from ip: " << this->_clientIp; 
+// 	ws_log(stream.str());
+// 	close(this->_clientSocket);
+// }
 
 const char* Socket::InitSocketException::what() const throw()
 {

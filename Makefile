@@ -6,10 +6,10 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/07/03 13:04:11 by hdelmas          ###   ########.fr        #
-#    Updated: 2023/07/02 15:04:05 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/07/13 13:28:03 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 NAME = webserv
 OBJS_DIR = Objs
@@ -22,9 +22,9 @@ OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 # ===---===---===---===---===---===---===---===---===---===---===---===---
 
-CFLAGS = -Wall -Wextra #-Werror -g #-Wno-unused-variable -Wno-unused-parameter
+CFLAGS = -Wall -Wextra -Werror -g #-Wno-unused-variable -Wno-unused-parameter
 
-CPPFLAGS = -std=c++98 #-fsanitize=address
+CPPFLAGS = -std=c++98  -fsanitize=address
 
 INCLUDES = -I Includes
 
