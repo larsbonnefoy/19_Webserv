@@ -327,7 +327,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 		this->_requestError(serv, 403);
     }
     else if (request.getBody().size() > serv.getMaxBodySize()) {
-		this->_requestError(serv, 400); //or 416 ??
+		this->_requestError(serv, 413); //or 416 ??
     }
     else {
         Location    location = getLocation(serv, request); //check for server name

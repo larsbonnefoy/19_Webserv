@@ -53,7 +53,7 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
     this->_env["HTTP_USER_AGENT="] = requestHeaderFields["User-Agent"];
     this->_env["HTTP_CONNECTION="] = requestHeaderFields["Connection"];
 
-    std::cout << "======" << std::endl;
+    std::cout << "==CGI END====" << std::endl;
 }
 
 Cgi::Cgi(const Cgi &other) : _env(other._env) {
@@ -130,6 +130,7 @@ std::string Cgi::_readFromPipe(int pipeRead){
     //Dans quel cas peut on ne pas avoir de '\0' quand charRead == 0?
     while ((charRead = read(pipeRead, buffer, BUFFERSIZE))) {
         if (charRead == -1) {
+            std::cerr << "Read form pipe failed" << std::endl; 
             delete[] buffer;
             ws_log("read");
             throw InternalError();
@@ -144,6 +145,7 @@ std::string Cgi::_readFromPipe(int pipeRead){
  * Return internal error if Cgi fails;
  */ 
 std::string Cgi::run(void) {
+    ws_log("1");
     int pipeData[2], pipeCGI[2];
     pid_t pid;
     std::string cgiOut;
@@ -152,6 +154,7 @@ std::string Cgi::run(void) {
         ws_log(strerror(errno));
         throw InternalError();
     }
+    ws_log("2");
     pid = fork();
     if (pid == -1) {
         ws_log(strerror(errno));
@@ -164,24 +167,34 @@ std::string Cgi::run(void) {
     //  sets pipeCGI[1] to STDOUT_FILENO (CGI process can write its output into the pipe)
     //  TO CLOSE pipeData[1], pipeCGI[2]???
     else if (pid == 0) {
+        ws_log("In child");
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
+            ws_log("writing to pipe alllooo");
 
 //            std::cerr << "-----------\nIN CHILD: Write data to pipe for cgi script\n";
   //          std::cerr << toWrite << " (len = " << this->_data.length()<< ")\n------------\n";
             
+            std::cerr << PIPE_BUF * 8 << std::endl;
+            std::cerr << "Writing " << this->_data.length() << " bytes to pipe" << std::endl;
+            //should write to tmp file here
             if (write(pipeData[1], toWrite, this->_data.length()) == -1) {
-                ws_log(strerror(errno));
+                std::cerr << "WRITE FAILED" << std::endl;
+                ws_logErr(strerror(errno));
                 throw InternalError();
             };
+            std::cout << "HUUUUUUUUUUM" << std::endl; 
         }
 
+        std::cerr << "2" << std::endl;
         dup2(pipeData[0], STDIN_FILENO);
         close(pipeData[0]);
 
+        std::cerr << "3" << std::endl;
         dup2(pipeCGI[1], STDOUT_FILENO);
         close(pipeCGI[1]);
 
+        std::cerr << "4" << std::endl;
         char **av = _convToTab(this->_av);
         char **env = _convToTab(this->_env);
         
@@ -195,6 +208,7 @@ std::string Cgi::run(void) {
     //PARENT 
     // Reads CGI ouput from pipeCGI[0] 
     else {
+        ws_log("In Parent");
 
         close(pipeData[0]);
         close(pipeData[1]);
@@ -210,6 +224,7 @@ std::string Cgi::run(void) {
             }
         }
         cgiOut = _readFromPipe(pipeCGI[0]);
+        ws_log("CGI Response Recieved");
         close(pipeCGI[0]);
     }
     return (cgiOut);
