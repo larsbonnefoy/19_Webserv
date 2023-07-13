@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import cgi
 import os
 
@@ -17,11 +17,10 @@ if file_item.filename:
     file_path = os.path.join(upload_dir, os.path.basename(file_item.filename))
 
     # Save the file
-    print("ici???")
     with open(file_path, "wb") as file:
         file.write(file_item.file.read())
 
-    print("Content-type:text/html\r\n\r\n")
+    print("Content-type:text/html\r\n")
     print("<html>")
     print("<head>")
     print("<title>File Upload</title>")
@@ -31,7 +30,7 @@ if file_item.filename:
     print("</body>")
     print("</html>")
 else:
-    print("Content-type:text/html\r\n\r\n")
+    print("Content-type:text/html\r\n")
     print("<html>")
     print("<head>")
     print("<title>File Upload</title>")

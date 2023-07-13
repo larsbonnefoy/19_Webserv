@@ -43,6 +43,7 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();
 
+    this->_env["CONTENT_TYPE="] = requestHeaderFields["Content-Type"];
     this->_env["HTTP_ACCEPT="] = requestHeaderFields["Accept"];
     this->_env["HTTP_ACCEPT_ENCODING="] = requestHeaderFields["Accept-Encoding"];
     this->_env["HTTP_ACCEPT_LANGUAGE="] = requestHeaderFields["Accept-Language"];

@@ -140,7 +140,7 @@ int	Socket::connectClient(void)
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (this->_clientSocket == -1)
 		throw std::exception();
-	fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
+	//fcntl(this->_clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
 	stream << "Client connected on port: "
