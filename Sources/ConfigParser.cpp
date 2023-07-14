@@ -26,7 +26,7 @@
  */ 
 void parseConfig(std::string configFile, Config &conf) {
 
-    std::ifstream file(configFile);
+    std::ifstream file(configFile.c_str());
 
     if (file.fail() || !endsWithConf(configFile)) {
         throw UnvalidInputFile();

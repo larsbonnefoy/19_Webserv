@@ -6,8 +6,6 @@
 // Constructors
 Mux::Mux()
 {
-	// this->_conf = DEFAULTCONF;
-	// this->initSockets();
 }
 
 Mux::Mux(Config	&conf) :	_conf(conf),
@@ -45,34 +43,68 @@ Mux & Mux::operator=(const Mux &assign)
 // Member Functions
 void	Mux::run(void)
 {
+	size_t	nbrfds = this->_nbrSocket;
+	size_t	newNbrfds = this->_nbrSocket;
+	std::map<int, Socket*>	fdToSocket;
 	while (1)
 	{
-		int returnPoll = poll(this->_pollSocketFds, this->_nbrSocket , TIMEOUT);
+		nbrfds = newNbrfds;
+		int returnPoll = poll(this->_pollSocketFds, nbrfds, TIMEOUT);
 		if (returnPoll < 0)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
-			for (size_t i = 0; i < this->_nbrSocket; ++i)
+			ws_log(nbrfds);
+			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
 				{
-					//connect client maybe change program flow from receive parse read to receive all parse all send all
 					try
 					{
-						this->_Sockets[i]->connectClient();
-						const std::string request = this->_Sockets[i]->receiveRequest();
-						ws_log(request);
-						HttpRequest Request(request);
-						HttpResponse response(this->_serverMap[this->_Sockets[i]->getPort()], Request);
+						if (i < this->_nbrSocket)
+						{
+							int clientFd = this->_Sockets[i]->connectClient();
+							newNbrfds++;
 
-                    	// ws_log(response.convertToStr());
-						this->_Sockets[i]->sendResponse(response.convertToStr());	
-						this->_Sockets[i]->closeClient();			
-						this->_pollSocketFds[i].revents = 0;
+							pollfd *tmp = new pollfd[newNbrfds];
+							for (size_t j = 0; j < newNbrfds - 1; ++j)
+							{
+								tmp[j].fd = this->_pollSocketFds[j].fd;
+								tmp[j].events = this->_pollSocketFds[j].events;
+								tmp[j].revents = this->_pollSocketFds[j].revents;
+							}
+							tmp[newNbrfds - 1].fd = clientFd;
+							tmp[newNbrfds - 1].events = POLLIN;
+							tmp[newNbrfds - 1].revents = POLLIN;
+							delete [] this->_pollSocketFds;
+							this->_pollSocketFds = tmp;
+
+							fdToSocket[clientFd] = this->_Sockets[i];
+							this->_pollSocketFds[i].revents = 0;
+						}
+						else
+						{
+							if (fdToSocket[this->_pollSocketFds[i].fd])
+							{
+								Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
+
+								const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
+								ws_log(request);
+								HttpRequest Request(request);
+								HttpResponse response(this->_serverMap[sock->getPort()], Request);
+                	    		// ws_log(response.convertToStr());
+								sock->sendResponse(this->_pollSocketFds[i].fd, response.convertToStr());	
+								close(this->_pollSocketFds[i].fd);
+								this->_pollSocketFds[i].fd = -1;
+								this->_pollSocketFds[i].revents = 0;
+								this->_pollSocketFds[i].events = 0;
+								newNbrfds--;
+							}
+						}
 					}
 					catch(const std::exception& e)
 					{
-						this->_pollSocketFds[i].fd = 0;
+						this->_pollSocketFds[i].fd = -1;
 						this->_Sockets[i]->sc_close();
 						ws_logErr(e.what());
 					}
@@ -89,12 +121,12 @@ void	Mux::initSockets()
 
 	this->_nbrSocket = this->_conf.getServers().size();
 	for (std::map<size_t, Server>::iterator it = this->_serverMap.begin() ; it != this->_serverMap.end(); ++it)
-		this->_Sockets.push_back(new Socket(it->first));	
+		this->_Sockets.push_back(new Socket(it->second.getIp(), it->first));	
 	this->_pollSocketFds = new pollfd[this->_nbrSocket];
-	for (size_t i = 0; i <this->_nbrSocket; ++i)
+	for (size_t i = 0; i < this->_nbrSocket; ++i)
 	{
 		this->_pollSocketFds[i].fd = this->_Sockets[i]->getServerSocket();
-		this->_pollSocketFds[i].events = POLLIN | POLLPRI;
+		this->_pollSocketFds[i].events = POLLIN;
 	}
 }
 

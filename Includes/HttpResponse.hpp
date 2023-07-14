@@ -42,7 +42,7 @@
 class HttpResponse : public Http {
     private:
 
-		// Private Varaible
+		// Private Variable
         size_t      _statusCode;
         std::string _statusPhrase;
 		std::string _path;
@@ -62,15 +62,15 @@ class HttpResponse : public Http {
         bool        _isDirectory(const std::string& path);
         void        _handleAutoIndex(const std::string &path);
         std::string _createHTMLAutoindex(const std::string &url);
-		void		_setMethode(Location location, HttpRequest request);
+		void		_setMethode(Location &location, HttpRequest &request);
 
 		// Request Handling 
-		void	_GETRequest(Location location, Server server);
-		void	_DELETERequest(Server server);
-		void	_setPath(Location location, HttpRequest request, int methode);
-		void	_setIndex(Location location);
-		void	_setRedir(Location location);
-		void 	_requestError(Server server, int code);
+		void	_GETRequest(Server &server);
+		void	_DELETERequest(Server &server);
+		void	_setPath(Location &location, HttpRequest &request, int methode);
+		void	_setIndex(Location &location);
+		void	_setRedir(Location &location);
+		void 	_requestError(Server &server, int code);
 		void 	_requestSuccess(int code);
 		void	_createResponse(void);
 		void	_handleRedirection(void);
