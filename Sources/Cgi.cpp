@@ -16,25 +16,18 @@ Cgi::Cgi(void) {
 //Si GET: CONTENT_LENGTH = body len,  on met les infos dans query QUERY_STRING 
 //Si POST: CONTENT_LENGHT = NULL, write le body dans pipe et dup pipe sur stdin;
 Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
-    std::cout << "===CGI Constructor===" << std::endl;
 
     this->_pathInfo = path; //change once path as been added to request;
-    ws_log(path);
-    ws_log(request.getPayload());
-    ws_log(request.getMethode());
 
     this->_av.push_back("");
     
     this->_env["REQUEST_METHOD="] = request.getMethode();
-    ws_log(uploadDir);
     this->_env["UPLOAD_DIR="] = uploadDir;
-    //this->_env["UPLOAD_DIR="] = "/Users/larsbonnefoy/projects/19_Webserv/site/data/uploads";
     if (request.getMethode() == "GET") {
         this->_method = GET;
         this->_data = request.getPayload();
         this->_env["CONTENT_LENGTH="] = "NULL";
         this->_env["QUERY_STRING="] = this->_data;
-        //ws_log(this->_data);
     } 
     else if (request.getMethode() == "POST") {
         this->_method = POST;
@@ -43,7 +36,6 @@ Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
         this->_env["QUERY_STRING="] = "NULL";
         ws_log("Body len of file to upload");
         ws_log(_data.length());
-        //ws_log(this->_data);
     }
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();

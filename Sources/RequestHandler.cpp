@@ -331,7 +331,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
     }
     else {
         Location    location = getLocation(serv, request); //check for server name
-		
+	
 		this->_setMethode(location, request);
 		this->_setPath(location, request, this->_methode);
         std::string uploadDir = location.getUploadDir();
@@ -357,7 +357,12 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 }
                 this->_setIndex(location);	
                 this->_setRedir(location);	
-                this->_autoindex = location.getAutoIndex();
+                if (this->_pathtype == DIRTYPE) {
+                    this->_autoindex = location.getAutoIndex();
+                }
+                else {
+                    this->_autoindex = UNDEFINED;
+                }
                 this->_GETRequest(location, serv);
                 break;
             
@@ -387,6 +392,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         }
     }
     this->_createResponse();
+    ws_log("_____RESPONSE_____");
+    ws_log(*this);
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/
