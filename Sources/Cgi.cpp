@@ -2,20 +2,20 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <iostream>
-#include <unistd.h>
 #include <sys/wait.h>
-#include <fcntl.h>
+#include <unistd.h>
 
-#define BUFFERSIZE 500
+#define BUFFERSIZE 2048
 
 Cgi::Cgi(void) {
 }
 
 //Si GET: CONTENT_LENGTH = body len,  on met les infos dans query QUERY_STRING 
 //Si POST: CONTENT_LENGHT = NULL, write le body dans pipe et dup pipe sur stdin;
-Cgi::Cgi(HttpRequest &request, std::string path) {
+Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
     std::cout << "===CGI Constructor===" << std::endl;
 
     this->_pathInfo = path; //change once path as been added to request;
@@ -26,19 +26,24 @@ Cgi::Cgi(HttpRequest &request, std::string path) {
     this->_av.push_back("");
     
     this->_env["REQUEST_METHOD="] = request.getMethode();
+    ws_log(uploadDir);
+    this->_env["UPLOAD_DIR="] = uploadDir;
+    //this->_env["UPLOAD_DIR="] = "/Users/larsbonnefoy/projects/19_Webserv/site/data/uploads";
     if (request.getMethode() == "GET") {
         this->_method = GET;
         this->_data = request.getPayload();
         this->_env["CONTENT_LENGTH="] = "NULL";
         this->_env["QUERY_STRING="] = this->_data;
-        ws_log(this->_data);
+        //ws_log(this->_data);
     } 
     else if (request.getMethode() == "POST") {
         this->_method = POST;
         this->_data = request.getBody() + '\0';
         this->_env["CONTENT_LENGTH="] = request.valToString(_data.length());
         this->_env["QUERY_STRING="] = "NULL";
-        ws_log(this->_data);
+        ws_log("Body len of file to upload");
+        ws_log(_data.length());
+        //ws_log(this->_data);
     }
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();
@@ -66,24 +71,25 @@ Cgi &Cgi::operator=(const Cgi &other) {
     this->_env = other._env;
     return *this;
 }
+
 /*------------------------Private member functions----------------------------*/
-//_convToTab should be template but un peu la flemme comme on dit chez moi
 //Dans le cas d'un pd d'execve ou d'alloc ici il faut FREEEEEE!!!!
 char **Cgi::_convToTab(std::map<std::string, std::string> env) {
     size_t size = env.size();
 
     char **envp = new char*[size + 1];
     if (envp == NULL) {
-        ws_log(strerror(errno));
-        throw InternalError();
+        ws_logErr(strerror(errno));
+        exit(1);
     }
     size_t i = 0;
     for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it) {
         std::string str = it->first + it->second;
         envp[i] = new char[str.length() + 1];
         if (envp[i] == NULL) {
-            ws_log(strerror(errno));
-            throw InternalError();
+            delete[] envp;
+            ws_logErr(strerror(errno));
+            exit(1);
         }
         strcpy(envp[i], str.c_str());
         i++; 
@@ -97,15 +103,16 @@ char **Cgi::_convToTab(std::vector<std::string> av) {
 
     char **avp = new char*[size + 1];
     if (avp == NULL) {
-        ws_log(strerror(errno));
-        throw InternalError();
+        ws_logErr(strerror(errno));
+        exit(1);
     }
     size_t i = 0;
     for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
         avp[i] = new char[av[i].length() + 1];
         if (avp[i] == NULL) {
-            ws_log(strerror(errno));
-            throw InternalError();
+            delete[] avp;
+            ws_logErr(strerror(errno));
+            exit(1);
         }
         strcpy(avp[i], av[i].c_str());
         i++; 
@@ -121,83 +128,79 @@ std::string Cgi::_readFromPipe(int pipeRead){
     int charRead;
     std::string out = "";
 
-    char *buffer = new char[BUFFERSIZE + 1];
-    if (buffer == NULL) {
-        ws_log(strerror(errno));
-        throw InternalError();
-    }
-
-    //Dans quel cas peut on ne pas avoir de '\0' quand charRead == 0?
+    char  buffer[BUFFERSIZE];
     while ((charRead = read(pipeRead, buffer, BUFFERSIZE))) {
         if (charRead == -1) {
-            std::cerr << "Read form pipe failed" << std::endl; 
-            delete[] buffer;
-            ws_log("read");
+            ws_logErr(strerror(errno));
             throw InternalError();
         }
-        buffer[charRead] = '\0';
-        out += buffer;
+        out.append(buffer, charRead);
     }
-    delete[] buffer;
     return (out);
 }
+
 /*
  * Return internal error if Cgi fails;
  */ 
 std::string Cgi::run(void) {
-    ws_log("1");
-    int pipeData[2], pipeCGI[2];
+    int pipeCGI[2];
     pid_t pid;
     std::string cgiOut;
 
-    if (pipe(pipeData) == -1 || pipe(pipeCGI) == -1) {
-        ws_log(strerror(errno));
+    if (pipe(pipeCGI) == -1) {
+        ws_logErr(strerror(errno));
         throw InternalError();
     }
-    ws_log("2");
+
     pid = fork();
     if (pid == -1) {
-        ws_log(strerror(errno));
+        close(pipeCGI[0]);
+        close(pipeCGI[1]);
+        ws_logErr(strerror(errno));
         throw InternalError();
     }
     
     //CHILD (executes CGI)
-    //  writes POST DATA to pipeData[1]
-    //  sets pipeData[0] to STDIN_FILENO (CGI process can then read from pipeData[1] on stdIn)
+    //  writes POST DATA to tmpFileWrite
+    //  sets tmpFileWrite to STDIN_FILENO (CGI process can then read from tmpFileRead on stdIn)
     //  sets pipeCGI[1] to STDOUT_FILENO (CGI process can write its output into the pipe)
-    //  TO CLOSE pipeData[1], pipeCGI[2]???
     else if (pid == 0) {
-        ws_log("In child");
+        FILE *tmpFileWrite = std::fopen("/tmp/CgiDataUpload", "w");
+        if (tmpFileWrite == NULL) {
+            ws_logErr(strerror(errno));
+            exit(1);
+        }
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
-            ws_log("writing to pipe alllooo");
 
-//            std::cerr << "-----------\nIN CHILD: Write data to pipe for cgi script\n";
-  //          std::cerr << toWrite << " (len = " << this->_data.length()<< ")\n------------\n";
-            
-            std::cerr << PIPE_BUF * 8 << std::endl;
-            std::cerr << "Writing " << this->_data.length() << " bytes to pipe" << std::endl;
-            //should write to tmp file here
-            if (write(pipeData[1], toWrite, this->_data.length()) == -1) {
-                std::cerr << "WRITE FAILED" << std::endl;
+            if (write(fileno(tmpFileWrite), toWrite, this->_data.length()) == -1) {
                 ws_logErr(strerror(errno));
-                throw InternalError();
-            };
-            std::cout << "HUUUUUUUUUUM" << std::endl; 
+                exit(1);
+            }
+        
         }
+        close(fileno(tmpFileWrite));
+        
+        FILE *tmpFileRead = std::fopen("/tmp/CgiDataUpload", "r"); 
+        dup2(fileno(tmpFileRead), STDIN_FILENO);
+        close(fileno(tmpFileRead));
 
-        std::cerr << "2" << std::endl;
-        dup2(pipeData[0], STDIN_FILENO);
-        close(pipeData[0]);
-
-        std::cerr << "3" << std::endl;
         dup2(pipeCGI[1], STDOUT_FILENO);
         close(pipeCGI[1]);
 
-        std::cerr << "4" << std::endl;
         char **av = _convToTab(this->_av);
         char **env = _convToTab(this->_env);
         
+        size_t lastSlashIdx = this->_pathInfo.find_last_of("/");
+
+        ws_log(this->_pathInfo);
+        if (chdir(this->_pathInfo.substr(0, lastSlashIdx).c_str()) == -1) {
+            delete[] av;
+            delete[] env;
+            ws_logErr(this->_pathInfo);
+            ws_logErr(strerror(errno));
+            exit(1);
+        }
         if (execve(this->_pathInfo.c_str(), av, env) == -1) {
             delete[] av;
             delete[] env;
@@ -208,10 +211,7 @@ std::string Cgi::run(void) {
     //PARENT 
     // Reads CGI ouput from pipeCGI[0] 
     else {
-        ws_log("In Parent");
 
-        close(pipeData[0]);
-        close(pipeData[1]);
         close(pipeCGI[1]);
 
         int status;
@@ -219,7 +219,8 @@ std::string Cgi::run(void) {
         if (WIFEXITED(status)) {
             int exitCode = WEXITSTATUS(status);
             if (exitCode != 0) {
-                ws_log("CGI script failed\n");
+                close(pipeCGI[0]);
+                ws_logErr("CGI script failed\n");
                 throw InternalError();
             }
         }

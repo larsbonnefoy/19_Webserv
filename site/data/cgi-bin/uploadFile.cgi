@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 import cgi
+import sys
 import os
 
 # Set the upload directory
-upload_dir = "/Users/larsbonnefoy/projects/19_Webserv/site/data/uploads"
+# upload_dir = "/Users/larsbonnefoy/projects/19_Webserv/site/data/uploads"
+upload_dir = os.environ['UPLOAD_DIR']
 
 # Create an instance of the FieldStorage class to parse the form data
 form = cgi.FieldStorage()
+print(os.environ, file=sys.stderr)
 
 # Get the uploaded file
 file_item = form["file"]

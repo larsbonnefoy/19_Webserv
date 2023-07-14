@@ -333,8 +333,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         Location    location = getLocation(serv, request); //check for server name
 		
 		this->_setMethode(location, request);
-		
 		this->_setPath(location, request, this->_methode);
+        std::string uploadDir = location.getUploadDir();
 		//cgi response can have
 		//  startline with response code 
 		//  Http Headers (file type,...)
@@ -344,8 +344,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
             case GET:
                 if (this->_cgi)
                 {
-                    try { 
-                        Cgi res(request, this->_path);
+                    try {
+                        Cgi res(request, this->_path, uploadDir);
                         std::string response = res.run();
                         _requestSuccess(200);
                         _handleCgiResponse(response);
@@ -365,7 +365,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 if (this->_cgi)
                 {
                     try { 
-                        Cgi res(request, this->_path);
+                        Cgi res(request, this->_path, uploadDir);
                         std::string response = res.run();
                         _requestSuccess(200);
                         _handleCgiResponse(response);

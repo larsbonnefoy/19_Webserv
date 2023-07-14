@@ -14,6 +14,7 @@
 #include <stack>
 #include <netinet/in.h>
 #include "../Includes/Config.hpp"
+#include "Location.hpp"
 
 void parseConfig(std::string configFile, Config &conf);
 bool endsWithConf(const std::string& filename);
@@ -34,6 +35,7 @@ void        addMethods(std::string infoBuffer, Location &loc);
 void        setRedir(std::string inputBuffer, Location &loc);
 int         matchMethod(std::string method);
 void        setCGI(std::string inputBuffer, Location &loc);
+void        checkUploadDir(Server &serv, Location &loc);
 
 bool        isNumeric(const std::string &input);
 bool        isEmptyLine(std::string str);
@@ -129,4 +131,13 @@ class RootIsNotAbs : public std::exception {
         const char *what(void) const throw();
 }; 
 
+class CgiNotDefined : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
+
+class ServerRootNotDefined : public std::exception { 
+    public:
+        const char *what(void) const throw();
+}; 
 #endif

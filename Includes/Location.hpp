@@ -24,6 +24,7 @@ class Location {
         std::pair<size_t, std::string>      _redirect;
         bool                                _autorizedMethods[NBR_METHODS];
         std::string                         _cgiPath;
+        std::string                         _uploadDir;
 
     public:
         Location(void);
@@ -40,6 +41,7 @@ class Location {
         bool                            getPostVal(void) const;
         bool                            getDelVal(void) const;
         std::string                     getCGIPath(void) const;
+        std::string                     getUploadDir(void) const;
 
         void                            setPath(std::string root);
         void                            setRoot(std::string root);
@@ -51,6 +53,7 @@ class Location {
         void                            setPost(bool val);
         void                            setDel(bool val);
         void                            setCGIPath(std::string &cgi);
+        void                            setUploadDir(std::string &uploadDir);
 };
 
 std::ostream &operator<<(std::ostream &out, const Location &loc);
