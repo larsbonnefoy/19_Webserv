@@ -23,6 +23,7 @@
 
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include <arpa/inet.h>
 # include <string.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -42,7 +43,7 @@ class Socket
 		// Constructors
 		Socket();
 		Socket(const Socket &copy);
-		Socket(const uint32_t port);
+		Socket(const std::string ip, const uint32_t port);
 
 		// Destructor
 		~Socket();
@@ -64,21 +65,10 @@ class Socket
 		const std::string	receiveRequest(int clientFd);
 		int					connectClient(void);
 		void				sendResponse(int clientFd, const std::string response);		
-		void				socketInit(const uint32_t port);
+		void				socketInit(const std::string ip, const uint32_t port);
 		// void				closeClient(int client);
 		void				sc_close(void);
-
-	private:
-		int 				_serverSocket;
-		int					_socketAddressLen;
-		uint32_t			_port; //ID
-	 	struct sockaddr_in	_socketAddress;
-		// int 				_clientSocket;
-		std::string			_clientIp;
-		std::string			_request;
-
-		// Exceptions
-
+	
 	class InitSocketException : public std::exception
 	{
 		public:
@@ -90,6 +80,18 @@ class Socket
 		public:
 			virtual const char* what() const throw();
 	};
+	private:
+		int 				_serverSocket;
+		int					_socketAddressLen;
+		uint32_t			_port; //ID
+	 	struct sockaddr_in	_socketAddress;
+		// int 				_clientSocket;
+		std::string			_clientIp;
+		std::string			_request;
+
+		// Exceptions
+
+	
 };
 #endif
 

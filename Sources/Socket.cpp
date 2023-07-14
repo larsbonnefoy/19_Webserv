@@ -2,6 +2,7 @@
 
 // Static functions
 
+
 static std::string ipAddressToString(uint32_t ipAddress) {
     std::stringstream ipString;
     ipString << ((ipAddress >> 24) & 0xFF);
@@ -14,14 +15,50 @@ static std::string ipAddressToString(uint32_t ipAddress) {
     return (ipString.str());
 }
 
-void	Socket::socketInit(const uint32_t port)
+static uint32_t ipStringToULong(const std::string &ip) {
+    
+	std::stringstream	ipSream(ip);
+	uint32_t			res = 0;
+	int iter = 3;
+
+	for (std::string digits; std::getline(ipSream, digits, '.'); iter--)
+	{
+
+		for (size_t i = 0; i < digits.size(); ++i)
+		{
+			if (!std::isdigit(digits[i]) || digits.size() > 3)
+			{
+				ws_logErr("badip");
+				throw Socket::InitSocketException();
+			}
+		}
+
+		std::stringstream	digitsStream(digits);
+		uint32_t			toAdd = 0;
+
+		digitsStream >> toAdd;
+		ws_log(digitsStream.str());
+		ws_log(toAdd);
+		res += toAdd << (8 * iter);
+		ws_log(res);
+	}
+	if (iter != -1)
+	{
+		ws_logErr("badip format");
+		throw Socket::InitSocketException();
+	}
+	ws_log(ipAddressToString(res));	
+	return (res);
+}
+
+void	Socket::socketInit(const std::string ip, const uint32_t port)
 {
 	int option;
 
 	option = 1;
 	if (this->_serverSocket == -1)
 		throw InitSocketException();
-	// fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
+	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
 					static_cast<socklen_t>(sizeof(option))))
 		throw InitSocketException();
@@ -31,7 +68,7 @@ void	Socket::socketInit(const uint32_t port)
 		throw InitSocketException();
 
 	this->_socketAddress.sin_family = AF_INET;
-	this->_socketAddress.sin_addr.s_addr = INADDR_ANY;
+	this->_socketAddress.sin_addr.s_addr = htonl(ipStringToULong(ip));
 	this->_socketAddress.sin_port = htons(port);
 
 	if (bind(this->_serverSocket,
@@ -47,11 +84,11 @@ Socket::Socket()
 {
 }
 
-Socket::Socket(const uint32_t port) :	_serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
+Socket::Socket(const std::string ip, const uint32_t port) :	_serverSocket(socket(AF_INET, SOCK_STREAM, 0)),
 										_socketAddressLen(sizeof(this->_socketAddress)),
 										_port(port)
 {
-	this->socketInit(port);
+	this->socketInit(ip, port);
 }
 
 Socket::Socket(const Socket &copy)
