@@ -1,4 +1,4 @@
-#include "Socket.hpp"
+#include "../Includes/Socket.hpp"
 
 // Static functions
 
@@ -167,9 +167,7 @@ uint32_t	Socket::getPort(void) const
 }
 
 // Member Functions
-
-int	Socket::
-connectClient(void)
+int	Socket::connectClient(void)
 {
 
 	struct sockaddr_in	clientAddress;

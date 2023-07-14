@@ -3,7 +3,7 @@
 #include <sys/types.h>
 
 Location::Location(void) 
-    :_path(""), _root(""), _index(""), _autoindex(UNDEFINED), _cgiPath(""){
+    :_path(""), _root(""), _index(""), _autoindex(UNDEFINED), _cgiPath(""), _uploadDir("") {
     this->setAutorizedMethods(false, false, false);
     this->_redirect.first = 0;
     this->_redirect.second = "";
@@ -11,7 +11,7 @@ Location::Location(void)
 
 Location::Location(const Location &other) 
     : _path(other._path), _root(other._root), _index(other._index), 
-    _autoindex(other._autoindex), _redirect(other._redirect), _cgiPath(other._cgiPath){
+    _autoindex(other._autoindex), _redirect(other._redirect), _cgiPath(other._cgiPath), _uploadDir(other._uploadDir) {
     this->setAutorizedMethods(other.getGetVal(), other.getPostVal(), other.getDelVal());
 }
 
@@ -26,6 +26,7 @@ Location &Location::operator=(const Location &other) {
     this->_redirect = other._redirect;
     this->setAutorizedMethods(other.getGetVal(), other.getPostVal(), other.getDelVal());
     this->_cgiPath = other._cgiPath;
+    this->_uploadDir = other._uploadDir;
     return *this;
 }
 
@@ -64,6 +65,11 @@ bool Location::getDelVal(void) const {
 std::string Location::getCGIPath(void) const{
     return (this->_cgiPath);
 }
+
+std::string Location::getUploadDir(void) const{
+    return (this->_uploadDir);
+}
+
 void Location::setPath(std::string path) {
     this->_path = path;
 }
@@ -107,6 +113,10 @@ void Location::setCGIPath(std::string &cgi) {
     this->_cgiPath = cgi;
 }
 
+void Location::setUploadDir(std::string &uploadDir) {
+    this->_uploadDir = uploadDir;
+}
+
 std::ostream &operator<<(std::ostream &out, const Location &loc) {
 
     out << "    ->Location" << std::endl;
@@ -119,6 +129,7 @@ std::ostream &operator<<(std::ostream &out, const Location &loc) {
     out << "    POST : {" << loc.getPostVal() << "}";
     out << "    DEL : {" << loc.getDelVal() << "}" << std::endl;
     out << "    CGI : " << loc.getCGIPath() << std::endl;
+    out << "    UploadDir : " << loc.getUploadDir() << std::endl;
     
     return (out);
 }
