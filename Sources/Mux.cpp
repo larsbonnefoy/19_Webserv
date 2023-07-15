@@ -54,7 +54,7 @@ void	Mux::run(void)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
-			ws_log(nbrfds);
+			// ws_log(nbrfds);
 			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
@@ -105,7 +105,10 @@ void	Mux::run(void)
 					catch(const std::exception& e)
 					{
 						this->_pollSocketFds[i].fd = -1;
-						this->_Sockets[i]->sc_close();
+						if (i < this->_nbrSocket) 
+						{
+							this->_Sockets[i]->sc_close();
+						}
 						ws_logErr(e.what());
 					}
 				}
@@ -134,12 +137,10 @@ void	Mux::initSockets()
 
 const char* Mux::PollException::what() const throw()
 {
-	ws_logErr("[Mux] : Poll Failure");
 	return ("[Mux] : Poll Failure");
 }
 
 const char* Mux::InitSocketException::what() const throw()
 {
-	ws_logErr("[Mux] : Socket Initialization Failure");
 	return ("[Mux] : Socket Initialization Failure");
 }

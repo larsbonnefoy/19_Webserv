@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/12 19:09:19 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/15 14:24:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,8 +396,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         }
     }
     this->_createResponse();
-    ws_log("_____RESPONSE_____");
-    ws_log(*this);
+    // ws_log("_____RESPONSE_____");
+    // ws_log(*this);
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/

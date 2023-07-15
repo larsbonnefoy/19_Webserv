@@ -177,7 +177,6 @@ int	Socket::connectClient(void)
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (clientSocket == -1)
 		throw InitSocketException();
-	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
 	stream << "Client connected on port: "
@@ -264,10 +263,6 @@ const std::string	Socket::receiveRequest(int clientFd)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = recv(clientFd, buffer, BUFF_SIZE, 0);
-		ws_log(strerror(errno));
-		ws_log(returnRead);
-		ws_log("client");
-		ws_log(clientFd);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
@@ -282,7 +277,6 @@ const std::string	Socket::receiveRequest(int clientFd)
 	if (chounkedCheck)
 	{
 		returnRead = 1;
-		ws_log("hmmm");
 		this->_request = unChounkInit(this->_request);
 		this->sendResponse(clientFd, "HTTP/1.1 100 Continue");
 		size_t	size = 1;
@@ -320,16 +314,14 @@ void	Socket::sendResponse(int clientFd, const std::string response)
 	size_t	remainingSize = response.size();
 
 	i = 0;
+
 	while (i < response.size())
 	{
 		if (remainingSize < BUFF_SIZE)
 			size = remainingSize;
 		ssize_t	retWrite = write(clientFd, &toWrite[i], size);
 		if (retWrite < 0)
-		{
-			ws_log("Need to close socket and not kill the server");
 			throw IoException();
-		}
 		remainingSize -= retWrite;
 		i += retWrite;
 	}
@@ -347,12 +339,10 @@ void	Socket::sendResponse(int clientFd, const std::string response)
 
 const char* Socket::InitSocketException::what() const throw()
 {
-	ws_logErr("[Socket] : Socket Initialization Failure");
 	return ("[Socket] : Socket Initialization Failure");
 }
 
 const char* Socket::IoException::what() const throw()
 {
-	ws_logErr("[Socket] : IO Failure");
 	return ("[Socket] : IO Failure");
 }
