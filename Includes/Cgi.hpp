@@ -22,7 +22,7 @@ class Cgi {
 
     public:
         Cgi(void);
-        Cgi(HttpRequest &request, std::string path);
+        Cgi(HttpRequest &request, std::string path, std::string uploadDir);
         Cgi(const Cgi &other);
         ~Cgi(void);
 

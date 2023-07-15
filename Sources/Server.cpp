@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 Server::Server(void) 
-    :_root(""), _ip(""), _port(0), _maxBodySize(0), _serverName("") {
+    :_root(""), _ip(""), _port(0), _maxBodySize(10000), _serverName("") {
 }
 
 Server::Server(const Server &other) 
@@ -91,6 +91,7 @@ void Server::setLocation(Location &loc) {
 std::string Server::getName(void) const {
     return (this->_serverName);
 }
+
 std::map<size_t, std::string> Server::getErrors(void) const {
     return (this->_errors);
 }

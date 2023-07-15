@@ -66,23 +66,46 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
     }
     
     std::stringstream htmlContent;
-    htmlContent << "<!DOCTYPE html>\n<html>\n<body>\n";
-    htmlContent << "<h1> Index of " << this->_uri<<"</h1>\n"; 
-    htmlContent << "<ul>\n";
+    htmlContent << "<!DOCTYPE html>\n<html>\n";
+    htmlContent << "<head>\n";
+    htmlContent << "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css\">\n";
+    htmlContent << "<title> Index " << this->_uri << "</title>"; 
+    htmlContent << "</head>\n";
+    htmlContent << "<body>\n";
+    htmlContent << "<h1 style=\"font-family: Courier, monospace;\"> Index of " << this->_uri<<"</h1>\n"; 
     
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
         std::string name = entry->d_name;
+        std::string objPath = url + "/" + name;
+        struct stat statbuf;
+
+        if (stat(objPath.c_str(), &statbuf) != 0) {
+            std::cerr << "Something went wrong with Auto index hummmm" << std::endl;
+            break;
+        }
         if (name == ".") {
             continue;
         }
-        
-        htmlContent << "<li><a href=\"" << name << "\">" << name << "</a></li>\n";
+
+        htmlContent << "<p style=\"font-family: Courier, monospace;\">";
+        if (S_ISDIR(statbuf.st_mode)) {
+            htmlContent << "<i class=\"fas fa-folder\"></i>";
+        }
+        else {
+            htmlContent << "<i class=\"fas fa-file\"></i>";
+        }
+        htmlContent << "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        htmlContent << "<a href=\"" << this->_uri + "/" + name << "\">" << name << "</a>";
+        for (int spaces = 50 - name.length(); spaces > 0; spaces--) {
+            htmlContent << "&nbsp;";
+        }
+        htmlContent << statbuf.st_size << "b";
+        htmlContent << "</p>\n";
     }
     
-    htmlContent << "</ul>\n</body>\n</html>";
+    htmlContent << "</body>\n</html>";
     closedir(dir);
-    
     return (htmlContent.str());
 }
 

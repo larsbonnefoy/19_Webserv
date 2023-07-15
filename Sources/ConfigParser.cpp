@@ -19,6 +19,7 @@
 #define INDEX 4
 #define AUTOINDEX 5
 #define REDIRECT 6
+#define UPLOAD_DIR 7
 
 /*
  * When seeing Server Block between brackets, isolates it and sends the whole 
@@ -242,6 +243,9 @@ void    addServer(std::string infoBuffer, Config &conf) {
                     break; 
 
                 case LOCATION:
+                    if (serv.getServerRoot() == "") {
+                        throw ServerRootNotDefined();
+                    }
                     getLocationBlock(ss, line);
                     createLocation(line, serv);
                     break; 
@@ -365,10 +369,11 @@ std::string getLocationPath(std::string infoBuffer, size_t startPos) {
 void createLocation(std::string inputBuffer, Server &serv) {
 
     Location    loc;
-    std::string directives[7] = {"location", "root", "accept", "cgi", "index", "autoindex", "redirect"};
+    std::string directives[8] = {"location", "root", "accept", "cgi", "index", "autoindex", "redirect", "upload_dir"};
     std::stringstream ss(inputBuffer);
     std::string line;
     bool definedActionOnLoading = false;
+    std::string servRoot  = serv.getServerRoot();
 
     while (std::getline(ss, line)) {
         std::string value = "";
@@ -377,7 +382,7 @@ void createLocation(std::string inputBuffer, Server &serv) {
             continue ;
         }
         else {
-            int directiveID = matchDirective(line, directives, 7);
+            int directiveID = matchDirective(line, directives, 8);
 
             switch(directiveID) {
                 case LOC:
@@ -399,7 +404,8 @@ void createLocation(std::string inputBuffer, Server &serv) {
                 
                 case CGI_LOC:
                     findMatchingValue(line, directives[directiveID], value);
-                    setCGI(value, loc);
+                    loc.setCGIPath(value);
+                    loc.setUploadDir(servRoot);
                     break;
 
                 case INDEX:
@@ -437,6 +443,18 @@ void createLocation(std::string inputBuffer, Server &serv) {
                         throw ConflictingInstruction();
                     break;
 
+                case UPLOAD_DIR:
+                    if (loc.getCGIPath() == "") {
+                        throw CgiNotDefined();
+                    }
+                    findMatchingValue(line, directives[directiveID], value);
+                    if (value == "") {
+                        throw UnvalidDirective();
+                    }
+                    value = servRoot + "/" + value;
+                    loc.setUploadDir(value);
+                    break;
+
                 default:
                     throw UnvalidDirective();
             }
@@ -445,12 +463,9 @@ void createLocation(std::string inputBuffer, Server &serv) {
     serv.setLocation(loc);
 }
 
-/*
- * Adds cgi PATH to location 
- * /!\ having "CGI" in path, check is repo exists?
- */
-void setCGI(std::string inputBuffer, Location &loc) {
-    loc.setCGIPath(inputBuffer);
+void checkUploadDir(Server &serv, Location &loc){
+    std::cout << serv.getServerRoot() << std::endl;
+    std::cout << loc.getUploadDir() << std::endl;
 }
 
 /*
@@ -601,4 +616,12 @@ const char *NoServerCreated::what(void) const throw() {
 
 const char *RootIsNotAbs::what(void) const throw() {
     return ("[ConfigFileError] :  Root Path should be absolute");
+}
+
+const char *CgiNotDefined::what(void) const throw() {
+    return ("[ConfigFileError] : Cgi has to be defined before upload_dir");
+}
+
+const char *ServerRootNotDefined::what(void) const throw() {
+    return ("[ConfigFileError] : ServerRoot has to be defined before setting up Location");
 }
