@@ -220,7 +220,6 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 			size = line.size();
 	for (size_t	i = 0; i < size; ++i) 
 		res += line[i];
-	res.append("\r\n");
 	return (res);
 }
 
@@ -249,7 +248,8 @@ static std::string	unChounkInit(std::string request)
 		{
 			size_t	size;
 			std::istringstream(line) >> std::hex >> size;
-			newRequest.append(unChounk(requestStream, size));
+			newRequest.append(unChounk(requestStream, size), size);
+			newRequest.append("\r\n");
 		}
 	}
 	return (newRequest);
@@ -258,18 +258,22 @@ static std::string	unChounkInit(std::string request)
 const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
+	size_t tmp = 0;
 	this->_request = "";
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
-		returnRead = recv(clientFd, buffer, BUFF_SIZE, 0);
+		returnRead = read(clientFd, buffer, BUFF_SIZE);
+		tmp += returnRead;
+		ws_log("tmp");
+		ws_log(tmp);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
 			break ;
 		}
 		buffer[returnRead] = 0;
-		this->_request.append(buffer);
+		this->_request.append(buffer, returnRead);
 		if (returnRead < BUFF_SIZE)
 			break ;
 	}
@@ -299,7 +303,8 @@ const std::string	Socket::receiveRequest(int clientFd)
 				std::istringstream(sizeStr) >> std::hex >> size;
 				if (size == 0)
 					break ;
-				this->_request.append(unChounk(bufferStream, size));
+				this->_request.append(unChounk(bufferStream, size), size);
+				this->_request.append("\r\n");
 			}
 		}		
 	}	

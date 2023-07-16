@@ -36,6 +36,8 @@ Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
         this->_env["QUERY_STRING="] = "NULL";
         ws_log("Body len of file to upload");
         ws_log(_data.length());
+		// // ws_log("body in cgi");
+		// ws_log(this->_data);
     }
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();

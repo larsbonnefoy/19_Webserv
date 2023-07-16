@@ -1,0 +1,15 @@
+{
+	"makefile.launchConfigurations": [
+		{
+			"cwd": "/home/space/Documents/19_Webserv",
+			"binaryPath": "/home/space/Documents/19_Webserv/webserv",
+			"binaryArgs": []
+		}
+	],
+	"files.associations": {
+		"*.hugo": "ssh_config",
+		"new": "cpp",
+		"*.tcc": "cpp",
+		"istream": "cpp"
+	}
+}
