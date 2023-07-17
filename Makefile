@@ -6,7 +6,7 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/07/16 15:55:27 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/07/17 16:19:02 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 NAME = webserv
 OBJS_DIR = Objs
 
-FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpResponse.cpp HttpRequest.cpp  RequestHandler.cpp Cgi.cpp
+FILES = main.cpp Config.cpp ConfigParser.cpp Server.cpp Location.cpp Mux.cpp Log.cpp Socket.cpp Http.cpp HttpResponse.cpp HttpRequest.cpp  RequestHandler.cpp Cgi.cpp Signal.cpp
 
 SRCS = $(addprefix Sources/, $(FILES))
 
@@ -24,7 +24,7 @@ OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 CFLAGS = -Wall -Wextra -Werror -g #-Wno-unused-variable -Wno-unused-parameter
 
-CPPFLAGS = -std=c++98  -fsanitize=address
+CPPFLAGS = -std=c++98  #-fsanitize=address
 
 INCLUDES = -I Includes
 

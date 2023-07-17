@@ -6,6 +6,9 @@
 #include "../Includes/Log.hpp"
 #include "../Includes/Http.hpp"
 #include "../Includes/HttpResponse.hpp"
+#include "../Includes/Signal.hpp"
+#include "../Includes/Log.hpp"
+#include "../Includes/isGood.hpp"
 #include <string>
 #include <iostream>
 #include <vector>
@@ -24,13 +27,14 @@ int main (int argc, char *argv[])
     Config conf;
 
     try {
+        ws_signal();
         parseConfig(argv[1], conf);
         StaticInit::initStatic();
         Mux	mux(conf);
         mux.run();
     }
     catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+        ws_log(e.what());
     }
     return 0;
 }
