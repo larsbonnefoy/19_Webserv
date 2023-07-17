@@ -97,7 +97,7 @@ void	Mux::run(void)
 								ws_log("Connection closed");
 								this->_pollSocketFds[i].fd = -1;
 								this->_pollSocketFds[i].revents = 0;
-								this->_pollSocketFds[i].events = 0;
+								// this->_pollSocketFds[i].events = 0;
 							}
 						}
 					}
