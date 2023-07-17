@@ -341,7 +341,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         switch (this->_methode)
         {
             case GET:
-                if (this->_cgi)
+                if (this->_cgi && this->_path != BADPATH)
                 {
                     try {
                         Cgi res(request, this->_path, uploadDir);
@@ -366,7 +366,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 break;
             
             case POST:
-                if (this->_cgi)
+                if (this->_cgi && this->_path != BADPATH)
                 {
                     try { 
                         Cgi res(request, this->_path, uploadDir);
@@ -378,6 +378,10 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                         _requestError(serv, 500);
                     }
                     break ;
+                }
+                else if (this->_path == BADPATH) {
+                    _requestError(serv, 404);
+                    break;
                 }
                 _requestSuccess(204); 
                 break ;
@@ -391,8 +395,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         }
     }
     this->_createResponse();
-	ws_log("\n-----Response-----");
-	ws_log(*this);
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/

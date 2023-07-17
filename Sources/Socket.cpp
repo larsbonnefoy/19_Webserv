@@ -249,13 +249,11 @@ static std::string	unChounkInit(std::string request)
 const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
-	size_t tmp = 0;
 	this->_request = "";
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(clientFd, buffer, BUFF_SIZE);
-		tmp += returnRead;
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");

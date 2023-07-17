@@ -14,6 +14,7 @@ static void freeTab(char **tab) {
 
     while (tab[i] != NULL) {
         delete[] tab[i];
+        i++;
     }
     delete[] tab;
 }
