@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 11:11:04 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/16 17:16:32 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/17 10:26:08 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ void	HttpRequest::requestParser(std::string request)
 	while (requestStream.eof() != 1)	
 	{
 		char str[BUFF_SIZE]; requestStream.read(str, BUFF_SIZE);
-		ws_log("hello");
+		// ws_log("hello");
 		this->_body.append(str, requestStream.gcount());
-		ws_log(requestStream.gcount());
-		ws_log(request.size());
+		// ws_log(requestStream.gcount());
+		// ws_log(request.size());
 	}
 	this->_body.append("\0");
 }
