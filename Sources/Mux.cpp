@@ -47,11 +47,11 @@ void	Mux::run(void)
     g_isGood = true;
 
 	size_t	nbrfds = this->_nbrSocket;
-	// size_t	newNbrfds = this->_nbrSocket;
+	size_t	newNbrfds = this->_nbrSocket;
 	std::map<int, Socket*>	fdToSocket;
 	while (g_isGood)
-	{	
-		nbrfds = this->_nbrSocket;
+	{
+		nbrfds = newNbrfds;
 		int returnPoll = poll(this->_pollSocketFds, nbrfds, TIMEOUT);
 		if (g_isGood == false)
 			return ;
@@ -59,6 +59,7 @@ void	Mux::run(void)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
+			// ws_log(nbrfds);
 			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
@@ -68,41 +69,40 @@ void	Mux::run(void)
 						if (i < this->_nbrSocket)
 						{
 							int clientFd = this->_Sockets[i]->connectClient();
-							nbrfds++;
+							newNbrfds++;
 
-							pollfd *tmp = new pollfd[nbrfds];
-							for (size_t j = 0; j < nbrfds - 1; ++j)
+							pollfd *tmp = new pollfd[newNbrfds];
+							for (size_t j = 0; j < newNbrfds - 1; ++j)
 							{
 								tmp[j].fd = this->_pollSocketFds[j].fd;
 								tmp[j].events = this->_pollSocketFds[j].events;
 								tmp[j].revents = this->_pollSocketFds[j].revents;
 							}
-							tmp[nbrfds - 1].fd = clientFd;
-							tmp[nbrfds - 1].events = POLLIN;
-							tmp[nbrfds - 1].revents = POLLIN;
+							tmp[newNbrfds - 1].fd = clientFd;
+							tmp[newNbrfds - 1].events = POLLIN;
+							tmp[newNbrfds - 1].revents = 0;
 							delete [] this->_pollSocketFds;
 							this->_pollSocketFds = tmp;
-
 							fdToSocket[clientFd] = this->_Sockets[i];
 							this->_pollSocketFds[i].revents = 0;
 						}
 						else
 						{
-							if (fdToSocket[this->_pollSocketFds[i].fd])
+							if (fdToSocket[this->_pollSocketFds[i].fd] && this->_pollSocketFds[i].revents & POLLIN)
 							{
 								Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 
 								const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
-								ws_log(request);
+								// ws_log(request);
 								HttpRequest Request(request);
 								HttpResponse response(this->_serverMap[sock->getPort()], Request);
                 	    		// ws_log(response.convertToStr());
 								sock->sendResponse(this->_pollSocketFds[i].fd, response.convertToStr());	
 								close(this->_pollSocketFds[i].fd);
-								ws_log("Connection closed");
 								this->_pollSocketFds[i].fd = -1;
 								this->_pollSocketFds[i].revents = 0;
-								// this->_pollSocketFds[i].events = 0;
+								this->_pollSocketFds[i].events = 0;
+								newNbrfds--;
 							}
 						}
 					}
@@ -116,7 +116,7 @@ void	Mux::run(void)
 						ws_logErr(e.what());
 					}
 				}
-			}
+			}			
 		}
 	}
 }
