@@ -35,7 +35,7 @@
 
 # define PORT 8282
 # define DEFAULTPORT 8080
-# define BUFF_SIZE 2048
+# define BUFF_SIZE 30000
 
 class Socket
 {

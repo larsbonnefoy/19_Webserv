@@ -44,17 +44,16 @@ Mux & Mux::operator=(const Mux &assign)
 void	Mux::run(void)
 {
 	size_t	nbrfds = this->_nbrSocket;
-	size_t	newNbrfds = this->_nbrSocket;
+	// size_t	newNbrfds = this->_nbrSocket;
 	std::map<int, Socket*>	fdToSocket;
 	while (1)
 	{
-		nbrfds = newNbrfds;
 		int returnPoll = poll(this->_pollSocketFds, nbrfds, TIMEOUT);
 		if (returnPoll < 0)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
-			ws_log(nbrfds);
+			size_t	nbrfds = this->_nbrSocket;
 			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
@@ -64,18 +63,18 @@ void	Mux::run(void)
 						if (i < this->_nbrSocket)
 						{
 							int clientFd = this->_Sockets[i]->connectClient();
-							newNbrfds++;
+							nbrfds++;
 
-							pollfd *tmp = new pollfd[newNbrfds];
-							for (size_t j = 0; j < newNbrfds - 1; ++j)
+							pollfd *tmp = new pollfd[nbrfds];
+							for (size_t j = 0; j < nbrfds - 1; ++j)
 							{
 								tmp[j].fd = this->_pollSocketFds[j].fd;
 								tmp[j].events = this->_pollSocketFds[j].events;
 								tmp[j].revents = this->_pollSocketFds[j].revents;
 							}
-							tmp[newNbrfds - 1].fd = clientFd;
-							tmp[newNbrfds - 1].events = POLLIN;
-							tmp[newNbrfds - 1].revents = POLLIN;
+							tmp[nbrfds - 1].fd = clientFd;
+							tmp[nbrfds - 1].events = POLLIN;
+							tmp[nbrfds - 1].revents = POLLIN;
 							delete [] this->_pollSocketFds;
 							this->_pollSocketFds = tmp;
 
@@ -89,7 +88,7 @@ void	Mux::run(void)
 								Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 
 								const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
-								ws_log(request);
+								// ws_log(request);
 								HttpRequest Request(request);
 								HttpResponse response(this->_serverMap[sock->getPort()], Request);
                 	    		// ws_log(response.convertToStr());
@@ -98,14 +97,16 @@ void	Mux::run(void)
 								this->_pollSocketFds[i].fd = -1;
 								this->_pollSocketFds[i].revents = 0;
 								this->_pollSocketFds[i].events = 0;
-								newNbrfds--;
 							}
 						}
 					}
 					catch(const std::exception& e)
 					{
 						this->_pollSocketFds[i].fd = -1;
-						this->_Sockets[i]->sc_close();
+						if (i < this->_nbrSocket) 
+						{
+							this->_Sockets[i]->sc_close();
+						}
 						ws_logErr(e.what());
 					}
 				}
@@ -134,12 +135,10 @@ void	Mux::initSockets()
 
 const char* Mux::PollException::what() const throw()
 {
-	ws_logErr("[Mux] : Poll Failure");
 	return ("[Mux] : Poll Failure");
 }
 
 const char* Mux::InitSocketException::what() const throw()
 {
-	ws_logErr("[Mux] : Socket Initialization Failure");
 	return ("[Mux] : Socket Initialization Failure");
 }
