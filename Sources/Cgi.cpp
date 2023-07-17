@@ -9,6 +9,14 @@
 #include <unistd.h>
 
 #define BUFFERSIZE 2048
+static void freeTab(char **tab) {
+    size_t i = 0;
+
+    while (tab[i] != NULL) {
+        delete[] tab[i];
+    }
+    delete[] tab;
+}
 
 Cgi::Cgi(void) {
 }
@@ -34,8 +42,6 @@ Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
         this->_data = request.getBody() + '\0';
         this->_env["CONTENT_LENGTH="] = request.valToString(_data.length());
         this->_env["QUERY_STRING="] = "NULL";
-        ws_log("Body len of file to upload");
-        ws_log(_data.length());
     }
 
     std::map<std::string, std::string> requestHeaderFields = request.getHeaderField();
@@ -50,7 +56,6 @@ Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
     this->_env["HTTP_USER_AGENT="] = requestHeaderFields["User-Agent"];
     this->_env["HTTP_CONNECTION="] = requestHeaderFields["Connection"];
 
-    std::cout << "==CGI END====" << std::endl;
 }
 
 Cgi::Cgi(const Cgi &other) : _env(other._env) {
@@ -65,7 +70,6 @@ Cgi &Cgi::operator=(const Cgi &other) {
 }
 
 /*------------------------Private member functions----------------------------*/
-//Dans le cas d'un pd d'execve ou d'alloc ici il faut FREEEEEE!!!!
 char **Cgi::_convToTab(std::map<std::string, std::string> env) {
     size_t size = env.size();
 
@@ -79,7 +83,7 @@ char **Cgi::_convToTab(std::map<std::string, std::string> env) {
         std::string str = it->first + it->second;
         envp[i] = new char[str.length() + 1];
         if (envp[i] == NULL) {
-            delete[] envp;
+            freeTab(envp);
             ws_logErr(strerror(errno));
             exit(1);
         }
@@ -102,7 +106,7 @@ char **Cgi::_convToTab(std::vector<std::string> av) {
     for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
         avp[i] = new char[av[i].length() + 1];
         if (avp[i] == NULL) {
-            delete[] avp;
+            freeTab(avp);
             ws_logErr(strerror(errno));
             exit(1);
         }
@@ -112,6 +116,7 @@ char **Cgi::_convToTab(std::vector<std::string> av) {
     avp[i] = NULL;
     return (avp);
 }
+
 /*-------------------------Public member functions----------------------------*/
 /*
  *  
@@ -187,15 +192,15 @@ std::string Cgi::run(void) {
 
         ws_log(this->_pathInfo);
         if (chdir(this->_pathInfo.substr(0, lastSlashIdx).c_str()) == -1) {
-            delete[] av;
-            delete[] env;
+            freeTab(av);
+            freeTab(env);
             ws_logErr(this->_pathInfo);
             ws_logErr(strerror(errno));
             exit(1);
         }
         if (execve(this->_pathInfo.c_str(), av, env) == -1) {
-            delete[] av;
-            delete[] env;
+            freeTab(av);
+            freeTab(env);
             std::exit(1);
         }
     }
@@ -217,9 +222,9 @@ std::string Cgi::run(void) {
             }
         }
         cgiOut = _readFromPipe(pipeCGI[0]);
-        ws_log("CGI Response Recieved");
         close(pipeCGI[0]);
     }
+    std::remove("/tmp/CgiDataUpload");
     return (cgiOut);
 }
 

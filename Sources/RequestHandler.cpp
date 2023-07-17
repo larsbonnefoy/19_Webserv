@@ -338,6 +338,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	
 		this->_setMethode(location, request);
 		this->_setPath(location, request, this->_methode);
+        ws_log("REQUEST PATH");
+        ws_log(this->_path);
         std::string uploadDir = location.getUploadDir();
 		//cgi response can have
 		//  startline with response code 
@@ -397,7 +399,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
     }
     this->_createResponse();
     ws_log("_____RESPONSE_____");
-    ws_log(*this);
+//    ws_log(*this);
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/
