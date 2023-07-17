@@ -58,7 +58,7 @@ void	Socket::socketInit(const std::string ip, const uint32_t port)
 	option = 1;
 	if (this->_serverSocket == -1)
 		throw InitSocketException();
-	// fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
+	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
 					static_cast<socklen_t>(sizeof(option))))
 		throw InitSocketException();

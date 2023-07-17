@@ -85,7 +85,6 @@ void	Mux::run(void)
 						{
 							if (fdToSocket[this->_pollSocketFds[i].fd])
 							{
-								ws_log("oh");
 								Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 
 								const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
