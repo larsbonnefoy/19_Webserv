@@ -43,17 +43,22 @@ Mux & Mux::operator=(const Mux &assign)
 // Member Functions
 void	Mux::run(void)
 {
+	extern bool g_isGood;
+    g_isGood = true;
+
 	size_t	nbrfds = this->_nbrSocket;
 	// size_t	newNbrfds = this->_nbrSocket;
 	std::map<int, Socket*>	fdToSocket;
-	while (1)
-	{
+	while (g_isGood)
+	{	
+		nbrfds = this->_nbrSocket;
 		int returnPoll = poll(this->_pollSocketFds, nbrfds, TIMEOUT);
+		if (g_isGood == false)
+			return ;
 		if (returnPoll < 0)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
-			size_t	nbrfds = this->_nbrSocket;
 			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
@@ -107,7 +112,7 @@ void	Mux::run(void)
 						ws_logErr(e.what());
 					}
 				}
-			}			
+			}
 		}
 	}
 }
