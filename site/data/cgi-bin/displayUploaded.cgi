@@ -1,20 +1,32 @@
 #!/usr/bin/env python3
 import os
-import sys
 
 upload_dir = os.environ['UPLOAD_DIR']
 
-print(upload_dir, file=sys. stderr)
+
+def generate_empty():
+    html = '''
+    <html>
+    <head>
+        <title>Uploaded Files</title>
+    </head>
+    <body>
+        <h1>No Uploaded Files</h1>
+    </body>
+    </html>
+    '''
+
+    return html
 
 
 def generate_autoindex(directory):
     html = '''
     <html>
     <head>
-        <title>Index of {directory}</title>
+        <title>Uploaded Files</title>
     </head>
     <body>
-        <h1>Index of {directory}</h1>
+        <h1>Uploaded Files</h1>
         <hr>
         <ul>
     '''
@@ -39,7 +51,10 @@ def generate_autoindex(directory):
 
 
 # Generate the autoindex HTML content
-html_content = generate_autoindex(upload_dir)
+if os.path.exists(upload_dir):
+    html_content = generate_autoindex(upload_dir)
+else:
+    html_content = generate_empty()
 
 # Print the HTML content with appropriate headers
 print("Content-type: text/html\n")

@@ -9,9 +9,8 @@
 </head>
 <body>
   <div class="banner">
-    <h1> CAT SERV </h1>
+    <h1><a href="/" class="button-blue">CAT SERV</a><h1>
     <p> Welcome to some page to see and upload cat related things </p>
-    <a href="upload.html" class="button-blue">Upload!</a>
   </div>
 
     <div class="container">
@@ -20,14 +19,16 @@
             <div class="card-white">
                 <img src="../images/catGET.jpg" alt="CAT GET">
                 <h3> GET <h3>
-                <p> GET request with a CGI <script>
-                </script></p>
+                <p> Display uploaded files</p>
+                <form action="displayUploaded.cgi" method="GET">
+                <button class="button-blue"> GET </button>
             </div>
 
             <div class="card-white">
                 <img src="../images/catPOST.jpg" alt="CAT POST">
                 <h3> POST <h3>
-                <p> POST request with a CGI script </p>
+                <p> Upload a file</p>
+                <a href="upload.html" class="button-blue">Upload!</a>
             </div>
 
             <div class="card-white">
