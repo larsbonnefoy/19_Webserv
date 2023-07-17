@@ -76,7 +76,7 @@ char **Cgi::_convToTab(std::map<std::string, std::string> env) {
     char **envp = new char*[size + 1];
     if (envp == NULL) {
         ws_logErr(strerror(errno));
-        exit(1);
+        std::exit(1);
     }
     size_t i = 0;
     for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it) {
@@ -85,7 +85,7 @@ char **Cgi::_convToTab(std::map<std::string, std::string> env) {
         if (envp[i] == NULL) {
             freeTab(envp);
             ws_logErr(strerror(errno));
-            exit(1);
+            std::exit(1);
         }
         strcpy(envp[i], str.c_str());
         i++; 
@@ -100,7 +100,7 @@ char **Cgi::_convToTab(std::vector<std::string> av) {
     char **avp = new char*[size + 1];
     if (avp == NULL) {
         ws_logErr(strerror(errno));
-        exit(1);
+        std::exit(1);
     }
     size_t i = 0;
     for (std::vector<std::string>::iterator it = av.begin(); it != av.end(); ++it) {
@@ -108,7 +108,7 @@ char **Cgi::_convToTab(std::vector<std::string> av) {
         if (avp[i] == NULL) {
             freeTab(avp);
             ws_logErr(strerror(errno));
-            exit(1);
+            std::exit(1);
         }
         strcpy(avp[i], av[i].c_str());
         i++; 
@@ -165,14 +165,14 @@ std::string Cgi::run(void) {
         FILE *tmpFileWrite = std::fopen("/tmp/CgiDataUpload", "w");
         if (tmpFileWrite == NULL) {
             ws_logErr(strerror(errno));
-            exit(1);
+            std::exit(1);
         }
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
 
             if (write(fileno(tmpFileWrite), toWrite, this->_data.length()) == -1) {
                 ws_logErr(strerror(errno));
-                exit(1);
+                std::exit(1);
             }
         
         }
@@ -196,7 +196,7 @@ std::string Cgi::run(void) {
             freeTab(env);
             ws_logErr(this->_pathInfo);
             ws_logErr(strerror(errno));
-            exit(1);
+            std::exit(1);
         }
         if (execve(this->_pathInfo.c_str(), av, env) == -1) {
             freeTab(av);

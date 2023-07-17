@@ -26,8 +26,10 @@
 # include "Config.hpp"
 # include "ConfigParser.hpp"
 # include "Server.hpp"
+// # include "isGood.hpp"
 
 # define TIMEOUT -1 
+
 
 class Mux
 {

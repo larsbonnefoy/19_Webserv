@@ -10,6 +10,8 @@
 		"*.hugo": "ssh_config",
 		"new": "cpp",
 		"*.tcc": "cpp",
-		"istream": "cpp"
+		"istream": "cpp",
+		"iostream": "cpp",
+		"ostream": "cpp"
 	}
 }
