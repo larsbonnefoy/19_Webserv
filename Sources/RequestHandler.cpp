@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/16 17:40:51 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/17 11:29:11 by lbonnefo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "../Includes/HttpResponse.hpp"
 #include "../Includes/RequestHandler.hpp"
 #include <sstream>
-
-// Change most error code to 403
 
 void HttpResponse::_isCgi(void) {
 	if (this->_uri.rfind(".cgi") != this->_uri.size() - 4)
@@ -68,7 +66,6 @@ static Location	getLocation(Server &server, HttpRequest &request)
 void	HttpResponse::_setMethode(Location &location, HttpRequest &request)
 {
 	int methode = matchMethod(request.getMethode());
-	ws_log ("setMethode");
 	this->_methode = -1;
 	switch (methode)
 	{
@@ -81,7 +78,6 @@ void	HttpResponse::_setMethode(Location &location, HttpRequest &request)
 			if (location.getPostVal())
 			{
 				this->_methode = POST;
-				ws_log("non enfait");
 			}
 			break ;
 	
@@ -266,7 +262,6 @@ void	HttpResponse::_DELETERequest(Server &server)
 	return (_requestSuccess(204));
 }
 
-//Do nothing in case of a cgi as everything as already been set in the cgiResponseParser
 void HttpResponse::_handleSuccessRequest(void) {
 
     if (this->_autoindex == 1) {
@@ -276,7 +271,6 @@ void HttpResponse::_handleSuccessRequest(void) {
         return ;
     }
     else {
-		ws_log("elsse");
         this->_handleURL(this->_path);
     }
 }
@@ -300,7 +294,6 @@ void	HttpResponse::_createResponse(void)
 			break ;		
 
 		default:
-			ws_log("default");
     	    this->_handleURL(this->_path);
 			break;
 	}
@@ -311,7 +304,6 @@ void HttpResponse::_handleCgiResponse(std::string response) {
     std::string line;
     bool body = false;
 
-    std::cout << line << std::endl;
     while (std::getline(ss, line)) {
         if (line == "") {
             body = true;
@@ -340,9 +332,8 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
 	
 		this->_setMethode(location, request);
 		this->_setPath(location, request, this->_methode);
-        ws_log("REQUEST PATH");
-        ws_log(this->_path);
         std::string uploadDir = location.getUploadDir();
+		
 		//cgi response can have
 		//  startline with response code 
 		//  Http Headers (file type,...)
@@ -350,7 +341,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         switch (this->_methode)
         {
             case GET:
-                if (this->_cgi)
+                if (this->_cgi && this->_path != BADPATH)
                 {
                     try {
                         Cgi res(request, this->_path, uploadDir);
@@ -375,7 +366,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 break;
             
             case POST:
-                if (this->_cgi)
+                if (this->_cgi && this->_path != BADPATH)
                 {
                     try { 
                         Cgi res(request, this->_path, uploadDir);
@@ -387,6 +378,10 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                         _requestError(serv, 500);
                     }
                     break ;
+                }
+                else if (this->_path == BADPATH) {
+                    _requestError(serv, 404);
+                    break;
                 }
                 _requestSuccess(204); 
                 break ;
@@ -400,8 +395,6 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
         }
     }
     this->_createResponse();
-    ws_log("_____RESPONSE_____");
-//    ws_log(*this);
 }
 
 /*-----------------------------EXCEPTION--------------------------------------*/

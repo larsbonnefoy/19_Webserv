@@ -35,12 +35,10 @@ void Server::setServerRoot(std::string rootPath) {
             this->_root = rootPath;
         }
         else {
-            std::cout << "In ServerRoot 1" <<std::endl;
             throw UnvalidServerRoute();
         } 
     }
     else { 
-        std::cout << "In ServerRoot 2" <<std::endl;
         throw UnvalidServerRoute();
     }
 }
