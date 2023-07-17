@@ -110,12 +110,9 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
 }
 
 void    HttpResponse::_handleURL(std::string &url) {
-	ws_log("handleURL");
-	ws_log(url);
     this->addToHeaderField("Content-Type", _getMIMEType(url));
     this->addToHeaderField("Content-Length", valToString(_getFileSize(url)));
     this->setBody(_fileToString(url));
-	ws_log("done");
 }
 
 void    HttpResponse::_handleRedirection(void)

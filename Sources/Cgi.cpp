@@ -190,7 +190,6 @@ std::string Cgi::run(void) {
         
         size_t lastSlashIdx = this->_pathInfo.find_last_of("/");
 
-        ws_log(this->_pathInfo);
         if (chdir(this->_pathInfo.substr(0, lastSlashIdx).c_str()) == -1) {
             freeTab(av);
             freeTab(env);

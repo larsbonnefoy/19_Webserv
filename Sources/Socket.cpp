@@ -37,17 +37,13 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		uint32_t			toAdd = 0;
 
 		digitsStream >> toAdd;
-		// ws_log(digitsStream.str());
-		// ws_log(toAdd);
 		res += toAdd << (8 * iter);
-		// ws_log(res);
 	}
 	if (iter != -1)
 	{
 		ws_logErr("badip format");
 		throw Socket::InitSocketException();
 	}
-	ws_log(ipAddressToString(res));	
 	return (res);
 }
 
@@ -182,7 +178,6 @@ int	Socket::connectClient(void)
 	stream << "Client connected on port: "
 			<< ntohs(this->_socketAddress.sin_port)
 			<< " from ip: " << this->_clientIp;
-	ws_log(stream.str());
 	return (clientSocket);
 }
 
@@ -199,8 +194,6 @@ static bool	isChounked(std::string request)
 			if(line.find("chunked") < std::string::npos)
 				res = true;
 	}
-	// ws_log("isChounked");
-	// ws_log(res);
 	return (res);
 }
 
@@ -211,9 +204,7 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 	std::string	res = "";
 	std::string	line;
 
-	ws_log("YOOO");
 	std::getline(stream, line);
-	// ws_log(line);
 	if (!stream.good())
 		return (res);
 	if (line.size() < size)
@@ -265,8 +256,6 @@ const std::string	Socket::receiveRequest(int clientFd)
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(clientFd, buffer, BUFF_SIZE);
 		tmp += returnRead;
-		// ws_log("tmp");
-		// ws_log(tmp);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
