@@ -88,15 +88,16 @@ void	Mux::run(void)
 								Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 
 								const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
-								// ws_log(request);
+								ws_log(request);
 								HttpRequest Request(request);
 								HttpResponse response(this->_serverMap[sock->getPort()], Request);
                 	    		// ws_log(response.convertToStr());
 								sock->sendResponse(this->_pollSocketFds[i].fd, response.convertToStr());	
 								close(this->_pollSocketFds[i].fd);
+								ws_log("Connection closed");
 								this->_pollSocketFds[i].fd = -1;
 								this->_pollSocketFds[i].revents = 0;
-								this->_pollSocketFds[i].events = 0;
+								// this->_pollSocketFds[i].events = 0;
 							}
 						}
 					}

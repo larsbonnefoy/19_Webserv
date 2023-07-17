@@ -58,7 +58,7 @@ void	Socket::socketInit(const std::string ip, const uint32_t port)
 	option = 1;
 	if (this->_serverSocket == -1)
 		throw InitSocketException();
-	// fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
+	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
 					static_cast<socklen_t>(sizeof(option))))
 		throw InitSocketException();
@@ -177,6 +177,7 @@ int	Socket::connectClient(void)
 			(struct sockaddr *)&clientAddress, (socklen_t *)&clientAddressLen);
 	if (clientSocket == -1)
 		throw InitSocketException();
+	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 	std::stringstream stream;
 	this->_clientIp = ipAddressToString(htonl(clientAddress.sin_addr.s_addr));
 	stream << "Client connected on port: "
@@ -258,15 +259,11 @@ static std::string	unChounkInit(std::string request)
 const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
-	size_t tmp = 0;
 	this->_request = "";
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(clientFd, buffer, BUFF_SIZE);
-		tmp += returnRead;
-		// ws_log("tmp");
-		// ws_log(tmp);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
@@ -288,7 +285,7 @@ const std::string	Socket::receiveRequest(int clientFd)
 
 		while (size != 0)
 		{
-			returnRead = recv(clientFd, buffer, BUFF_SIZE, 0);
+			returnRead = read(clientFd, buffer, BUFF_SIZE);
 			if (returnRead < 0)
 				return (this->_request);
 			buffer[returnRead] = 0;
