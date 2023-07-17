@@ -25,7 +25,7 @@ Cgi::Cgi(void) {
 //Si POST: CONTENT_LENGHT = NULL, write le body dans pipe et dup pipe sur stdin;
 Cgi::Cgi(HttpRequest &request, std::string path, std::string uploadDir) {
 
-    this->_pathInfo = path; //change once path as been added to request;
+    this->_pathInfo = path;
 
     this->_av.push_back("");
     
@@ -189,15 +189,17 @@ std::string Cgi::run(void) {
         char **env = _convToTab(this->_env);
         
         size_t lastSlashIdx = this->_pathInfo.find_last_of("/");
-
-        if (chdir(this->_pathInfo.substr(0, lastSlashIdx).c_str()) == -1) {
+		
+		int ret = chdir(this->_pathInfo.substr(0, lastSlashIdx).c_str());
+        if (ret == -1) {
             freeTab(av);
             freeTab(env);
             ws_logErr(this->_pathInfo);
             ws_logErr(strerror(errno));
             exit(1);
         }
-        if (execve(this->_pathInfo.c_str(), av, env) == -1) {
+		ret = execve(this->_pathInfo.c_str(), av, env);
+        if (ret == -1) {
             freeTab(av);
             freeTab(env);
             std::exit(1);
