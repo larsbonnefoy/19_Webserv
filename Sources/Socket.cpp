@@ -262,14 +262,10 @@ const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
 	this->_request = "";
-	size_t	tmp = 0;//to delete
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(clientFd, buffer, BUFF_SIZE);
-		tmp += returnRead;
-		// ws_log("tmp");
-		// ws_log(tmp);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
