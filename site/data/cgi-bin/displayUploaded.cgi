@@ -36,9 +36,9 @@ def generate_autoindex(directory):
         file_path = os.path.join(directory, file)
         if os.path.isfile(file_path):
             size = os.path.getsize(file_path)
-            html += f'<li><a href="{file}">{file}</a> ({size} bytes)</li>'
+            html += f'<li>{file} ({size} bytes)</li>'
         elif os.path.isdir(file_path):
-            html += f'<li><a href="{file}/">{file}/</a></li>'
+            html += f'<li>{file}</li>'
 
     html += '''
         </ul>
