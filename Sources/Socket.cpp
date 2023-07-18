@@ -47,7 +47,7 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		ws_logErr("badip format");
 		throw Socket::InitSocketException();
 	}
-	ws_log(ipAddressToString(res));	
+	// ws_log(ipAddressToString(res));	
 	return (res);
 }
 
@@ -185,6 +185,7 @@ int	Socket::connectClient(void)
 			<< " from ip: " << this->_clientIp;
 	// usleep(2000);
 	ws_log(stream.str());
+
 	return (clientSocket);
 }
 

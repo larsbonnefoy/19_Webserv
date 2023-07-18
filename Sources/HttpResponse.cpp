@@ -73,15 +73,23 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
     htmlContent << "</head>\n";
     htmlContent << "<body>\n";
     htmlContent << "<h1 style=\"font-family: Courier, monospace;\"> Index of " << this->_uri<<"</h1>\n"; 
-    
+
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        std::string name = entry->d_name;
-        std::string objPath = url + "/" + name;
-        struct stat statbuf;
+        std::string objPath = url;
+        if (url.back() != '/') { 
+            objPath.append("/");
+        }
 
+        std::string name = entry->d_name;
+        if (name == ".") {
+            continue;
+        }
+
+        objPath += name;
+
+        struct stat statbuf;
         if (stat(objPath.c_str(), &statbuf) != 0) {
-            std::cerr << "Something went wrong with Auto index hummmm" << std::endl;
             break;
         }
         if (name == ".") {
@@ -96,7 +104,10 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
             htmlContent << "<i class=\"fas fa-file\"></i>";
         }
         htmlContent << "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-        htmlContent << "<a href=\"" << this->_uri + "/" + name << "\">" << name << "</a>";
+        if (this->_uri.back() != '/') {
+            this->_uri += '/';
+        }
+        htmlContent << "<a href=\"" << this->_uri + name << "\">" << name << "</a>";
         for (int spaces = 50 - name.length(); spaces > 0; spaces--) {
             htmlContent << "&nbsp;";
         }
@@ -110,12 +121,9 @@ std::string HttpResponse::_createHTMLAutoindex(const std::string &url) {
 }
 
 void    HttpResponse::_handleURL(std::string &url) {
-	ws_log("handleURL");
-	ws_log(url);
     this->addToHeaderField("Content-Type", _getMIMEType(url));
     this->addToHeaderField("Content-Length", valToString(_getFileSize(url)));
     this->setBody(_fileToString(url));
-	ws_log("done");
 }
 
 void    HttpResponse::_handleRedirection(void)
