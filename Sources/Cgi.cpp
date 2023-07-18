@@ -171,6 +171,7 @@ std::string Cgi::run(void) {
         if (this->_method == POST) {
             char const *toWrite = this->_data.c_str();
 
+	        // fcntl(fileno(tmpFileWrite), F_SETFL, O_NONBLOCK);
             if (write(fileno(tmpFileWrite), toWrite, this->_data.length()) == -1) {
                 ws_logErr(strerror(errno));
                 std::exit(1);
