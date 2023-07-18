@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/17 11:29:11 by lbonnefo         ###   ########.fr       */
+/*   Updated: 2023/07/18 13:29:15 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,7 @@ void	HttpResponse::_setMethode(Location &location, HttpRequest &request)
 		
 		case POST : 
 			if (location.getPostVal())
-			{
-				this->_methode = POST;
-			}
+			{this->_methode = POST;}
 			break ;
 	
 		case DELETE :
@@ -229,7 +227,7 @@ void HttpResponse::_requestSuccess(int code)
  
 void	HttpResponse::_setRedir(Location &location)
 {
-    std::cout << location.getRedirect().first << std::endl;
+    // std::cout << location.getRedirect().first << std::endl;
 	if (location.getRedirect().first == 0)
 		return ;
 	this->_statusCode = location.getRedirect().first;
@@ -238,17 +236,17 @@ void	HttpResponse::_setRedir(Location &location)
 		redir.erase(redir.size() - 1);
 	size_t locationSize = location.getPath().size();
 	std::string query = this->_uri.substr(locationSize, this->_uri.size() - locationSize);
-	if (*query.begin() != '/') 
+	if (*query.begin() != '/' && query.size() != 0) 
 		query = "/" + query;
 	this->_path = redir + query;
 	this->_pathtype = FILETYPE;
 }
 
-void HttpResponse::_GETRequest(Server &server)
+void HttpResponse::_GETRequest(Server &server, Location &location)
 {
 	if (this->_path == BADPATH)
 		return (_requestError(server, 404));
-	if (this->_path == BADREDIR || this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0)
+	if (this->_path == BADREDIR || this->_pathtype == BADTYPE || this->_path == BADINDEX || this->_autoindex == 0 || (this->_autoindex == 2 && this->_pathtype == DIRTYPE && location.getIndex() == "" && location.getRedirect().first == 0))
 		return(_requestError(server, 403));		
 	if (this->_pathtype == FILETYPE || this->_autoindex == 1 || this->_path != "")
 		return(_requestSuccess(this->_statusCode));
@@ -363,7 +361,7 @@ HttpResponse::HttpResponse(Server &serv, HttpRequest &request)
                 else {
                     this->_autoindex = UNDEFINED;
                 }
-                this->_GETRequest(serv);
+                this->_GETRequest(serv, location);
                 break;
             
             case POST:
