@@ -65,7 +65,7 @@ class HttpResponse : public Http {
 		void		_setMethode(Location &location, HttpRequest &request);
 
 		// Request Handling 
-		void	_GETRequest(Server &server);
+		void	_GETRequest(Server &server, Location &location);
 		void	_DELETERequest(Server &server);
 		void	_setPath(Location &location, HttpRequest &request, int methode);
 		void	_setIndex(Location &location);
