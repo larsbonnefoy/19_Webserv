@@ -183,9 +183,9 @@ int	Socket::connectClient(void)
 	stream << "Client connected on port: "
 			<< ntohs(this->_socketAddress.sin_port)
 			<< " from ip: " << this->_clientIp;
-	// usleep(2000);
 	ws_log(stream.str());
 
+	// usleep(2000);
 	return (clientSocket);
 }
 
