@@ -92,7 +92,7 @@ void	Mux::run(void)
 						{
 							Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 							const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
-							// ws_log(request);
+							ws_log(request);
 							HttpRequest Request(request);
 							HttpResponse response(this->_serverMap[sock->getPort()], Request);
                 	    	// ws_log(response.convertToStr());

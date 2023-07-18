@@ -6,7 +6,7 @@
 #    By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/25 15:04:20 by larsbonnefo       #+#    #+#              #
-#    Updated: 2023/07/18 10:58:29 by hdelmas          ###   ########.fr        #
+#    Updated: 2023/07/18 14:56:47 by hdelmas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 CFLAGS = -Wall -Wextra -Werror -g #-Wno-unused-variable -Wno-unused-parameter
 
-CPPFLAGS = -std=c++98  #-fsanitize=address
+CPPFLAGS = -std=c++98  -fsanitize=address
 
 INCLUDES = -I Includes
 

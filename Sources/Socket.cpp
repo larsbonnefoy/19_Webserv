@@ -212,17 +212,20 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 	if (size == 0)
 		return ("");
 	std::string	res = "";
-	std::string	line;
+	char		buffer[size + 1];
 
 	ws_log("YOOO");
-	std::getline(stream, line);
-	// ws_log(line);
+	
+	stream.read(buffer, size);
+	buffer[size] = 0;
+	ws_log(buffer);
 	if (!stream.good())
 		return (res);
-	if (line.size() < size)
-			size = line.size();
+	if (static_cast<size_t>(stream.gcount()) < size)
+			size = stream.gcount();
+	buffer[size] = 0;
 	for (size_t	i = 0; i < size; ++i) 
-		res += line[i];
+		res += buffer[i];
 	return (res);
 }
 
@@ -234,6 +237,8 @@ static std::string	unChounkInit(std::string request)
 
 	for  (std::string line; std::getline(requestStream, line); requestStream.good())
 	{
+		// if (line == "\n")
+		// 	break ;
 		if (!inBody)
 		{
 			if (line == "\r")
@@ -249,10 +254,15 @@ static std::string	unChounkInit(std::string request)
 		}
 		else
 		{
-			size_t	size;
+			size_t	size = 0;
+			ws_log(line);
 			std::istringstream(line) >> std::hex >> size;
-			newRequest.append(unChounk(requestStream, size), size);
-			newRequest.append("\r\n");
+			ws_log(size);
+			if (size != 0)
+			{
+				newRequest.append(unChounk(requestStream, size));
+				newRequest.append("\r\n");
+			}
 		}
 	}
 	return (newRequest);
@@ -281,31 +291,31 @@ const std::string	Socket::receiveRequest(int clientFd)
 	{
 		returnRead = 1;
 		this->_request = unChounkInit(this->_request);
-		this->sendResponse(clientFd, "HTTP/1.1 100 Continue");
-		size_t	size = 1;
-		char	buffer[BUFF_SIZE + 1];
+		// this->sendResponse(clientFd, "HTTP/1.1 100 Continue\r\n");
+		// size_t	size = 1;
+		// char	buffer[BUFF_SIZE + 1];
+		// ws_log("PEEEEEPEEEEEEPOOOOPOOOOOO");
+		// while (size != 0)
+		// {
+		// 	returnRead = read(clientFd, buffer, BUFF_SIZE);
+		// 	if (returnRead < 0)
+		// 		return (this->_request);
+		// 	buffer[returnRead] = 0;
 
-		while (size != 0)
-		{
-			returnRead = read(clientFd, buffer, BUFF_SIZE);
-			if (returnRead < 0)
-				return (this->_request);
-			buffer[returnRead] = 0;
-
-			std::stringstream	bufferStream(buffer);
-			while (bufferStream.good())
-			{
-				std::string	sizeStr;
-				std::getline(bufferStream, sizeStr);
-				if (!bufferStream.good())
-					break ;
-				std::istringstream(sizeStr) >> std::hex >> size;
-				if (size == 0)
-					break ;
-				this->_request.append(unChounk(bufferStream, size), size);
-				this->_request.append("\r\n");
-			}
-		}		
+		// 	std::stringstream	bufferStream(buffer);
+		// 	while (bufferStream.good())
+		// 	{
+		// 		std::string	sizeStr;
+		// 		std::getline(bufferStream, sizeStr);
+		// 		if (!bufferStream.good())
+		// 			break ;
+		// 		std::istringstream(sizeStr) >> std::hex >> size;
+		// 		if (size == 0)
+		// 			break ;
+		// 		this->_request.append(unChounk(bufferStream, size), size);
+		// 		this->_request.append("\r\n");
+		// 	}
+		// }		
 	}	
 	return (this->_request);
 }
