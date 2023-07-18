@@ -202,8 +202,6 @@ static bool	isChounked(std::string request)
 			if(line.find("chunked") < std::string::npos)
 				res = true;
 	}
-	// ws_log("isChounked");
-	// ws_log(res);
 	return (res);
 }
 
@@ -214,8 +212,6 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 	std::string	res = "";
 	char		buffer[size + 1];
 
-	ws_log("YOOO");
-	
 	stream.read(buffer, size);
 	buffer[size] = 0;
 	ws_log(buffer);
@@ -255,9 +251,7 @@ static std::string	unChounkInit(std::string request)
 		else
 		{
 			size_t	size = 0;
-			ws_log(line);
 			std::istringstream(line) >> std::hex >> size;
-			ws_log(size);
 			if (size != 0)
 			{
 				newRequest.append(unChounk(requestStream, size));
@@ -291,31 +285,30 @@ const std::string	Socket::receiveRequest(int clientFd)
 	{
 		returnRead = 1;
 		this->_request = unChounkInit(this->_request);
-		// this->sendResponse(clientFd, "HTTP/1.1 100 Continue\r\n");
-		// size_t	size = 1;
-		// char	buffer[BUFF_SIZE + 1];
-		// ws_log("PEEEEEPEEEEEEPOOOOPOOOOOO");
-		// while (size != 0)
-		// {
-		// 	returnRead = read(clientFd, buffer, BUFF_SIZE);
-		// 	if (returnRead < 0)
-		// 		return (this->_request);
-		// 	buffer[returnRead] = 0;
+		this->sendResponse(clientFd, "HTTP/1.1 100 Continue\r\n");
+		size_t	size = 1;
+		char	buffer[BUFF_SIZE + 1];
+		while (size != 0)
+		{
+			returnRead = read(clientFd, buffer, BUFF_SIZE);
+			if (returnRead < 0)
+				return (this->_request);
+			buffer[returnRead] = 0;
 
-		// 	std::stringstream	bufferStream(buffer);
-		// 	while (bufferStream.good())
-		// 	{
-		// 		std::string	sizeStr;
-		// 		std::getline(bufferStream, sizeStr);
-		// 		if (!bufferStream.good())
-		// 			break ;
-		// 		std::istringstream(sizeStr) >> std::hex >> size;
-		// 		if (size == 0)
-		// 			break ;
-		// 		this->_request.append(unChounk(bufferStream, size), size);
-		// 		this->_request.append("\r\n");
-		// 	}
-		// }		
+			std::stringstream	bufferStream(buffer);
+			while (bufferStream.good())
+			{
+				std::string	sizeStr;
+				std::getline(bufferStream, sizeStr);
+				if (!bufferStream.good())
+					break ;
+				std::istringstream(sizeStr) >> std::hex >> size;
+				if (size == 0)
+					break ;
+				this->_request.append(unChounk(bufferStream, size), size);
+				this->_request.append("\r\n");
+			}
+		}		
 	}	
 	return (this->_request);
 }
