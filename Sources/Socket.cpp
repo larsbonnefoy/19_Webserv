@@ -58,10 +58,10 @@ void	Socket::socketInit(const std::string ip, const uint32_t port)
 	option = 1;
 	if (this->_serverSocket == -1)
 		throw InitSocketException();
-	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option,
 					static_cast<socklen_t>(sizeof(option))))
 		throw InitSocketException();
+	fcntl(this->_serverSocket, F_SETFL, O_NONBLOCK);
 
 	// if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEPORT, &option,
 	// 				static_cast<socklen_t>(sizeof(option))))
@@ -183,7 +183,9 @@ int	Socket::connectClient(void)
 	stream << "Client connected on port: "
 			<< ntohs(this->_socketAddress.sin_port)
 			<< " from ip: " << this->_clientIp;
-	ws_log(stream.str()); //Ptdr on a besoin du temps du print
+	// usleep(2000);
+	ws_log(stream.str());
+
 	return (clientSocket);
 }
 
@@ -260,10 +262,14 @@ const std::string	Socket::receiveRequest(int clientFd)
 {
 	ssize_t	returnRead = 1;
 	this->_request = "";
+	size_t	tmp = 0;//to delete
 	while (returnRead != -1)
 	{
 		char	buffer[BUFF_SIZE + 1];
 		returnRead = read(clientFd, buffer, BUFF_SIZE);
+		tmp += returnRead;
+		// ws_log("tmp");
+		// ws_log(tmp);
 		if (returnRead < 0)
 		{
 			this->_request.append("\0");
