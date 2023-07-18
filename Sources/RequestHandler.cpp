@@ -229,24 +229,18 @@ void HttpResponse::_requestSuccess(int code)
  
 void	HttpResponse::_setRedir(Location &location)
 {
-    std::cout << "IN REDIR" << std::endl;
     std::cout << location.getRedirect().first << std::endl;
 	if (location.getRedirect().first == 0)
 		return ;
 	this->_statusCode = location.getRedirect().first;
 	std::string	redir = location.getRedirect().second;
-    std::cerr << "REDIR FROM LOCATION " << redir << std::endl; 
 	if (*redir.rbegin() == '/')
 		redir.erase(redir.size() - 1);
-    std::cerr << "REDIR FROM LOCATION " << redir << std::endl; 
 	size_t locationSize = location.getPath().size();
-    std::cerr << "URI " <<this->_uri << std::endl;
 	std::string query = this->_uri.substr(locationSize, this->_uri.size() - locationSize);
 	if (*query.begin() != '/') 
 		query = "/" + query;
 	this->_path = redir + query;
-    std::cerr << "Query " << query << std::endl;
-    std::cerr << "PATH " << this->_path << std::endl; 
 	this->_pathtype = FILETYPE;
 }
 
