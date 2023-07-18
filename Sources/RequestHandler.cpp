@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 18:07:26 by hdelmas           #+#    #+#             */
-/*   Updated: 2023/07/18 13:13:33 by hdelmas          ###   ########.fr       */
+/*   Updated: 2023/07/18 13:29:15 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,7 +236,7 @@ void	HttpResponse::_setRedir(Location &location)
 		redir.erase(redir.size() - 1);
 	size_t locationSize = location.getPath().size();
 	std::string query = this->_uri.substr(locationSize, this->_uri.size() - locationSize);
-	if (*query.begin() != '/') 
+	if (*query.begin() != '/' && query.size() != 0) 
 		query = "/" + query;
 	this->_path = redir + query;
 	this->_pathtype = FILETYPE;
