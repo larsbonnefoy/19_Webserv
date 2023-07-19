@@ -28,7 +28,7 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		{
 			if (!std::isdigit(digits[i]) || digits.size() > 3)
 			{
-				ws_logErr("badip");
+				ws_logErr("Badip");
 				throw Socket::InitSocketException();
 			}
 		}
@@ -37,17 +37,13 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		uint32_t			toAdd = 0;
 
 		digitsStream >> toAdd;
-		// ws_log(digitsStream.str());
-		// ws_log(toAdd);
 		res += toAdd << (8 * iter);
-		// ws_log(res);
 	}
 	if (iter != -1)
 	{
 		ws_logErr("badip format");
 		throw Socket::InitSocketException();
 	}
-	// ws_log(ipAddressToString(res));	
 	return (res);
 }
 
@@ -202,8 +198,6 @@ static bool	isChounked(std::string request)
 			if(line.find("chunked") < std::string::npos)
 				res = true;
 	}
-	// ws_log("isChounked");
-	// ws_log(res);
 	return (res);
 }
 
@@ -214,9 +208,7 @@ static std::string	unChounk(std::stringstream &stream, size_t size)
 	std::string	res = "";
 	std::string	line;
 
-	ws_log("YOOO");
 	std::getline(stream, line);
-	// ws_log(line);
 	if (!stream.good())
 		return (res);
 	if (line.size() < size)
@@ -330,16 +322,6 @@ void	Socket::sendResponse(int clientFd, const std::string response)
 		i += retWrite;
 	}
 }
-
-// void	Socket::closeClient(void)
-// {
-// 	std::stringstream stream;
-// 	stream << "Client disconnected on port: "
-// 			<< ntohs(this->_socketAddress.sin_port)
-// 			<< " from ip: " << this->_clientIp; 
-// 	ws_log(stream.str());
-// 	close(this->_clientSocket);
-// }
 
 const char* Socket::InitSocketException::what() const throw()
 {

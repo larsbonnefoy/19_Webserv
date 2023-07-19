@@ -227,7 +227,6 @@ void HttpResponse::_requestSuccess(int code)
  
 void	HttpResponse::_setRedir(Location &location)
 {
-    // std::cout << location.getRedirect().first << std::endl;
 	if (location.getRedirect().first == 0)
 		return ;
 	this->_statusCode = location.getRedirect().first;
@@ -240,9 +239,7 @@ void	HttpResponse::_setRedir(Location &location)
 		query = "/" + query;
 	if (*redir.rbegin() == '/' && (redir.size() > 1 || *query.begin() == '/'))
 		redir.erase(redir.size() - 1);
-	ws_log(query);
 	this->_path = redir + query;
-	ws_log(this->_path);
 	this->_pathtype = FILETYPE;
 }
 

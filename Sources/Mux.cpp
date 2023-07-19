@@ -59,8 +59,6 @@ void	Mux::run(void)
 			throw PollException();
 		else if (returnPoll > 0)
 		{
-			// ws_log("nbrfds");
-			// ws_log(nbrfds);
 			for (size_t i = 0; i < nbrfds; ++i)
 			{
 				if (this->_pollSocketFds[i].revents & POLLIN)
@@ -92,13 +90,12 @@ void	Mux::run(void)
 						{
 							Socket	*sock = fdToSocket[this->_pollSocketFds[i].fd];
 							const std::string request = sock->receiveRequest(this->_pollSocketFds[i].fd);
-							// ws_log(request);
+							ws_logFile(request);
 							HttpRequest Request(request);
 							HttpResponse response(this->_serverMap[sock->getPort()], Request);
-                	    	// ws_log(response.convertToStr());
 							sock->sendResponse(this->_pollSocketFds[i].fd, response.convertToStr());	
 							close(this->_pollSocketFds[i].fd);
-							ws_log("client close");
+							ws_logFile("Client closed");
 							this->_pollSocketFds[i].fd = -1;
 							this->_pollSocketFds[i].revents = 0;
 						}
