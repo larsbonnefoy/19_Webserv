@@ -74,10 +74,7 @@ void	HttpRequest::requestParser(std::string request)
 	while (requestStream.eof() != 1)	
 	{
 		char str[BUFF_SIZE]; requestStream.read(str, BUFF_SIZE);
-		// ws_log("hello");
 		this->_body.append(str, requestStream.gcount());
-		// ws_log(requestStream.gcount());
-		// ws_log(request.size());
 	}
 	this->_body.append("\0");
 }

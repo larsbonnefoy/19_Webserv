@@ -51,7 +51,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
 /******************************PRIVATE FUNCTIONS*******************************/
 
 void HttpResponse::_handleAutoIndex(const std::string &url) {
-    std::cout << url << std::endl;
     std::string htmlAutoIndex;
     this->addToHeaderField("Content-Type", StaticInit::MIME_TYPES["html"]);
     htmlAutoIndex = _createHTMLAutoindex(url);

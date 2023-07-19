@@ -28,7 +28,7 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		{
 			if (!std::isdigit(digits[i]) || digits.size() > 3)
 			{
-				ws_logErr("badip");
+				ws_logErr("Badip");
 				throw Socket::InitSocketException();
 			}
 		}
@@ -37,17 +37,13 @@ static uint32_t ipStringToULong(const std::string &ip) {
 		uint32_t			toAdd = 0;
 
 		digitsStream >> toAdd;
-		// ws_log(digitsStream.str());
-		// ws_log(toAdd);
 		res += toAdd << (8 * iter);
-		// ws_log(res);
 	}
 	if (iter != -1)
 	{
 		ws_logErr("badip format");
 		throw Socket::InitSocketException();
 	}
-	// ws_log(ipAddressToString(res));	
 	return (res);
 }
 
@@ -233,8 +229,6 @@ static std::string	unChounkInit(std::string request)
 
 	for  (std::string line; std::getline(requestStream, line); requestStream.good())
 	{
-		// if (line == "\n")
-		// 	break ;
 		if (!inBody)
 		{
 			if (line == "\r")
@@ -333,16 +327,6 @@ void	Socket::sendResponse(int clientFd, const std::string response)
 		i += retWrite;
 	}
 }
-
-// void	Socket::closeClient(void)
-// {
-// 	std::stringstream stream;
-// 	stream << "Client disconnected on port: "
-// 			<< ntohs(this->_socketAddress.sin_port)
-// 			<< " from ip: " << this->_clientIp; 
-// 	ws_log(stream.str());
-// 	close(this->_clientSocket);
-// }
 
 const char* Socket::InitSocketException::what() const throw()
 {
